@@ -10,7 +10,7 @@ Window {
     height: mainScreen.height
 
     visible: true
-    title: "QTPROJETTROPBIEN"
+    title: "TrackMyPrompts"
 
     AppView {
         id: mainScreen
