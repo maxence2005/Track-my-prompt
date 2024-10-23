@@ -1,24 +1,25 @@
 import logging
 import os
 import pathlib
-
 import sys
+
 from PySide6.QtCore import QObject, Slot, Signal, QUrl
 from PySide6.QtWidgets import QApplication
 from PySide6.QtQml import QQmlApplicationEngine
-from .models.app_state import AppState
+# from models.app_state import AppState
 from .utils import filepaths
-
+from .controller.backend import Backend
 
 
 def main():
-    # get path to python package
+    # Get path to the python package
     package_path = pathlib.Path(__file__).absolute().parent.parent
 
     # Configure logging
     log_format = '%(asctime)s - %(levelname)s - %(message)s'
     logging.basicConfig(level=logging.DEBUG, format=log_format)
 
+    # Create necessary directories
     filepaths.create_cache_dir()
     filepaths.create_config_dir()
     filepaths.create_data_dir()
@@ -26,26 +27,23 @@ def main():
     # Set the environment variable for the torch home directory
     os.environ['TORCH_HOME'] = str(filepaths.get_base_data_dir() / 'weights')
 
+    # Change working directory to the package path
     os.chdir(package_path)
     print("Starting QtQuickDetect")
 
-    # Set up the QApplication
-    # Créer une instance d'application Qt
+    # Create an instance of the backend
+    backend = Backend()
+
+    # Create an instance of QQmlApplicationEngine
     app = QApplication(sys.argv)
-
-    # Créer une instance du backend
-    #backend = Backend()
-
-    # Créer une instance de QQmlApplicationEngine
     engine = QQmlApplicationEngine()
 
-    # Exposer le backend au contexte QML
-    #engine.rootContext().setContextProperty("backend", backend)
+    # Expose the backend to the QML context
+    engine.rootContext().setContextProperty("backend", backend)
 
-    # Charger le fichier QML
+    # Load the QML file
     engine.load(QUrl("qtquickdetect/views/App.qml"))
 
-    # Vérifier si le fichier QML est chargé correctement
     if not engine.rootObjects():
         sys.exit(-1)
 

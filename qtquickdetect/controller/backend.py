@@ -19,17 +19,20 @@ class Backend(QObject):
 
     @Slot(str)
     def receiveFile(self, fileUrl):
-
+        # Extraire le chemin du fichier
         if fileUrl.startswith("file:///"):
-            filePath = fileUrl[8:]
+            filePath = fileUrl[8:]  # Enlève le préfixe "file:///"
         else:
             filePath = fileUrl
 
-        destination_directory = "../dropped_files"
-        if not os.path.exists(destination_directory):
-            os.makedirs(destination_directory)
+        # Définir le répertoire de destination
+        destination_directory = os.path.join(os.path.dirname(__file__), "../resources/save")
+
+        # Assurez-vous que le répertoire de destination existe
+        os.makedirs(destination_directory, exist_ok=True)
 
         try:
+            # Copier le fichier dans le répertoire de destination
             shutil.copy(filePath, destination_directory)
             print(f"Fichier {filePath} enregistré avec succès dans {destination_directory}")
             self.infoSent.emit(f"Fichier enregistré : {filePath}")
@@ -49,29 +52,3 @@ class Backend(QObject):
             selected_files = file_dialog.selectedFiles()  # Récupérer les fichiers sélectionnés
             if selected_files:
                 self.receiveFile(selected_files[0])  # Appeler la méthode pour traiter le fichier sélectionné
-
-def main():
-    # Créer une instance d'application Qt
-    app = QApplication(sys.argv)
-
-    # Créer une instance du backend
-    backend = Backend()
-
-    # Créer une instance de QQmlApplicationEngine
-    engine = QQmlApplicationEngine()
-
-    # Exposer le backend au contexte QML
-    engine.rootContext().setContextProperty("backend", backend)
-
-    # Charger le fichier QML
-    engine.load(QUrl("../view/App.qml"))
-
-    # Vérifier si le fichier QML est chargé correctement
-    if not engine.rootObjects():
-        sys.exit(-1)
-
-    # Lancer la boucle d'événements de l'application
-    sys.exit(app.exec())
-
-if __name__ == "__main__":
-    main()
