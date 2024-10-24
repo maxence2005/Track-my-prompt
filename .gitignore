@@ -10,3 +10,4 @@ qtquickdetect.spec
 *.egg-info
 build/
 site/
+.vscode
