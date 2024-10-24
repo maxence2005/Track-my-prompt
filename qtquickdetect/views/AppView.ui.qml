@@ -23,7 +23,7 @@ Rectangle {
             width: parent.width * 0.2
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            enabled: (!backend?.shared_variable["settingsMenuShowed"] ?? true)
+            enabled: (!backend?.shared_variable["settingsMenuShowed"] ?? true) && (!backend?.shared_variable["Erreur"] ?? true)
         }
 
         PromptMenu.PromptMenu {
@@ -31,7 +31,7 @@ Rectangle {
             width: parent.width * 0.8
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            enabled: (!backend?.shared_variable["settingsMenuShowed"] ?? true)
+            enabled: (!backend?.shared_variable["settingsMenuShowed"] ?? true) && (!backend?.shared_variable["Erreur"] ?? true)
         }
     }
 
@@ -40,7 +40,7 @@ Rectangle {
         id: interactionBlocker
         color: "transparent"
         anchors.fill: parent
-        visible: (backend?.shared_variable["settingsMenuShowed"] ?? false)
+        visible: (backend?.shared_variable["settingsMenuShowed"] ?? false) || (backend?.shared_variable["Erreur"] ?? false)
         MouseArea {
             anchors.fill: parent
             enabled: true
@@ -50,7 +50,7 @@ Rectangle {
 
     FastBlur {
         id: blurEffect
-        visible: (backend?.shared_variable["settingsMenuShowed"] ?? false)
+        visible: (backend?.shared_variable["settingsMenuShowed"] ?? false ) || (backend?.shared_variable["Erreur"] ?? false)
         anchors.fill: parent
         source: appView
         radius: 50
@@ -59,6 +59,15 @@ Rectangle {
     Param {
         id: param
         visible: (backend?.shared_variable["settingsMenuShowed"] ?? false)
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        width: parent.width * 0.8
+        height: parent.height * 0.8
+    }
+
+    Erreur {
+        id: erreur
+        visible: (backend?.shared_variable["Erreur"] ?? false)
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         width: parent.width * 0.8
