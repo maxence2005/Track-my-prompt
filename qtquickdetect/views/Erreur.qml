@@ -48,6 +48,7 @@ Rectangle {
         Column {
             id: contentColumn
             anchors.centerIn: parent
+            width: parent.width - 50
             spacing: 25 // Espacement entre les éléments
 
             // Image du point d'interrogation
@@ -66,6 +67,9 @@ Rectangle {
                 color: "red"
                 font.pixelSize: 25
                 anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width // Ajuste la largeur pour tenir compte des marges
+                wrapMode: Text.WordWrap // Permet le retour à la ligne automatique
+                horizontalAlignment: Text.AlignHCenter
                 visible: erreurRectangle.errorMessage.length > 0 // Visible seulement s'il y a un message d'erreur
             }
 
@@ -93,7 +97,7 @@ Rectangle {
                         backend.shared_variable = sharedVar;
                     }
                     onEntered: {
-                        closeButton.color = "#666"; 
+                        closeButton.color = "#666";
                     }
 
                     onExited: {
@@ -107,7 +111,7 @@ Rectangle {
     Connections {
         target: backend
         function onInfoSent(message) {
-            erreurRectangle.errorMessage = message
+            erreurRectangle.errorMessage = message;
             var sharedVar = backend.shared_variable;
             sharedVar["Erreur"] = true;
             backend.shared_variable = sharedVar;
