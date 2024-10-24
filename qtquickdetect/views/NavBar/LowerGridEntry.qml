@@ -5,6 +5,7 @@ Rectangle {
     id: customRectangle
     property string iconSource
     property string labelText
+    signal clicked
 
     width: 200
     height: 65
@@ -14,9 +15,6 @@ Rectangle {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
-        onClicked: {
-            popup.visible = !popup.visible;
-        }
 
         onEntered: {
             label.color = "#FFFFFF";
@@ -24,6 +22,10 @@ Rectangle {
 
         onExited: {
             label.color = "#CCCCCC";
+        }
+
+        onClicked: {
+            customRectangle.clicked();
         }
 
         RowLayout {

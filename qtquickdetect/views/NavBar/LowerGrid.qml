@@ -14,19 +14,24 @@ Grid {
         id: lowerSeparatorLine
     }
 
-
     ColumnLayout {
         id: lightModeColumn
         anchors.horizontalCenter: parent.horizontalCenter
-        spacing : 10
+        spacing: 10
         LowerGridEntry {
             iconSource: "../imgs/light_mode_icon.png"
             labelText: qsTr("Light mode")
         }
-    
+
         LowerGridEntry {
             iconSource: "../imgs/settings.png"
             labelText: qsTr("Settings")
+
+            onClicked: {
+                var sharedVar = backend.shared_variable;
+                sharedVar["settingsMenuShowed"] = true;
+                backend.shared_variable = sharedVar;
+            }
         }
     }
 }
