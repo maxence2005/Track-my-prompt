@@ -33,7 +33,6 @@ Rectangle {
             if (drag.hasUrls) {
                 var fileUrl = drag.urls[0];  // Récupérer le premier fichier déposé
                 backend.receiveFile(fileUrl);  // Envoyer l'URL du fichier au backend
-                console.log("Fichier déposé : " + fileUrl);
                 chooseFileMainRectangle.color = "#44464f";  // Rétablir la couleur par défaut après le dépôt
             }
         }
