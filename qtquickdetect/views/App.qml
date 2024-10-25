@@ -4,7 +4,7 @@
 import QtQuick
 
 Window {
-    minimumWidth: 1000
+    minimumWidth: 1100
     minimumHeight: 600
     width: mainScreen.width
     height: mainScreen.height

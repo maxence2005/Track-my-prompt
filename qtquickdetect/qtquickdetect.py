@@ -9,6 +9,7 @@ from PySide6.QtQml import QQmlApplicationEngine
 # from models.app_state import AppState
 from .utils import filepaths
 from .controller.backend import Backend
+from .models.encylo import DatabaseManager
 from .controller.ColorManager import ColorManager
 
 
@@ -30,10 +31,20 @@ def main():
 
     # Change working directory to the package path
     os.chdir(package_path)
-    print("Starting QtQuickDetect")
+    print("Starting QtQuickDetect")    
+    db_path = os.path.abspath("qtquickdetect/resources/trackmyprompts.db")
+    print(db_path)
+    if not os.path.isfile(db_path):
+        sys.exit(-1)
 
+    try:
+        database_manager = DatabaseManager(db_path)
+    except Exception as e:
+        print(f"Erreur lors de l'initialisation de DatabaseManager : {e}")
+        sys.exit(-1)
+        
     theme = "dark"
-    
+
     # Create an instance of the backend
     backend = Backend()
     color_manager = ColorManager("qtquickdetect/resources/themes.json", theme)
@@ -42,6 +53,9 @@ def main():
     app = QApplication(sys.argv)
     engine = QQmlApplicationEngine()
 
+    engine.rootContext().setContextProperty("databaseManager", database_manager)
+
+    engine.rootContext().setContextProperty("encyclopediaModel", database_manager.encyclopediaModel)
     # Expose the backend to the QML context
     engine.rootContext().setContextProperty("backend", backend)
     engine.rootContext().setContextProperty("colorManager", color_manager)
