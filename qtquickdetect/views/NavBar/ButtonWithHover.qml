@@ -11,9 +11,10 @@ Button {
     property int topMargin: 0
 
     background: Rectangle {
+        property bool hovered: false
         id: buttonBackground
-        color: "transparent"
-        border.color: "#343541"
+        color: hovered ? (colorManager?.getColor["dark_gray"] ?? "FFFFFF") : "transparent"
+        border.color: (colorManager?.getColor["very_dark_gray"] ?? "FFFFFF")
         border.width: 3
         radius: 8
 
@@ -23,11 +24,11 @@ Button {
             hoverEnabled: true
 
             onEntered: {
-                buttonBackground.color = "#444654";  // Couleur de fond au survol
+                parent.hovered = true
             }
 
             onExited: {
-                buttonBackground.color = "transparent";  // Couleur de fond par défaut
+                parent.hovered = false
             }
         }
     }
@@ -57,7 +58,7 @@ Button {
                 height: 40
                 text: buttonWithHover.text
                 Layout.alignment: Qt.AlignVCenter
-                color: "#CCCCCC"
+                color: (colorManager?.getColor["silver_gray"] ?? "FFFFFF")
                 font.pixelSize: 16
                 verticalAlignment: Text.AlignVCenter
             }

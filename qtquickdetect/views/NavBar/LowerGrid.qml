@@ -21,6 +21,10 @@ Grid {
         LowerGridEntry {
             iconSource: "../imgs/light_mode_icon.png"
             labelText: qsTr("Light mode")
+            
+            onClicked: {
+                colorManager.switchTheme();
+            }
         }
 
         LowerGridEntry {

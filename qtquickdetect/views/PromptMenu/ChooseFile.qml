@@ -6,7 +6,7 @@ Rectangle {
     id: chooseFileMainRectangle
     width: 600
     height: 100
-    color: "#44464F"
+    color: (colorManager?.getColor["dark_bluish_gray"] ?? "FFFFFF")
     radius: 10
     Layout.alignment: Qt.AlignHCenter
 
@@ -21,19 +21,19 @@ Rectangle {
             // Vérifier si le drag contient des URLs (fichiers)
             if (drag.hasUrls) {
                 drag.accept(Qt.CopyAction);  // Accepter l'action de copier
-                chooseFileMainRectangle.color = "#55585D";  // Changer la couleur pour indiquer l'acceptation
+                chooseFileMainRectangle.color = (colorManager?.getColor["steel_gray"] ?? "FFFFFF");  // Changer la couleur pour indiquer l'acceptation
             }
         }
 
         onExited: {
-            chooseFileMainRectangle.color = "#44464F";  // Rétablir la couleur par défaut
+            chooseFileMainRectangle.color = (colorManager?.getColor["dark_bluish_gray"] ?? "FFFFFF");  // Rétablir la couleur par défaut
         }
 
         onDropped: function(drag) {
             if (drag.hasUrls) {
                 var fileUrl = drag.urls[0];  // Récupérer le premier fichier déposé
                 backend.receiveFile(fileUrl);  // Envoyer l'URL du fichier au backend
-                chooseFileMainRectangle.color = "#44464F";  // Rétablir la couleur par défaut après le dépôt
+                chooseFileMainRectangle.color = (colorManager?.getColor["dark_bluish_gray"] ?? "FFFFFF");  // Rétablir la couleur par défaut après le dépôt
             }
         }
     }
@@ -57,7 +57,7 @@ Rectangle {
                 id: dragDropText
                 text: "Drag\nand Drop "
                 font.pixelSize: 18
-                color: "#D4D4D4"
+                color: (colorManager?.getColor["very_light_gray"] ?? "FFFFFF")
             }
         }
 
@@ -65,7 +65,7 @@ Rectangle {
             id: orText
             text: "or"
             font.pixelSize: 36
-            color: "#B0B0B0"
+            color: (colorManager?.getColor["light_gray"] ?? "FFFFFF")
         }
 
         RowLayout {

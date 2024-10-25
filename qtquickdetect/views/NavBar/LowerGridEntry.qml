@@ -5,6 +5,9 @@ Rectangle {
     id: customRectangle
     property string iconSource
     property string labelText
+    property bool hovered: false
+    property color textColor: (colorManager?.getColor["silver_gray"] ?? "FFFFFF")
+    property color textColorHover: (colorManager?.getColor["default"] ?? "FFFFFF")
     signal clicked
 
     width: 200
@@ -17,11 +20,11 @@ Rectangle {
         hoverEnabled: true
 
         onEntered: {
-            label.color = "white";
+            customRectangle.hovered = true;
         }
 
         onExited: {
-            label.color = "#CCCCCC";
+            customRectangle.hovered = false;
         }
 
         onClicked: {
@@ -43,7 +46,7 @@ Rectangle {
                 id: label
                 text: customRectangle.labelText
                 font.pixelSize: 20
-                color: "#CCCCCC"
+                color: customRectangle.hovered ? customRectangle.textColorHover : customRectangle.textColor
             }
         }
     }

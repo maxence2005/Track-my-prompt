@@ -11,10 +11,13 @@ RowLayout {
 
     Rectangle {
         id: wizardIconRectangle
+        property bool hovered: false
+        property color backgroundColor: (colorManager?.getColor["dark_gray"] ?? "FFFFFF")
+        property color backgroundColorHover: (colorManager?.getColor["blue_gray"] ?? "FFFFFF")
         width: 50
         height: 50
         radius: 50
-        color: "#444654"
+        color: hovered ? backgroundColorHover : backgroundColor
 
         Image {
             id: wizardIconImage
@@ -29,10 +32,10 @@ RowLayout {
             anchors.fill: parent
             hoverEnabled: true
             onEntered: {
-                wizardIconRectangle.color = "#66687d";
+                wizardIconRectangle.hovered = true;
             }
             onExited: {
-                wizardIconRectangle.color = "#444654";
+                wizardIconRectangle.hovered = false;
             }
         }
     }
@@ -41,7 +44,7 @@ RowLayout {
         id: promptInputRectangle
         width: 600
         height: 50
-        color: "#44464F"
+        color: (colorManager?.getColor["dark_bluish_gray"] ?? "FFFFFF")
         radius: 10
 
         TextField {
@@ -50,8 +53,8 @@ RowLayout {
             font.pixelSize: 18
             width: parent.width - 50 // Réduire la largeur pour faire de la place à l'image
             height: parent.height
-            color: "#B0B0B0"
-            placeholderTextColor: "#66687D"
+            color: (colorManager?.getColor["light_gray"] ?? "FFFFFF")
+            placeholderTextColor: (colorManager?.getColor["blue_gray"] ?? "FFFFFF")
             background: Rectangle {
                 color: "transparent"
             }

@@ -32,6 +32,7 @@ class Backend(QObject):
 
     @Slot(str)
     def receiveFile(self, fileUrl):
+        print(fileUrl)
         # Extraire le chemin du fichier
         if fileUrl.startswith("file:///"):
             file_path = fileUrl[8:]  # Enlève le préfixe "file:///"
