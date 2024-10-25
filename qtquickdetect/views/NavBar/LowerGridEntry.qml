@@ -41,12 +41,6 @@ Rectangle {
                 source: customRectangle.iconSource
                 sourceSize.width: 30
                 sourceSize.height: 30
-
-                ColorOverlay {
-                    anchors.fill: parent
-                    source: parent
-                    color: (colorManager?.getColor["default"] ?? "FFFFFF")
-                }
             }
 
             Text {
@@ -56,5 +50,11 @@ Rectangle {
                 color: customRectangle.hovered ? customRectangle.textColorHover : customRectangle.textColor
             }
         }
+    }
+
+    ColorOverlay {
+        anchors.fill: icon
+        source: icon
+        color: (colorManager?.getColor["default"] ?? "FFFFFF")
     }
 }

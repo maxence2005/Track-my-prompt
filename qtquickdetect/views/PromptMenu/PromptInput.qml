@@ -27,12 +27,6 @@ RowLayout {
             anchors.centerIn: parent
             width: 30
             height: 30
-
-            ColorOverlay {
-                anchors.fill: parent
-                source: parent
-                color: (colorManager?.getColor["default"] ?? "FFFFFF")
-            }
         }
 
         MouseArea {
@@ -44,6 +38,12 @@ RowLayout {
             onExited: {
                 wizardIconRectangle.hovered = false;
             }
+        }
+
+        ColorOverlay {
+            anchors.fill: wizardIconImage
+            source: wizardIconImage
+            color: (colorManager?.getColor["default"] ?? "FFFFFF")
         }
     }
 

@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects 1.0
+
 Button {
     id: buttonWithHover
     width: 180
@@ -11,8 +12,8 @@ Button {
     property int topMargin: 0
 
     background: Rectangle {
-        property bool hovered: false
         id: buttonBackground
+        property bool hovered: false
         color: hovered ? (colorManager?.getColor["dark_gray"] ?? "FFFFFF") : "transparent"
         border.color: (colorManager?.getColor["very_dark_gray"] ?? "FFFFFF")
         border.width: 3
@@ -24,11 +25,11 @@ Button {
             hoverEnabled: true
 
             onEntered: {
-                parent.hovered = true
+                parent.hovered = true;
             }
 
             onExited: {
-                parent.hovered = false
+                parent.hovered = false;
             }
         }
     }
@@ -51,12 +52,6 @@ Button {
                 fillMode: Image.PreserveAspectFit
                 Layout.alignment: Qt.AlignVCenter
                 visible: buttonWithHover.iconSource !== ""
-
-                ColorOverlay {
-                    anchors.fill: parent
-                    source: parent
-                    color: (colorManager?.getColor["default"] ?? "FFFFFF")
-                }
             }
 
             Text {
@@ -69,5 +64,11 @@ Button {
                 verticalAlignment: Text.AlignVCenter
             }
         }
+    }
+
+    ColorOverlay {
+        anchors.fill: buttonImage
+        source: buttonImage
+        color: (colorManager?.getColor["default"] ?? "FFFFFF")
     }
 }

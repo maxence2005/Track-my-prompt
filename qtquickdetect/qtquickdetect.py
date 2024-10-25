@@ -32,9 +32,11 @@ def main():
     os.chdir(package_path)
     print("Starting QtQuickDetect")
 
+    theme = "dark"
+    
     # Create an instance of the backend
     backend = Backend()
-    color_manager = ColorManager("qtquickdetect/resources/themes.json", "dark")
+    color_manager = ColorManager("qtquickdetect/resources/themes.json", theme)
     
     # Create an instance of QQmlApplicationEngine
     app = QApplication(sys.argv)

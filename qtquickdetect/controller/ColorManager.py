@@ -27,3 +27,11 @@ class ColorManager(QObject):
             self.current_theme = "light"
         self.colors = self.themes[self.current_theme]
         self.themeChanged.emit()
+    
+    @Property(bool, notify=themeChanged)
+    def isLightMode(self):
+        return self.current_theme == "light"
+    
+    @Property(bool, notify=themeChanged)
+    def isDarkMode(self):
+        return self.current_theme == "dark"
