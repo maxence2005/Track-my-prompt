@@ -1,20 +1,31 @@
 import sys
 import os
 import shutil
+from urllib.parse import urlparse
+from pathlib import Path
 from PySide6.QtCore import QObject, Slot, Signal, QUrl, Property
 from PySide6.QtWidgets import QApplication, QFileDialog
 from PySide6.QtQml import QQmlApplicationEngine
 
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+
+from utils.file_explorer import open_file_explorer
+from utils.filepaths import get_base_config_dir, get_base_data_dir, create_config_dir, create_data_dir
+from utils.url_handler import is_image, is_video, is_live_video, is_url, download_file
 
 class Backend(QObject):
-    # Déclarez un signal
+
     infoSent = Signal(str)
     sharedVariableChanged = Signal()
 
     def __init__(self):
         super().__init__()
         self._shared_variable = {"settingsMenuShowed": False, "Erreur": False}
-        self.accepted_extensions = ['.jpg', '.jpeg', '.png', '.mp4', '.avi', '.mkv', '.mov']  # Extensions acceptées
+
+
+        create_config_dir()
+        create_data_dir()
 
     @Property('QVariant', notify=sharedVariableChanged)
     def shared_variable(self):
@@ -32,44 +43,69 @@ class Backend(QObject):
 
     @Slot(str)
     def receiveFile(self, fileUrl):
-        # Extraire le chemin du fichier
         if fileUrl.startswith("file:///"):
-            file_path = fileUrl[8:]  # Enlève le préfixe "file:///"
+            if sys.platform == 'win32':
+                file_path = fileUrl[8:]
+            elif sys.platform == 'darwin':
+                raise Exception('macOS is not supported yet')
+            else:
+                file_path = fileUrl[7:]
+
         else:
             file_path = fileUrl
 
-        # Vérifier l'extension du fichier
-        file_extension = os.path.splitext(file_path)[1].lower()  # Obtenir l'extension du fichier en minuscules
-        if file_extension not in self.accepted_extensions:
-            self.infoSent.emit(f"Erreur : le fichier n'est pas une image ou une vidéo.")
-            return
+        if is_url(file_path):
+            if is_image(file_path):
+                print(f"URL est une image : {file_path}")
+                destination_directory = get_base_data_dir() / "collections" / "image"
+            elif is_video(file_path):
+                print(f"URL est une vidéo : {file_path}")
+                destination_directory = get_base_data_dir() / "collections" / "video"
+            elif is_live_video(file_path):
+                print(f"URL est une vidéo en direct : {file_path}")
+                destination_directory = get_base_data_dir() / "collections" / "video" 
+            else:
+                self.infoSent.emit(f"Erreur : l'url n'est pas une image ou une vidéo.")
+                return
+            parsed_url = urlparse(file_path)
+            filename = os.path.basename(parsed_url.path)
+            dst = destination_directory / filename
+            download_file(file_path, dst)
+        else:
+            file_extension = os.path.splitext(file_path)[1].lower()
+            if file_extension in ['.jpg', '.jpeg', '.png', '.gif', '.bmp']:
+                print(f"Fichier est une image : {file_path}")
+                destination_directory = get_base_data_dir() / "collections" / "image"  
+            elif file_extension in ['.mp4', '.avi', '.mkv', '.mov']:
+                print(f"Fichier est une vidéo : {file_path}")
+                destination_directory = get_base_data_dir() / "collections" / "video"
+            else:
+                self.infoSent.emit(f"Erreur : le fichier n'est pas une image ou une vidéo.")
+                return
 
-        # Définir le répertoire de destination
-        destination_directory = os.path.join(os.path.dirname(__file__), "../resources/save")
+            try:
+                shutil.copy(file_path, destination_directory)
+            except Exception as e:
+                self.infoSent.emit(f"Erreur : {e}")
 
-        # Assurez-vous que le répertoire de destination existe
-        os.makedirs(destination_directory, exist_ok=True)
-
+    @Slot()
+    def selectFile(self):
         try:
-            # Copier le fichier dans le répertoire de destination
-            shutil.copy(file_path, destination_directory)
-            self.infoSent.emit(f"Fichier enregistré : {file_path}")
+            destination_directory = get_base_data_dir() / "collections"
+            os.makedirs(destination_directory, exist_ok=True)
+            open_file_explorer(destination_directory)
         except Exception as e:
-            print(f"Erreur lors de l'enregistrement du fichier : {e}")
+            print(f"Erreur lors de l'ouverture de l'explorateur de fichiers : {e}")
             self.infoSent.emit(f"Erreur : {e}")
 
     @Slot()
     def openFileExplorer(self):
-        # Ouvrir la boîte de dialogue pour sélectionner un fichier
         file_dialog = QFileDialog()
-        # Pour permettre la sélection de fichiers existants
         file_dialog.setFileMode(QFileDialog.ExistingFiles)
-        file_dialog.setNameFilter("Images et vidéos (*.jpg *.jpeg *.png *.gif *.bmp *.mp4 *.avi *.mov *.mkv)")  # Filtrer tous les fichiers
-        file_dialog.setViewMode(QFileDialog.List)  # Mode d'affichage en liste
+        file_dialog.setNameFilter("Images et vidéos (*.jpg *.jpeg *.png *.gif *.bmp *.mp4 *.avi *.mov *.mkv)")
+        file_dialog.setViewMode(QFileDialog.List)
 
         if file_dialog.exec():
-            # Récupérer les fichiers sélectionnés
             selected_files = file_dialog.selectedFiles()
             if selected_files:
-                # Appeler la méthode pour traiter le fichier sélectionné
                 self.receiveFile(selected_files[0])

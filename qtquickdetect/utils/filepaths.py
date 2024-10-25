@@ -20,7 +20,7 @@ def get_base_config_dir() -> Path:
         return Path(TMP_DIR.name) / 'config'
 
     if sys.platform == 'win32':
-        return Path(os.getenv('APPDATA')) / 'QtQuickDetect'
+        return Path(os.getenv('APPDATA')) / 'Track_my_prompt'
     elif sys.platform == 'darwin':
         raise Exception('macOS is not supported yet')
     else:
@@ -29,7 +29,7 @@ def get_base_config_dir() -> Path:
         if homedir is None:
             raise Exception('Could not find home directory')  # Linux is weird sometimes
 
-        return Path(homedir) / '.config' / 'qtquickdetect'
+        return Path(homedir) / '.config' / 'Track_my_prompt'
 
 
 def create_config_dir() -> None:
@@ -49,7 +49,7 @@ def get_base_data_dir() -> Path:
         return Path(TMP_DIR.name) / 'data'
 
     if sys.platform == 'win32':
-        return Path(os.getenv('APPDATA')) / 'QtQuickDetect' / 'data'
+        return Path(os.getenv('APPDATA')) / 'Track_my_prompt' / 'data'
     elif sys.platform == 'darwin':
         raise Exception('macOS is not supported yet')
     else:
@@ -58,7 +58,7 @@ def get_base_data_dir() -> Path:
         if homedir is None:
             raise Exception('Could not find home directory')
 
-        return Path(homedir) / '.local' / 'share' / 'qtquickdetect'
+        return Path(homedir) / '.local' / 'share' / 'Track_my_prompt'
 
 
 def create_data_dir() -> None:
@@ -85,7 +85,7 @@ def get_base_cache_dir() -> Path:
         return Path(TMP_DIR.name) / 'cache'
 
     if sys.platform == 'win32':
-        return Path(os.getenv('APPDATA')) / 'QtQuickDetect' / 'cache'
+        return Path(os.getenv('APPDATA')) / 'Track_my_prompt' / 'cache'
     elif sys.platform == 'darwin':
         raise Exception('macOS is not supported yet')
     else:
@@ -94,7 +94,7 @@ def get_base_cache_dir() -> Path:
         if homedir is None:
             raise Exception('Could not find home directory')
 
-        return Path(homedir) / '.cache' / 'qtquickdetect'
+        return Path(homedir) / '.cache' / 'Track_my_prompt'
 
 
 def create_cache_dir() -> None:

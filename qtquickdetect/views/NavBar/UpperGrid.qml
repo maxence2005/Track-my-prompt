@@ -25,6 +25,12 @@ Grid {
                 height: 50
                 text: "+ New detection"
                 topMargin: 10
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        backend.selectFile(); // Appeler la méthode pour ouvrir l'explorateur de fichiers
+                    }
+                }
             }
 
             ButtonWithHover {
