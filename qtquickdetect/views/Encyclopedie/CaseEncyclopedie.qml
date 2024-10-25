@@ -6,7 +6,7 @@ Rectangle {
     width: 150
     height: 150
     color: "transparent"
-    border.color: "#AAAAAA"
+    border.color: (colorManager?.getColor["default"] ?? "FFFFFF")
     border.width: 1
     radius: 10
 
@@ -24,7 +24,7 @@ Rectangle {
             id: icon
             text: iconSource
             font.pixelSize: 50  // Taille de l'émoticône (à ajuster si nécessaire)
-            color: "white"  // Couleur de l'émoticône
+            color: (colorManager?.getColor["default"] ?? "FFFFFF")
             anchors.horizontalCenter: parent.horizontalCenter
 
             // Animation lors du survol
@@ -60,7 +60,7 @@ Rectangle {
             id: nameLabel
             text: name
             font.pixelSize: 18
-            color: "white"
+            color: (colorManager?.getColor["default"] ?? "FFFFFF")
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter
         }
@@ -69,7 +69,7 @@ Rectangle {
             id: countLabel
             text: "Trouvé " + count + "x"
             font.pixelSize: 14
-            color: "white"
+            color: (colorManager?.getColor["default"] ?? "FFFFFF")
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter
         }

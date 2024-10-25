@@ -6,7 +6,7 @@ Rectangle {
     visible: true
     width: parent.width - 50
     height: parent.height
-    color: "#33343b"  // Couleur de fond
+    color: (colorManager?.getColor["anthracite_gray"] ?? "FFFFFF")
 
     ColumnLayout {
         id: mainColumnLayout
@@ -14,7 +14,7 @@ Rectangle {
         spacing: 0
 
         Header {
-            progression: 0.0
+            progression: 0.5
             id: headerComponent
             Layout.alignment: Qt.AlignTop
         }
