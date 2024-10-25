@@ -116,7 +116,7 @@ Rectangle {
         }
 
         onAccepted: {
-            console.log("Lien saisi: " + linkInput.text)
+            backend.receiveFile(linkInput.text);
         }
     }
 }

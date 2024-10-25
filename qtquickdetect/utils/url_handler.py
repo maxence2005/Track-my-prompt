@@ -1,20 +1,14 @@
 import requests
 
-from typing import Callable
+from typing import Callable, Optional
 
 
-def get_content_type(url: str) -> str | None:
-    """
-    Gets the content type of the URL
-    :param url: URL to get the content type of
-    :return: Content type of the URL or None if the request failed or the content type is not found
-    """
+def get_content_type(url: str) -> Optional[str]:
     try:
         response = requests.head(url, allow_redirects=True, timeout=10)
         return response.headers.get('Content-Type', '').split(';')[0].strip()
     except requests.RequestException:
         return None
-
 
 def is_image(url: str) -> bool:
     """
@@ -79,23 +73,22 @@ def is_url(url: str) -> bool:
         return False
 
 
-def download_file(url: str, dst: str, cb: Callable[[int, int], None] | None = None) -> None:
-    """
-    Downloads a file from a URL
-    :param url: URL to download from
-    :param dst: Destination path (leading folders must exist)
-    :param cb: Callback function to call on download progress (takes current and total bytes as parameters)
-    :raises any exception if 
-    """
+def download_file(url: str, dst: str, cb: Optional[Callable[[int, int], None]] = None) -> None:
+    try:
+        resp = requests.get(url, stream=True)
+        resp.raise_for_status()  # Vérifie si la requête a réussi
+        
+        total = int(resp.headers.get('content-length', 0))
+        current = 0
 
-    resp = requests.get(url, stream=True)
-    total = int(resp.headers.get('content-length', 0))
-    current = 0
+        with open(dst, 'wb') as file:
+            for chunk in resp.iter_content(chunk_size=1024):
+                current += len(chunk)
+                file.write(chunk)
 
-    with open(dst, 'wb') as file:
-        for chunk in resp.iter_content(chunk_size=1024):
-            current += len(chunk)
-            file.write(chunk)
-
-            if cb:
-                cb(current, total)
+                if cb:
+                    cb(current, total)
+    except requests.RequestException as e:
+        print(f"Erreur lors du téléchargement du fichier : {e}")
+    except IOError as e:
+        print(f"Erreur lors de l'enregistrement du fichier : {e}")
