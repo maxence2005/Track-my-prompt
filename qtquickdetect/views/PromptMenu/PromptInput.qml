@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
+import Qt5Compat.GraphicalEffects 1.0
 
 RowLayout {
     id: promptRowLayout
@@ -21,11 +22,17 @@ RowLayout {
 
         Image {
             id: wizardIconImage
-            source: "../imgs/wizard.png" // Remplace par ton fichier SVG
+            source: "../imgs/wizard.png"
             fillMode: Image.PreserveAspectFit
             anchors.centerIn: parent
             width: 30
             height: 30
+
+            ColorOverlay {
+                anchors.fill: parent
+                source: parent
+                color: (colorManager?.getColor["default"] ?? "FFFFFF")
+            }
         }
 
         MouseArea {
@@ -62,7 +69,7 @@ RowLayout {
 
         Image {
             id: sendIconImage
-            source: "../imgs/send.svg" // Remplacez par le chemin de votre icône d'envoi
+            source: "../imgs/send.svg"
             width: 20
             height: 20
             anchors.verticalCenter: parent.verticalCenter
@@ -75,6 +82,12 @@ RowLayout {
                 onClicked: {
                     backend.receivePrompt(promptInputField.text);
                 }
+            }
+
+            ColorOverlay {
+                anchors.fill: parent
+                source: parent
+                color: (colorManager?.getColor["light_bluish_gray"] ?? "FFFFFF")
             }
         }
     }

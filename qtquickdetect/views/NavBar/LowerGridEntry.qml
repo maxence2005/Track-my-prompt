@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import Qt5Compat.GraphicalEffects 1.0
 
 Rectangle {
     id: customRectangle
@@ -40,6 +41,12 @@ Rectangle {
                 source: customRectangle.iconSource
                 sourceSize.width: 30
                 sourceSize.height: 30
+
+                ColorOverlay {
+                    anchors.fill: parent
+                    source: parent
+                    color: (colorManager?.getColor["default"] ?? "FFFFFF")
+                }
             }
 
             Text {

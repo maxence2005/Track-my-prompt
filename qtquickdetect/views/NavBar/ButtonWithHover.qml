@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-
+import Qt5Compat.GraphicalEffects 1.0
 Button {
     id: buttonWithHover
     width: 180
@@ -51,6 +51,12 @@ Button {
                 fillMode: Image.PreserveAspectFit
                 Layout.alignment: Qt.AlignVCenter
                 visible: buttonWithHover.iconSource !== ""
+
+                ColorOverlay {
+                    anchors.fill: parent
+                    source: parent
+                    color: (colorManager?.getColor["default"] ?? "FFFFFF")
+                }
             }
 
             Text {
