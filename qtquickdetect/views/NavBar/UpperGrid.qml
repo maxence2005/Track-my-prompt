@@ -40,6 +40,14 @@ Grid {
                 text: "Encyclopédie"
                 topMargin: 70
                 iconSource: "../imgs/wizard.png"
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        var sharedVar = backend.shared_variable;
+                        sharedVar["Menu"] = !sharedVar["Menu"];
+                        backend.shared_variable = sharedVar;
+                    }
+                }
             }
         }
         SeparatorLine {

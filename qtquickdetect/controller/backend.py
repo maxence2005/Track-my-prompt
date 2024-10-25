@@ -21,7 +21,7 @@ class Backend(QObject):
 
     def __init__(self):
         super().__init__()
-        self._shared_variable = {"settingsMenuShowed": False, "Erreur": False}
+        self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True}
 
 
         create_config_dir()

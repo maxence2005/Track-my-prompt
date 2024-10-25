@@ -8,10 +8,21 @@ import QtQuick
 import QtQuick.Controls
 import "PromptMenu" as PromptMenu
 import "NavBar" as NavBar
+import "Encyclopedie" as  Encyclopedie
 import Qt5Compat.GraphicalEffects
 
 Rectangle {
     anchors.fill: parent  // Remplit l'espace du parent
+
+    Component {
+        id: promptMenuComponent
+        PromptMenu.PromptMenu {}
+    }
+
+    Component {
+        id: encyclopedie
+        Encyclopedie.Encyclopedie {} // Remplacez par le vrai nom de l'autre composant
+    }
 
     Row {
         id: appView
@@ -26,12 +37,13 @@ Rectangle {
             enabled: (!backend?.shared_variable["settingsMenuShowed"] ?? true) && (!backend?.shared_variable["Erreur"] ?? true)
         }
 
-        PromptMenu.PromptMenu {
-            id: promptMenu
+        Loader {
+            id: contentLoader
             width: parent.width * 0.8
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             enabled: (!backend?.shared_variable["settingsMenuShowed"] ?? true) && (!backend?.shared_variable["Erreur"] ?? true)
+            sourceComponent: (backend ? (backend.shared_variable["Menu"] ? promptMenuComponent : encyclopedie) : promptMenuComponent )
         }
     }
 
