@@ -36,11 +36,22 @@ Rectangle {
             id: rowLayout
             anchors.fill: parent
 
-            Image {
-                id: icon
-                source: customRectangle.iconSource
-                sourceSize.width: 30
-                sourceSize.height: 30
+            Rectangle {
+                width: icon.width
+                height: icon.height
+                color: "transparent"
+                Image {
+                    id: icon
+                    source: customRectangle.iconSource
+                    sourceSize.width: 30
+                    sourceSize.height: 30
+                }
+
+                ColorOverlay {
+                    anchors.fill: icon
+                    source: icon
+                    color: (colorManager?.getColor["default"] ?? "FFFFFF")
+                }
             }
 
             Text {
@@ -50,11 +61,5 @@ Rectangle {
                 color: customRectangle.hovered ? customRectangle.textColorHover : customRectangle.textColor
             }
         }
-    }
-
-    ColorOverlay {
-        anchors.fill: icon
-        source: icon
-        color: (colorManager?.getColor["default"] ?? "FFFFFF")
     }
 }

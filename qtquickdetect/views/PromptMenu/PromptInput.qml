@@ -83,12 +83,12 @@ RowLayout {
                     backend.receivePrompt(promptInputField.text);
                 }
             }
+        }
 
-            ColorOverlay {
-                anchors.fill: parent
-                source: parent
-                color: (colorManager?.getColor["light_bluish_gray"] ?? "FFFFFF")
-            }
+        ColorOverlay {
+            anchors.fill: sendIconImage
+            source: sendIconImage
+            color: (colorManager?.getColor["light_bluish_gray"] ?? "FFFFFF")
         }
     }
 }

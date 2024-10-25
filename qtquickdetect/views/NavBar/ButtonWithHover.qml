@@ -15,7 +15,7 @@ Button {
         id: buttonBackground
         property bool hovered: false
         color: hovered ? (colorManager?.getColor["dark_gray"] ?? "FFFFFF") : "transparent"
-        border.color: (colorManager?.getColor["very_dark_gray"] ?? "FFFFFF")
+        border.color: (colorManager?.getColor["dark_bluish_gray"] ?? "FFFFFF")
         border.width: 3
         radius: 8
 
@@ -44,14 +44,24 @@ Button {
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 10
 
-            Image {
-                id: buttonImage
-                sourceSize.width: 30
-                sourceSize.height: 30
-                source: buttonWithHover.iconSource
-                fillMode: Image.PreserveAspectFit
-                Layout.alignment: Qt.AlignVCenter
-                visible: buttonWithHover.iconSource !== ""
+            Row {
+                width: buttonImage.width
+                height: buttonImage.height
+                Image {
+                    id: buttonImage
+                    sourceSize.width: 30
+                    sourceSize.height: 30
+                    source: buttonWithHover.iconSource
+                    fillMode: Image.PreserveAspectFit
+                    Layout.alignment: Qt.AlignVCenter
+                    visible: buttonWithHover.iconSource !== ""
+                }
+
+                ColorOverlay {
+                    anchors.fill: buttonImage
+                    source: buttonImage
+                    color: (colorManager?.getColor["default"] ?? "FFFFFF")
+                }
             }
 
             Text {
@@ -64,11 +74,5 @@ Button {
                 verticalAlignment: Text.AlignVCenter
             }
         }
-    }
-
-    ColorOverlay {
-        anchors.fill: buttonImage
-        source: buttonImage
-        color: (colorManager?.getColor["default"] ?? "FFFFFF")
     }
 }

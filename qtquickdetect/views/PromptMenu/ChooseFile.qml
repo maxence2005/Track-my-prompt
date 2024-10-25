@@ -4,9 +4,13 @@ import QtQuick.Controls 2.15
 
 Rectangle {
     id: chooseFileMainRectangle
+    property bool hovered: false
+    property color backgroundColor: (colorManager?.getColor["dark_bluish_gray"] ?? "FFFFFF")
+    property color backgroundColorHover: (colorManager?.getColor["steel_gray"] ?? "FFFFFF")
+
     width: 600
     height: 100
-    color: (colorManager?.getColor["dark_bluish_gray"] ?? "FFFFFF")
+    color: hovered ? backgroundColorHover : backgroundColor
     radius: 10
     Layout.alignment: Qt.AlignHCenter
 
@@ -21,19 +25,19 @@ Rectangle {
             // Vérifier si le drag contient des URLs (fichiers)
             if (drag.hasUrls) {
                 drag.accept(Qt.CopyAction);  // Accepter l'action de copier
-                chooseFileMainRectangle.color = (colorManager?.getColor["steel_gray"] ?? "FFFFFF");  // Changer la couleur pour indiquer l'acceptation
+                chooseFileMainRectangle.hovered = true;  // Mettre en surbrillance le rectangle
             }
         }
 
         onExited: {
-            chooseFileMainRectangle.color = (colorManager?.getColor["dark_bluish_gray"] ?? "FFFFFF");  // Rétablir la couleur par défaut
+            chooseFileMainRectangle.hovered = false;  // Annuler la surbrillance du rectangle
         }
 
         onDropped: function(drag) {
             if (drag.hasUrls) {
                 var fileUrl = drag.urls[0];  // Récupérer le premier fichier déposé
                 backend.receiveFile(fileUrl);  // Envoyer l'URL du fichier au backend
-                chooseFileMainRectangle.color = (colorManager?.getColor["dark_bluish_gray"] ?? "FFFFFF");  // Rétablir la couleur par défaut après le dépôt
+                chooseFileMainRectangle.hovered = false;  // Annuler la surbrillance du rectangle
             }
         }
     }
