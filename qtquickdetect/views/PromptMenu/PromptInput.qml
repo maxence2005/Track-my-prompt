@@ -14,7 +14,7 @@ RowLayout {
         width: 50
         height: 50
         radius: 50
-        color: "#40414E"
+        color: "#444654"
 
         Image {
             id: wizardIconImage
@@ -32,7 +32,7 @@ RowLayout {
                 wizardIconRectangle.color = "#66687d";
             }
             onExited: {
-                wizardIconRectangle.color = "#40414E";
+                wizardIconRectangle.color = "#444654";
             }
         }
     }
@@ -41,7 +41,7 @@ RowLayout {
         id: promptInputRectangle
         width: 600
         height: 50
-        color: "#44464f"
+        color: "#44464F"
         radius: 10
 
         TextField {
@@ -50,8 +50,8 @@ RowLayout {
             font.pixelSize: 18
             width: parent.width - 50 // Réduire la largeur pour faire de la place à l'image
             height: parent.height
-            color: "#C5C5D1"
-            placeholderTextColor: "#C5C5D1"
+            color: "#B0B0B0"
+            placeholderTextColor: "#66687D"
             background: Rectangle {
                 color: "transparent"
             }

@@ -11,7 +11,7 @@ Rectangle {
         id: backgroundParamRectangle
         width: parent.width
         height: parent.height
-        color: "#2D2D3A" // Couleur d'arrière-plan
+        color: "#343541" // Couleur d'arrière-plan
 
         Rectangle {
             id: closeButtonContainer
@@ -154,7 +154,7 @@ Rectangle {
                                 indicator: Rectangle {
                                     width: 20
                                     height: 20
-                                    color: expertModeCheckBox.checked ? "#1e1f1e" : "white" // Change la couleur en fonction de l'état
+                                    color: expertModeCheckBox.checked ? "#1E1F1E" : "white" // Change la couleur en fonction de l'état
                                 }
                             }
 

@@ -25,7 +25,7 @@ ColumnLayout {
             id: dogImagesRectangle
             width: 200
             height: 100
-            color: "#44464f"
+            color: "#44464F"
             radius: 10
             Text {
                 id: dogImagesText
@@ -42,10 +42,10 @@ ColumnLayout {
                 anchors.fill: parent
                 hoverEnabled: true
                 onEntered: {
-                    dogImagesRectangle.color = "#66687d";
+                    dogImagesRectangle.color = "#66687D";
                 }
                 onExited: {
-                    dogImagesRectangle.color = "#44464f";
+                    dogImagesRectangle.color = "#44464F";
                 }
             }
         }
@@ -54,7 +54,7 @@ ColumnLayout {
             id: catVideoRectangle
             width: 200
             height: 100
-            color: "#44464f"
+            color: "#44464F"
             radius: 10
             Text {
                 id: catVideoText
@@ -74,7 +74,7 @@ ColumnLayout {
                     catVideoRectangle.color = "#66687d";
                 }
                 onExited: {
-                    catVideoRectangle.color = "#44464f";
+                    catVideoRectangle.color = "#44464F";
                 }
             }
         }

@@ -6,7 +6,7 @@ Rectangle {
     id: chooseFileMainRectangle
     width: 600
     height: 100
-    color: "#44464f"
+    color: "#44464F"
     radius: 10
     Layout.alignment: Qt.AlignHCenter
 
@@ -21,19 +21,19 @@ Rectangle {
             // Vérifier si le drag contient des URLs (fichiers)
             if (drag.hasUrls) {
                 drag.accept(Qt.CopyAction);  // Accepter l'action de copier
-                chooseFileMainRectangle.color = "#55585d";  // Changer la couleur pour indiquer l'acceptation
+                chooseFileMainRectangle.color = "#55585D";  // Changer la couleur pour indiquer l'acceptation
             }
         }
 
         onExited: {
-            chooseFileMainRectangle.color = "#44464f";  // Rétablir la couleur par défaut
+            chooseFileMainRectangle.color = "#44464F";  // Rétablir la couleur par défaut
         }
 
         onDropped: function(drag) {
             if (drag.hasUrls) {
                 var fileUrl = drag.urls[0];  // Récupérer le premier fichier déposé
                 backend.receiveFile(fileUrl);  // Envoyer l'URL du fichier au backend
-                chooseFileMainRectangle.color = "#44464f";  // Rétablir la couleur par défaut après le dépôt
+                chooseFileMainRectangle.color = "#44464F";  // Rétablir la couleur par défaut après le dépôt
             }
         }
     }
@@ -65,7 +65,7 @@ Rectangle {
             id: orText
             text: "or"
             font.pixelSize: 36
-            color: "#B4B4B4"
+            color: "#B0B0B0"
         }
 
         RowLayout {

@@ -17,7 +17,7 @@ Rectangle {
         hoverEnabled: true
 
         onEntered: {
-            label.color = "#FFFFFF";
+            label.color = "white";
         }
 
         onExited: {

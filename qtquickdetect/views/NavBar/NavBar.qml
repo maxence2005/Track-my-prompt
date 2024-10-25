@@ -6,7 +6,7 @@ Rectangle {
     id: navBarRectangle
     width: parent.width
     height: parent.height
-    color: "#1e1e2d"
+    color: "#343541"
 
     Grid {
         id: navBarGrid

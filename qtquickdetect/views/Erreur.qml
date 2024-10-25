@@ -13,7 +13,7 @@ Rectangle {
         id: backgroundParamRectangle
         width: parent.width
         height: parent.height
-        color: "#2D2D3A" // Couleur d'arrière-plan
+        color: "#343541" // Couleur d'arrière-plan
 
         // Conteneur pour le bouton de fermeture (croix)
         Rectangle {
@@ -78,7 +78,7 @@ Rectangle {
                 id: closeButton
                 width: 120
                 height: 40
-                color: "#444" // Couleur du bouton
+                color: "#444444" // Couleur du bouton
                 radius: 10
                 anchors.horizontalCenter: parent.horizontalCenter
 
@@ -97,11 +97,11 @@ Rectangle {
                         backend.shared_variable = sharedVar;
                     }
                     onEntered: {
-                        closeButton.color = "#666";
+                        closeButton.color = "#666666";
                     }
 
                     onExited: {
-                        closeButton.color = "#444";
+                        closeButton.color = "#444444";
                     }
                 }
             }

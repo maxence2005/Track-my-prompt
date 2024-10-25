@@ -6,7 +6,7 @@ Rectangle {
     visible: true
     width: 800
     height: 600
-    color: "#33343b" // Couleur de fond similaire à celle de l'image
+    color: "#33343B" // Couleur de fond similaire à celle de l'image
 
     ColumnLayout {
         id: mainColumnLayout

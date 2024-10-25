@@ -12,7 +12,7 @@ Rectangle {
         id: separatorLine
         height: 2
         width: parent.width * 0.8
-        color: "#40414F"
+        color: "#444654"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: 10
