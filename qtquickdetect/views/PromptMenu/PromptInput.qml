@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
+import Qt5Compat.GraphicalEffects 1.0
 
 RowLayout {
     id: promptRowLayout
@@ -11,14 +12,17 @@ RowLayout {
 
     Rectangle {
         id: wizardIconRectangle
+        property bool hovered: false
+        property color backgroundColor: (colorManager?.getColor["dark_gray"] ?? "FFFFFF")
+        property color backgroundColorHover: (colorManager?.getColor["blue_gray"] ?? "FFFFFF")
         width: 50
         height: 50
         radius: 50
-        color: "#40414E"
+        color: hovered ? backgroundColorHover : backgroundColor
 
         Image {
             id: wizardIconImage
-            source: "../imgs/wizard.png" // Remplace par ton fichier SVG
+            source: "../imgs/wizard.png"
             fillMode: Image.PreserveAspectFit
             anchors.centerIn: parent
             width: 30
@@ -29,11 +33,17 @@ RowLayout {
             anchors.fill: parent
             hoverEnabled: true
             onEntered: {
-                wizardIconRectangle.color = "#66687d";
+                wizardIconRectangle.hovered = true;
             }
             onExited: {
-                wizardIconRectangle.color = "#40414E";
+                wizardIconRectangle.hovered = false;
             }
+        }
+
+        ColorOverlay {
+            anchors.fill: wizardIconImage
+            source: wizardIconImage
+            color: (colorManager?.getColor["default"] ?? "FFFFFF")
         }
     }
 
@@ -41,7 +51,7 @@ RowLayout {
         id: promptInputRectangle
         width: 600
         height: 50
-        color: "#44464f"
+        color: (colorManager?.getColor["dark_bluish_gray"] ?? "FFFFFF")
         radius: 10
 
         TextField {
@@ -50,8 +60,8 @@ RowLayout {
             font.pixelSize: 18
             width: parent.width - 50 // Réduire la largeur pour faire de la place à l'image
             height: parent.height
-            color: "#C5C5D1"
-            placeholderTextColor: "#C5C5D1"
+            color: (colorManager?.getColor["light_gray"] ?? "FFFFFF")
+            placeholderTextColor: (colorManager?.getColor["blue_gray"] ?? "FFFFFF")
             background: Rectangle {
                 color: "transparent"
             }
@@ -59,7 +69,7 @@ RowLayout {
 
         Image {
             id: sendIconImage
-            source: "../imgs/send.svg" // Remplacez par le chemin de votre icône d'envoi
+            source: "../imgs/send.svg"
             width: 20
             height: 20
             anchors.verticalCenter: parent.verticalCenter
@@ -73,6 +83,12 @@ RowLayout {
                     backend.receivePrompt(promptInputField.text);
                 }
             }
+        }
+
+        ColorOverlay {
+            anchors.fill: sendIconImage
+            source: sendIconImage
+            color: (colorManager?.getColor["light_bluish_gray"] ?? "FFFFFF")
         }
     }
 }

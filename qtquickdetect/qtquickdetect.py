@@ -9,6 +9,7 @@ from PySide6.QtQml import QQmlApplicationEngine
 # from models.app_state import AppState
 from .utils import filepaths
 from .controller.backend import Backend
+from .controller.ColorManager import ColorManager
 
 
 def main():
@@ -31,15 +32,19 @@ def main():
     os.chdir(package_path)
     print("Starting QtQuickDetect")
 
+    theme = "dark"
+    
     # Create an instance of the backend
     backend = Backend()
-
+    color_manager = ColorManager("qtquickdetect/resources/themes.json", theme)
+    
     # Create an instance of QQmlApplicationEngine
     app = QApplication(sys.argv)
     engine = QQmlApplicationEngine()
 
     # Expose the backend to the QML context
     engine.rootContext().setContextProperty("backend", backend)
+    engine.rootContext().setContextProperty("colorManager", color_manager)
 
     # Load the QML file
     engine.load(QUrl("qtquickdetect/views/App.qml"))

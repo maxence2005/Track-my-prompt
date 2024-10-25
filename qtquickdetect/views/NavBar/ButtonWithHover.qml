@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Qt5Compat.GraphicalEffects 1.0
 
 Button {
     id: buttonWithHover
@@ -12,8 +13,9 @@ Button {
 
     background: Rectangle {
         id: buttonBackground
-        color: "transparent"
-        border.color: "#343541"
+        property bool hovered: false
+        color: hovered ? (colorManager?.getColor["dark_gray"] ?? "FFFFFF") : "transparent"
+        border.color: (colorManager?.getColor["dark_bluish_gray"] ?? "FFFFFF")
         border.width: 3
         radius: 8
 
@@ -23,11 +25,11 @@ Button {
             hoverEnabled: true
 
             onEntered: {
-                buttonBackground.color = "#444654";  // Couleur de fond au survol
+                parent.hovered = true;
             }
 
             onExited: {
-                buttonBackground.color = "transparent";  // Couleur de fond par défaut
+                parent.hovered = false;
             }
         }
     }
@@ -42,14 +44,24 @@ Button {
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 10
 
-            Image {
-                id: buttonImage
-                sourceSize.width: 30
-                sourceSize.height: 30
-                source: buttonWithHover.iconSource
-                fillMode: Image.PreserveAspectFit
-                Layout.alignment: Qt.AlignVCenter
-                visible: buttonWithHover.iconSource !== ""
+            Row {
+                width: buttonImage.width
+                height: buttonImage.height
+                Image {
+                    id: buttonImage
+                    sourceSize.width: 30
+                    sourceSize.height: 30
+                    source: buttonWithHover.iconSource
+                    fillMode: Image.PreserveAspectFit
+                    Layout.alignment: Qt.AlignVCenter
+                    visible: buttonWithHover.iconSource !== ""
+                }
+
+                ColorOverlay {
+                    anchors.fill: buttonImage
+                    source: buttonImage
+                    color: (colorManager?.getColor["default"] ?? "FFFFFF")
+                }
             }
 
             Text {
@@ -57,7 +69,7 @@ Button {
                 height: 40
                 text: buttonWithHover.text
                 Layout.alignment: Qt.AlignVCenter
-                color: "#CCCCCC"
+                color: (colorManager?.getColor["silver_gray"] ?? "FFFFFF")
                 font.pixelSize: 16
                 verticalAlignment: Text.AlignVCenter
             }

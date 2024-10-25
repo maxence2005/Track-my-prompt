@@ -11,7 +11,7 @@ ColumnLayout {
         id: exemplesTitleLabel
         text: "Exemples"
         font.pixelSize: 24
-        color: "white"
+        color: (colorManager?.getColor["default"] ?? "FFFFFF")
         horizontalAlignment: Text.AlignHCenter
         Layout.alignment: Qt.AlignHCenter
     }
@@ -21,62 +21,14 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
         spacing: 30
 
-        Rectangle {
+        ExemplesEntry {
             id: dogImagesRectangle
-            width: 200
-            height: 100
-            color: "#44464f"
-            radius: 10
-            Text {
-                id: dogImagesText
-                anchors.centerIn: parent
-                width: parent.width - 20
-                text: "Trouver toutes les images de chiens parmi un ensemble d'images"
-                font.pixelSize: 16
-                color: "white"
-                horizontalAlignment: Text.AlignHCenter
-                wrapMode: Text.WordWrap
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                onEntered: {
-                    dogImagesRectangle.color = "#66687d";
-                }
-                onExited: {
-                    dogImagesRectangle.color = "#44464f";
-                }
-            }
+            entryText: "Trouver toutes les images de chiens parmi un ensemble d'images"
         }
 
-        Rectangle {
+        ExemplesEntry {
             id: catVideoRectangle
-            width: 200
-            height: 100
-            color: "#44464f"
-            radius: 10
-            Text {
-                id: catVideoText
-                anchors.centerIn: parent
-                width: parent.width - 20
-                text: "Détecter le nombre de chats sur une vidéo en simultané"
-                font.pixelSize: 16
-                color: "white"
-                horizontalAlignment: Text.AlignHCenter
-                wrapMode: Text.WordWrap
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                onEntered: {
-                    catVideoRectangle.color = "#66687d";
-                }
-                onExited: {
-                    catVideoRectangle.color = "#44464f";
-                }
-            }
+            entryText: "Détecter le nombre de chats sur une vidéo en simultané"
         }
     }
 }

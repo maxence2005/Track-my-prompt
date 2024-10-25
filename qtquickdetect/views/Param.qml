@@ -11,7 +11,7 @@ Rectangle {
         id: backgroundParamRectangle
         width: parent.width
         height: parent.height
-        color: "#2D2D3A" // Couleur d'arrière-plan
+        color: (colorManager?.getColor["very_dark_gray"] ?? "FFFFFF") // Couleur d'arrière-plan
 
         Rectangle {
             id: closeButtonContainer
@@ -25,7 +25,7 @@ Rectangle {
             Text {
                 id: closeButtonText
                 text: "✖" // Symbole de la croix
-                color: "white"
+                color: (colorManager?.getColor["default"] ?? "FFFFFF")
                 font.pixelSize: 24
                 anchors.centerIn: parent
             }
@@ -44,7 +44,7 @@ Rectangle {
             id: titleText
             text: "Paramètres"
             font.pixelSize: 40
-            color: "white"
+            color: (colorManager?.getColor["default"] ?? "FFFFFF")
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: 20
@@ -77,7 +77,7 @@ Rectangle {
                                 id: languageLabel
                                 text: "Langue de l'application"
                                 font.pixelSize: 20
-                                color: "white"
+                                color: (colorManager?.getColor["default"] ?? "FFFFFF")
                             }
 
                             ComboBox {
@@ -107,14 +107,14 @@ Rectangle {
                                 id: historyLabel
                                 text: "Historique"
                                 font.pixelSize: 20
-                                color: "white"
+                                color: (colorManager?.getColor["default"] ?? "FFFFFF")
                             }
                         }
 
                         Text {
                             id: historySizeText
                             text: "L'historique prend actuellement {TODO: mettre place}."
-                            color: "white"
+                            color: (colorManager?.getColor["default"] ?? "FFFFFF")
                         }
 
                         Button {
@@ -142,7 +142,7 @@ Rectangle {
                                 id: expertModeLabel
                                 text: "Mode expert"
                                 font.pixelSize: 20
-                                color: "white"
+                                color: (colorManager?.getColor["default"] ?? "FFFFFF")
                             }
                         }
 
@@ -154,7 +154,7 @@ Rectangle {
                                 indicator: Rectangle {
                                     width: 20
                                     height: 20
-                                    color: expertModeCheckBox.checked ? "#1e1f1e" : "white" // Change la couleur en fonction de l'état
+                                    color: expertModeCheckBox.checked ? (colorManager?.getColor["black"] ?? "FFFFFF") : (colorManager?.getColor["default"] ?? "FFFFFF") // Change la couleur en fonction de l'état
                                 }
                             }
 

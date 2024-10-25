@@ -2,10 +2,13 @@ import QtQuick 2.0
 
 Rectangle {
     property string imageSource: ""
+    property bool hovered: false
+    property color backgroundColor: (colorManager?.getColor["light_bluish_gray"] ?? "FFFFFF")
+    property color backgroundColorHover: (colorManager?.getColor["light_gray"] ?? "FFFFFF")
 
     width: 64
     height: 64
-    color: "#9A9B9F"
+    color: hovered ? backgroundColorHover : backgroundColor
     radius: 10
 
     Image {
@@ -22,11 +25,11 @@ Rectangle {
         hoverEnabled: true
 
         onEntered: {
-            parent.color = "#B0B0B0"
+            parent.hovered = true
         }
 
         onExited: {
-            parent.color = "#9A9B9F"
+            parent.hovered = false
         }
     }
 }

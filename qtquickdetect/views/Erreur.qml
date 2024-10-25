@@ -12,7 +12,7 @@ Rectangle {
         id: backgroundParamRectangle
         width: parent.width
         height: parent.height
-        color: "#2D2D3A" // Couleur d'arrière-plan
+        color: (colorManager?.getColor["very_dark_gray"] ?? "FFFFFF") // Couleur d'arrière-plan
 
         // Conteneur pour le bouton de fermeture (croix)
         Rectangle {
@@ -27,7 +27,7 @@ Rectangle {
             Text {
                 id: closeButtonText
                 text: "✖" // Symbole de la croix
-                color: "white"
+                color: (colorManager?.getColor["default"] ?? "FFFFFF")
                 font.pixelSize: 24
                 anchors.centerIn: parent
             }
@@ -77,13 +77,13 @@ Rectangle {
                 id: closeButton
                 width: 120
                 height: 40
-                color: "#444" // Couleur du bouton
+                color: (colorManager?.getColor["gray"] ?? "FFFFFF") // Couleur du bouton
                 radius: 10
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 Text {
                     text: "Ok"
-                    color: "white"
+                    color: (colorManager?.getColor["default"] ?? "FFFFFF")
                     font.pixelSize: 20
                     anchors.centerIn: parent
                 }
@@ -96,11 +96,11 @@ Rectangle {
                         backend.shared_variable = sharedVar;
                     }
                     onEntered: {
-                        closeButton.color = "#666";
+                        closeButton.color = (colorManager?.getColor["medium_gray"] ?? "FFFFFF");
                     }
 
                     onExited: {
-                        closeButton.color = "#444";
+                        closeButton.color = (colorManager?.getColor["gray"] ?? "FFFFFF");
                     }
                 }
             }

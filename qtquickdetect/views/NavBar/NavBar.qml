@@ -6,7 +6,7 @@ Rectangle {
     id: navBarRectangle
     width: parent.width
     height: parent.height
-    color: "#1e1e2d"
+    color: (colorManager?.getColor["very_dark_gray"] ?? "FFFFFF")
 
     Grid {
         id: navBarGrid

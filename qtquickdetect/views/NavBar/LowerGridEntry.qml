@@ -1,10 +1,14 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import Qt5Compat.GraphicalEffects 1.0
 
 Rectangle {
     id: customRectangle
     property string iconSource
     property string labelText
+    property bool hovered: false
+    property color textColor: (colorManager?.getColor["silver_gray"] ?? "FFFFFF")
+    property color textColorHover: (colorManager?.getColor["default"] ?? "FFFFFF")
     signal clicked
 
     width: 200
@@ -17,11 +21,11 @@ Rectangle {
         hoverEnabled: true
 
         onEntered: {
-            label.color = "#FFFFFF";
+            customRectangle.hovered = true;
         }
 
         onExited: {
-            label.color = "#CCCCCC";
+            customRectangle.hovered = false;
         }
 
         onClicked: {
@@ -32,18 +36,29 @@ Rectangle {
             id: rowLayout
             anchors.fill: parent
 
-            Image {
-                id: icon
-                source: customRectangle.iconSource
-                sourceSize.width: 30
-                sourceSize.height: 30
+            Rectangle {
+                width: icon.width
+                height: icon.height
+                color: "transparent"
+                Image {
+                    id: icon
+                    source: customRectangle.iconSource
+                    sourceSize.width: 30
+                    sourceSize.height: 30
+                }
+
+                ColorOverlay {
+                    anchors.fill: icon
+                    source: icon
+                    color: (colorManager?.getColor["default"] ?? "FFFFFF")
+                }
             }
 
             Text {
                 id: label
                 text: customRectangle.labelText
                 font.pixelSize: 20
-                color: "#CCCCCC"
+                color: customRectangle.hovered ? customRectangle.textColorHover : customRectangle.textColor
             }
         }
     }

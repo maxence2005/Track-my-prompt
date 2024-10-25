@@ -16,7 +16,7 @@ Rectangle {
         anchors.centerIn: parent
         text: "Track My Prompts"
         font.pixelSize: 32
-        color: "white"
+        color: (colorManager?.getColor["default"] ?? "FFFFFF")
         horizontalAlignment: Text.AlignHCenter
         Layout.alignment: Qt.AlignHCenter
     }
