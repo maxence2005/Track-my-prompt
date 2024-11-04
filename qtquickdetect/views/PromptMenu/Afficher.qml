@@ -35,6 +35,7 @@ Rectangle {
                 Rectangle {
                     anchors.fill: parent
                     color: "transparent"
+                    anchors.margins: 10
 
                     Image {
                         anchors.fill: parent

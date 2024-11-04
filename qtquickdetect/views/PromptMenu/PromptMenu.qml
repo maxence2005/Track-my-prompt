@@ -5,8 +5,8 @@ Rectangle {
     id: mainRectangle
     visible: true
     color: (colorManager?.getColor["anthracite_gray"] ?? "FFFFFF")
-    width: parent ? parent.width : 800
-    height: parent ? parent.height : 600
+    width: parent ? parent.width : 1536
+    height: parent ? parent.height : 864
 
     Component {
         id: aff
@@ -21,12 +21,12 @@ Rectangle {
     ColumnLayout {
         id: mainColumnLayout
         anchors.fill: parent
-        spacing: 20
+        spacing: 10
 
-        // Ajouter une marge simulée autour du contenu
+
         Rectangle {
             color: "transparent"
-            height: Qt.application.activeWindow.width > 600 ? 30 : 10
+            height: parent.width
             Layout.fillWidth: true
         }
 
@@ -49,7 +49,7 @@ Rectangle {
         ChooseFile {
             id: chooseFileComponent
             Layout.alignment: Qt.AlignCenter
-            Layout.preferredWidth: Qt.application.activeWindow.width > 600 ? 400 : 200
+            Layout.preferredWidth: 600
             Layout.minimumHeight: 50
             Layout.maximumHeight: 100
         }
@@ -58,14 +58,15 @@ Rectangle {
         PromptInput {
             id: promptInputComponent
             Layout.alignment: Qt.AlignBottom
-            Layout.fillWidth: true
+            Layout.preferredWidth: parent.width - 150
             Layout.minimumHeight: 80
+            Layout.maximumHeight: 100
         }
 
         // Marge simulée en bas
         Rectangle {
             color: "transparent"
-            height: Qt.application.activeWindow.width > 600 ? 30 : 10
+            height: parent.width
             Layout.fillWidth: true
         }
     }

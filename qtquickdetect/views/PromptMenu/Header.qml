@@ -15,7 +15,7 @@ Rectangle {
         id: headerLabel
         anchors.centerIn: parent
         text: "Track My Prompts"
-        font.pixelSize: 32
+        font.pixelSize: parent.width / 15
         color: (colorManager?.getColor["default"] ?? "FFFFFF")
         horizontalAlignment: Text.AlignHCenter
         Layout.alignment: Qt.AlignHCenter

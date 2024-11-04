@@ -6,7 +6,7 @@ import Qt5Compat.GraphicalEffects 1.0
 RowLayout {
     id: promptRowLayout
     anchors.horizontalCenter: parent.horizontalCenter
-    width: 700
+    width: parent.width
     height: 50
     spacing: 20
 
@@ -49,7 +49,9 @@ RowLayout {
 
     Rectangle {
         id: promptInputRectangle
-        width: 600
+        Layout.fillWidth: true
+        Layout.minimumWidth: 60
+        Layout.maximumWidth: parent.width - 80 
         height: 50
         color: (colorManager?.getColor["dark_bluish_gray"] ?? "FFFFFF")
         radius: 10
@@ -58,8 +60,7 @@ RowLayout {
             id: promptInputField
             placeholderText: "Enter your prompt..."
             font.pixelSize: 18
-            width: parent.width - 50 // Réduire la largeur pour faire de la place à l'image
-            height: parent.height
+            anchors.fill: parent 
             color: (colorManager?.getColor["light_gray"] ?? "FFFFFF")
             placeholderTextColor: (colorManager?.getColor["blue_gray"] ?? "FFFFFF")
             background: Rectangle {
