@@ -3,6 +3,15 @@ import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 
 ColumnLayout {
+    Connections {
+        target: colorManager
+        function onThemeChanged() {
+            colorManager.animateColorChange([
+                [exemplesTitleLabel, "color", "default"]
+            ]);
+        }
+    }
+    
     id: exemplesMainColumnLayout
     anchors.horizontalCenter: parent.horizontalCenter
     spacing: 10
@@ -11,7 +20,7 @@ ColumnLayout {
         id: exemplesTitleLabel
         text: "Exemples"
         font.pixelSize: 24
-        color: (colorManager?.getColor["default"] ?? "FFFFFF")
+        color: (colorManager?.getColorNoNotify("default") ?? "#000000")
         horizontalAlignment: Text.AlignHCenter
         Layout.alignment: Qt.AlignHCenter
     }

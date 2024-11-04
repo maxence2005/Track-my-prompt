@@ -3,12 +3,21 @@ import QtQuick.Layouts 1.15
 import Qt5Compat.GraphicalEffects 1.0
 
 Rectangle {
+    Connections {
+        target: colorManager
+        function onThemeChanged() {
+            colorManager.animateColorChange([
+                [colorOverlayIcon, "color", "default"]
+            ])
+        }
+    }
+
     id: customRectangle
     property string iconSource
     property string labelText
     property bool hovered: false
-    property color textColor: (colorManager?.getColor["silver_gray"] ?? "FFFFFF")
-    property color textColorHover: (colorManager?.getColor["default"] ?? "FFFFFF")
+    property color textColor: (colorManager?.getColor["silver_gray"] ?? "#000000")
+    property color textColorHover: (colorManager?.getColor["default"] ?? "#000000")
     signal clicked
 
     width: 200
@@ -48,9 +57,10 @@ Rectangle {
                 }
 
                 ColorOverlay {
+                    id: colorOverlayIcon
                     anchors.fill: icon
                     source: icon
-                    color: (colorManager?.getColor["default"] ?? "FFFFFF")
+                    color: (colorManager?.getColorNoNotify("default") ?? "#000000")
                 }
             }
 

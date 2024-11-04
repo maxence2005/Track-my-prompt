@@ -2,6 +2,21 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 Rectangle {
+    Connections {
+        target: colorManager
+        function onThemeChanged() {
+            colorManager.animateColorChange([
+                [backgroundParamRectangle, "color", "very_dark_gray"],
+                [closeButtonText, "color", "default"],
+                [titleText, "color", "default"],
+                [languageLabel, "color", "default"],
+                [historyLabel, "color", "default"],
+                [historySizeText, "color", "default"],
+                [expertModeLabel, "color", "default"]
+            ])
+        }
+    }
+
     id: paramRectangle
     visible: true
     width: parent.width
@@ -11,7 +26,7 @@ Rectangle {
         id: backgroundParamRectangle
         width: parent.width
         height: parent.height
-        color: (colorManager?.getColor["very_dark_gray"] ?? "FFFFFF") // Couleur d'arrière-plan
+        color: (colorManager?.getColorNoNotify("very_dark_gray") ?? "#000000") // Couleur d'arrière-plan
 
         Rectangle {
             id: closeButtonContainer
@@ -25,7 +40,7 @@ Rectangle {
             Text {
                 id: closeButtonText
                 text: "✖" // Symbole de la croix
-                color: (colorManager?.getColor["default"] ?? "FFFFFF")
+                color: (colorManager?.getColorNoNotify("default") ?? "#000000")
                 font.pixelSize: 24
                 anchors.centerIn: parent
             }
@@ -44,7 +59,7 @@ Rectangle {
             id: titleText
             text: "Paramètres"
             font.pixelSize: 40
-            color: (colorManager?.getColor["default"] ?? "FFFFFF")
+            color: (colorManager?.getColorNoNotify("default") ?? "#000000")
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: 20
@@ -77,7 +92,7 @@ Rectangle {
                                 id: languageLabel
                                 text: "Langue de l'application"
                                 font.pixelSize: 20
-                                color: (colorManager?.getColor["default"] ?? "FFFFFF")
+                                color: (colorManager?.getColorNoNotify("default") ?? "#000000")
                             }
 
                             ComboBox {
@@ -107,14 +122,14 @@ Rectangle {
                                 id: historyLabel
                                 text: "Historique"
                                 font.pixelSize: 20
-                                color: (colorManager?.getColor["default"] ?? "FFFFFF")
+                                color: (colorManager?.getColorNoNotify("default") ?? "#000000")
                             }
                         }
 
                         Text {
                             id: historySizeText
                             text: "L'historique prend actuellement {TODO: mettre place}."
-                            color: (colorManager?.getColor["default"] ?? "FFFFFF")
+                            color: (colorManager?.getColorNoNotify("default") ?? "#000000")
                         }
 
                         Button {
@@ -142,7 +157,7 @@ Rectangle {
                                 id: expertModeLabel
                                 text: "Mode expert"
                                 font.pixelSize: 20
-                                color: (colorManager?.getColor["default"] ?? "FFFFFF")
+                                color: (colorManager?.getColorNoNotify("default") ?? "#000000")
                             }
                         }
 
@@ -154,7 +169,7 @@ Rectangle {
                                 indicator: Rectangle {
                                     width: 20
                                     height: 20
-                                    color: expertModeCheckBox.checked ? (colorManager?.getColor["black"] ?? "FFFFFF") : (colorManager?.getColor["default"] ?? "FFFFFF") // Change la couleur en fonction de l'état
+                                    color: expertModeCheckBox.checked ? (colorManager?.getColorNoNotify("black") ?? "#000000") : (colorManager?.getColorNoNotify("default") ?? "#000000") // Change la couleur en fonction de l'état
                                 }
                             }
 
