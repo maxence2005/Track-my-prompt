@@ -1,11 +1,21 @@
 import QtQuick 2.15
 
 Rectangle {
+    Connections {
+        target: colorManager
+        function onThemeChanged() {
+            colorManager.animateColorChange([
+                [entryRectangle, "backgroundColor", "dark_bluish_gray"],
+                [entryTextItem, "color", "default"]
+            ])
+        }
+    }
+
     id: entryRectangle
     property string entryText
     property bool hovered: false
-    property color backgroundColor: (colorManager?.getColor["dark_bluish_gray"] ?? "FFFFFF");
-    property color backgroundColorHover: (colorManager?.getColor["blue_gray"] ?? "FFFFFF");
+    property color backgroundColor: (colorManager?.getColorNoNotify("dark_bluish_gray") ?? "#000000");
+    property color backgroundColorHover: (colorManager?.getColor["blue_gray"] ?? "#000000");
     
     width: 200
     height: 100
@@ -18,7 +28,7 @@ Rectangle {
         width: parent.width - 20
         text: entryText
         font.pixelSize: 16
-        color: (colorManager?.getColor["default"] ?? "FFFFFF")
+        color: (colorManager?.getColorNoNotify("default") ?? "#000000")
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
     }

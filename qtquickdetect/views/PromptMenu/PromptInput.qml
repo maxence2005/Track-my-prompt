@@ -4,6 +4,19 @@ import QtQuick.Controls 2.15
 import Qt5Compat.GraphicalEffects 1.0
 
 RowLayout {
+    Connections {
+        target: colorManager
+        function onThemeChanged() {
+            colorManager.animateColorChange([
+                [wizardIconRectangle, "backgroundColor", "dark_gray"],
+                [promptInputRectangle, "color", "dark_bluish_gray"],
+                [promptInputField, "color", "light_gray"],
+                [promptInputField, "placeholderTextColor", "blue_gray"],
+                [sendColorOverlay, "color", "light_bluish_gray"]
+            ])
+        }
+    }
+
     id: promptRowLayout
     anchors.horizontalCenter: parent.horizontalCenter
     width: 700
@@ -13,8 +26,8 @@ RowLayout {
     Rectangle {
         id: wizardIconRectangle
         property bool hovered: false
-        property color backgroundColor: (colorManager?.getColor["dark_gray"] ?? "FFFFFF")
-        property color backgroundColorHover: (colorManager?.getColor["blue_gray"] ?? "FFFFFF")
+        property color backgroundColor: (colorManager?.getColorNoNotify("dark_gray") ?? "#000000")
+        property color backgroundColorHover: (colorManager?.getColor["blue_gray"] ?? "#000000")
         width: 50
         height: 50
         radius: 50
@@ -43,7 +56,7 @@ RowLayout {
         ColorOverlay {
             anchors.fill: wizardIconImage
             source: wizardIconImage
-            color: (colorManager?.getColor["default"] ?? "FFFFFF")
+            color: (colorManager?.getColorNoNotify("default") ?? "#000000")
         }
     }
 
@@ -51,7 +64,7 @@ RowLayout {
         id: promptInputRectangle
         width: 600
         height: 50
-        color: (colorManager?.getColor["dark_bluish_gray"] ?? "FFFFFF")
+        color: (colorManager?.getColorNoNotify("dark_bluish_gray") ?? "#000000")
         radius: 10
 
         TextField {
@@ -60,8 +73,8 @@ RowLayout {
             font.pixelSize: 18
             width: parent.width - 50 // Réduire la largeur pour faire de la place à l'image
             height: parent.height
-            color: (colorManager?.getColor["light_gray"] ?? "FFFFFF")
-            placeholderTextColor: (colorManager?.getColor["blue_gray"] ?? "FFFFFF")
+            color: (colorManager?.getColorNoNotify("light_gray") ?? "#000000")
+            placeholderTextColor: (colorManager?.getColorNoNotify("blue_gray") ?? "#000000")
             background: Rectangle {
                 color: "transparent"
             }
@@ -86,9 +99,10 @@ RowLayout {
         }
 
         ColorOverlay {
+            id: sendColorOverlay
             anchors.fill: sendIconImage
             source: sendIconImage
-            color: (colorManager?.getColor["light_bluish_gray"] ?? "FFFFFF")
+            color: (colorManager?.getColorNoNotify("light_bluish_gray") ?? "#000000")
         }
     }
 }

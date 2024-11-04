@@ -1,15 +1,32 @@
-import QtQuick
+import QtQuick 2.15
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Controls 2.15
 
 Rectangle {
+    Connections {
+        target: colorManager
+        function onThemeChanged() {
+            colorManager.animateColorChange([
+                [headerRectangle, "color", "anthracite_gray"],
+                [headerLabel, "color", "default"],
+                [progressBackground, "color", "medium_gray"],
+                //[progressColor, "color", "blue_gray"],
+                [progressText, "color", "default"],
+                [_text, "color", "default"],
+                [gradientStop0, "color", "dark_bluish_gray"],
+                [gradientStop1, "color", "anthracite_gray"]
+            ])
+        }
+    }
+
     id: headerRectangle
     property double progression: 0
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
     width: parent.width
     height: 140
-    color: (colorManager?.getColor["anthracite_gray"] ?? "FFFFFF")
+    color: (colorManager?.getColorNoNotify("anthracite_gray") ?? "#000000")
     anchors.margins: 15
     radius: 20
     Rectangle {
@@ -18,12 +35,14 @@ Rectangle {
 
         gradient: Gradient {
             GradientStop {
+                id : gradientStop0
                 position: 0.0
-                color: (colorManager?.getColor["dark_bluish_gray"] ?? "FFFFFF")
+                color: (colorManager?.getColorNoNotify("dark_bluish_gray") ?? "#000000")
             } // Couleur supérieure
             GradientStop {
+                id : gradientStop1
                 position: 1.0
-                color: (colorManager?.getColor["anthracite_gray"] ?? "FFFFFF")
+                color: (colorManager?.getColorNoNotify("anthracite_gray") ?? "#000000")
             } // Couleur inférieure
         }
     }
@@ -43,7 +62,7 @@ Rectangle {
         anchors.bottom: progressBar.top
         anchors.bottomMargin: -75
         font.pixelSize: 32
-        color: (colorManager?.getColor["default"] ?? "FFFFFF")
+        color: (colorManager?.getColorNoNotify("default") ?? "#000000")
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: 0
@@ -60,7 +79,28 @@ Rectangle {
         anchors.leftMargin: 50
         anchors.rightMargin: 150
         anchors.verticalCenterOffset: 0
+
+        contentItem: Item {
+            width: progressBar.width
+            height: progressBar.height
+
+            Rectangle {
+                id: progressBackground
+                width: parent.width
+                height: parent.height
+                color: (colorManager?.getColorNoNotify("medium_gray") ?? "#000000") // Couleur d'arrière-plan
+            }
+
+            // Filled portion color
+            Rectangle {
+                id: progressColor
+                width: parent.width * progressBar.value
+                height: parent.height
+                color: "blue" // Couleur de la barre de progression
+            }
+        }
     }
+
 
     Text {
         id: progressText
@@ -72,7 +112,7 @@ Rectangle {
         anchors.left: progressBar.right  // Affiche la valeur en pourcentage
         anchors.leftMargin: 16  // Positionnement sous la barre de progression
         font.pixelSize: 16
-        color: (colorManager?.getColor["default"] ?? "FFFFFF")
+        color: (colorManager?.getColorNoNotify("default") ?? "#000000")
     }
 
     Text {
@@ -82,7 +122,7 @@ Rectangle {
         anchors.topMargin: 16
         font.pixelSize: 16
         anchors.horizontalCenter: parent.horizontalCenter
-        color: (colorManager?.getColor["default"] ?? "FFFFFF")
+        color: (colorManager?.getColorNoNotify("default") ?? "#000000")
         Layout.alignment: Qt.AlignHCenter
     }
 }

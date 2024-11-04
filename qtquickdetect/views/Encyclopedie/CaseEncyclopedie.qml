@@ -2,17 +2,30 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 Rectangle {
+    Connections {
+        target: colorManager
+        function onThemeChanged() {
+            colorManager.animateColorChange([
+                [container, "borderColor", "default"],
+                [icon, "color", "default"],
+                [nameLabel, "color", "default"],
+                [countLabel, "color", "default"]
+            ])
+        }
+    }
+    property color borderColor: (colorManager?.getColorNoNotify("default") ?? "#000000")
+
     id: container
     width: 150
     height: 150
     color: "transparent"
-    border.color: (colorManager?.getColor["default"] ?? "FFFFFF")
+    border.color: borderColor
     border.width: 1
     radius: 10
 
-    // Déclarez les propriétés dynamiques
+    // Propriétés dynamiques
     property string name: ""
-    property string iconSource: ""  // Contient l'émoticône ou le symbole Unicode
+    property string iconSource: ""
     property int count: 0
 
     Column {
@@ -24,7 +37,7 @@ Rectangle {
             id: icon
             text: iconSource
             font.pixelSize: 50  // Taille de l'émoticône (à ajuster si nécessaire)
-            color: (colorManager?.getColor["default"] ?? "FFFFFF")
+            color: (colorManager?.getColorNoNotify("default") ?? "#000000")
             anchors.horizontalCenter: parent.horizontalCenter
 
             // Animation lors du survol
@@ -60,7 +73,7 @@ Rectangle {
             id: nameLabel
             text: name
             font.pixelSize: 18
-            color: (colorManager?.getColor["default"] ?? "FFFFFF")
+            color: (colorManager?.getColorNoNotify("default") ?? "#000000")
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter
         }
@@ -69,7 +82,7 @@ Rectangle {
             id: countLabel
             text: "Trouvé " + count + "x"
             font.pixelSize: 14
-            color: (colorManager?.getColor["default"] ?? "FFFFFF")
+            color: (colorManager?.getColorNoNotify("default") ?? "#000000")
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter
         }

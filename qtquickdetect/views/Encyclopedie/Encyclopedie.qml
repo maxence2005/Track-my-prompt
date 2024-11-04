@@ -2,11 +2,20 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.15
 
 Rectangle {
+    Connections {
+        target: colorManager
+        function onThemeChanged() {
+            colorManager.animateColorChange([
+                [mainRectangle, "color", "anthracite_gray"]
+            ])
+        }
+    }
+
     id: mainRectangle
     visible: true
     width: parent.width - 50
     height: parent.height
-    color: (colorManager?.getColor["anthracite_gray"] ?? "FFFFFF")
+    color: (colorManager?.getColorNoNotify("anthracite_gray") ?? "#000000")
 
     ColumnLayout {
         id: mainColumnLayout

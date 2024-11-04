@@ -1,6 +1,6 @@
 {
 "light": {
-        "default": "black",
+        "default": "#000000",
         "dark_gray": "#A9A9A9",
         "very_dark_gray": "#808080",
         "gray": "#BEBEBE",
@@ -16,7 +16,7 @@
         "steel_gray": "#B0C4DE"
     },
     "dark": {
-        "default": "white",
+        "default": "#FFFFFF",
         "dark_gray": "#444654",
         "very_dark_gray": "#343541",
         "gray": "#444444",

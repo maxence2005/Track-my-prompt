@@ -1,10 +1,20 @@
 import QtQuick 2.0
 
 Rectangle {
+    Connections {
+        target: colorManager
+        function onThemeChanged() {
+            colorManager.animateColorChange([
+                [iconRectangle, "backgroundColor", "light_bluish_gray"]
+            ])
+        }
+    }
+
+    id: iconRectangle
     property string imageSource: ""
     property bool hovered: false
-    property color backgroundColor: (colorManager?.getColor["light_bluish_gray"] ?? "FFFFFF")
-    property color backgroundColorHover: (colorManager?.getColor["light_gray"] ?? "FFFFFF")
+    property color backgroundColor: (colorManager?.getColorNoNotify("light_bluish_gray") ?? "#000000")
+    property color backgroundColorHover: (colorManager?.getColor["light_gray"] ?? "#000000")
 
     width: 64
     height: 64

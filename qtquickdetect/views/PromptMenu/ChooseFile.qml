@@ -3,10 +3,21 @@ import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 
 Rectangle {
+    Connections {
+        target: colorManager
+        function onThemeChanged() {
+            colorManager.animateColorChange([
+                [chooseFileMainRectangle, "backgroundColor", "dark_bluish_gray"],
+                [dragDropText, "color", "very_light_gray"],
+                [orText, "color", "light_gray"]
+            ])
+        }
+    }
+
     id: chooseFileMainRectangle
     property bool hovered: false
-    property color backgroundColor: (colorManager?.getColor["dark_bluish_gray"] ?? "FFFFFF")
-    property color backgroundColorHover: (colorManager?.getColor["steel_gray"] ?? "FFFFFF")
+    property color backgroundColor: (colorManager?.getColorNoNotify("dark_bluish_gray") ?? "#000000")
+    property color backgroundColorHover: (colorManager?.getColor["steel_gray"] ?? "#000000")
 
     width: 600
     height: 100
@@ -61,7 +72,7 @@ Rectangle {
                 id: dragDropText
                 text: "Drag\nand Drop "
                 font.pixelSize: 18
-                color: (colorManager?.getColor["very_light_gray"] ?? "FFFFFF")
+                color: (colorManager?.getColorNoNotify("very_light_gray") ?? "#000000")
             }
         }
 
@@ -69,7 +80,7 @@ Rectangle {
             id: orText
             text: "or"
             font.pixelSize: 36
-            color: (colorManager?.getColor["light_gray"] ?? "FFFFFF")
+            color: (colorManager?.getColorNoNotify("light_gray") ?? "#000000")
         }
 
         RowLayout {

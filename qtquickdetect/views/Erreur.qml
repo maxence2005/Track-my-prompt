@@ -2,6 +2,13 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 Rectangle {
+    Connections {
+        target: colorManager
+        function onThemeChanged() {
+            colorManager.animateColorChange([[backgroundParamRectangle, "color", "very_dark_gray"], [closeButton, "color", "gray"], [closeButtonText, "color", "default"]])
+        }
+    }
+
     id: erreurRectangle
     visible: true
     width: parent.width
@@ -12,7 +19,7 @@ Rectangle {
         id: backgroundParamRectangle
         width: parent.width
         height: parent.height
-        color: (colorManager?.getColor["very_dark_gray"] ?? "FFFFFF") // Couleur d'arrière-plan
+        color: (colorManager?.getColorNoNotify("very_dark_gray") ?? "#000000") // Couleur d'arrière-plan
 
         // Conteneur pour le bouton de fermeture (croix)
         Rectangle {
@@ -27,7 +34,7 @@ Rectangle {
             Text {
                 id: closeButtonText
                 text: "✖" // Symbole de la croix
-                color: (colorManager?.getColor["default"] ?? "FFFFFF")
+                color: (colorManager?.getColorNoNotify("default") ?? "#000000")
                 font.pixelSize: 24
                 anchors.centerIn: parent
             }
@@ -77,13 +84,13 @@ Rectangle {
                 id: closeButton
                 width: 120
                 height: 40
-                color: (colorManager?.getColor["gray"] ?? "FFFFFF") // Couleur du bouton
+                color: (colorManager?.getColorNoNotify("gray") ?? "#000000") // Couleur du bouton
                 radius: 10
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 Text {
                     text: "Ok"
-                    color: (colorManager?.getColor["default"] ?? "FFFFFF")
+                    color: (colorManager?.getColorNoNotify("default") ?? "#000000")
                     font.pixelSize: 20
                     anchors.centerIn: parent
                 }
@@ -96,11 +103,11 @@ Rectangle {
                         backend.shared_variable = sharedVar;
                     }
                     onEntered: {
-                        closeButton.color = (colorManager?.getColor["medium_gray"] ?? "FFFFFF");
+                        closeButton.color = (colorManager?.getColorNoNotify("medium_gray") ?? "#000000");
                     }
 
                     onExited: {
-                        closeButton.color = (colorManager?.getColor["gray"] ?? "FFFFFF");
+                        closeButton.color = (colorManager?.getColorNoNotify("gray") ?? "#000000");
                     }
                 }
             }

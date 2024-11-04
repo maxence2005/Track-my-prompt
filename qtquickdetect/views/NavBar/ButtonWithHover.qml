@@ -4,6 +4,16 @@ import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects 1.0
 
 Button {
+    Connections {
+        target: colorManager
+        function onThemeChanged() {
+            colorManager.animateColorChange([
+                [buttonBackground, "borderColor", "dark_bluish_gray"],
+                [colorOverlay, "color", "default"],
+                [buttonText, "color", "silver_gray"]
+            ])
+        }
+    }
     id: buttonWithHover
     width: 180
     height: 50
@@ -14,8 +24,10 @@ Button {
     background: Rectangle {
         id: buttonBackground
         property bool hovered: false
-        color: hovered ? (colorManager?.getColor["dark_gray"] ?? "FFFFFF") : "transparent"
-        border.color: (colorManager?.getColor["dark_bluish_gray"] ?? "FFFFFF")
+        property color borderColor: colorManager?.getColorNoNotify("dark_bluish_gray") ?? "#000000"
+
+        color: hovered ? (colorManager?.getColor["dark_gray"] ?? "#000000") : "transparent"
+        border.color: borderColor
         border.width: 3
         radius: 8
 
@@ -58,9 +70,10 @@ Button {
                 }
 
                 ColorOverlay {
+                    id: colorOverlay
                     anchors.fill: buttonImage
                     source: buttonImage
-                    color: (colorManager?.getColor["default"] ?? "FFFFFF")
+                    color: (colorManager?.getColorNoNotify("default") ?? "#000000")
                 }
             }
 
@@ -69,7 +82,7 @@ Button {
                 height: 40
                 text: buttonWithHover.text
                 Layout.alignment: Qt.AlignVCenter
-                color: (colorManager?.getColor["silver_gray"] ?? "FFFFFF")
+                color: (colorManager?.getColorNoNotify("silver_gray") ?? "#000000")
                 font.pixelSize: 16
                 verticalAlignment: Text.AlignVCenter
             }
