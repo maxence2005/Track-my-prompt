@@ -8,6 +8,17 @@ Rectangle {
     width: parent ? parent.width : 800
     height: parent ? parent.height : 600
 
+    ListModel {
+        id: mediaModel
+    }
+
+    Connections {
+        target: backend
+        function onMediaAdded(filePath, mediaType) {
+            mediaModel.append({ "filePath": filePath, "mediaType": mediaType });
+        }
+    }
+
     Component {
         id: aff
         Afficher {}

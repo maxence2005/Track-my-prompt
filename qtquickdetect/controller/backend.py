@@ -25,8 +25,7 @@ class Backend(QObject):
     def __init__(self):
         super().__init__()
         self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Start": True}
-
-
+        self.start = True
         create_config_dir()
         create_data_dir()
 
@@ -47,7 +46,8 @@ class Backend(QObject):
     @Slot(str)
     def receiveFile(self, fileUrl):
         file_path = self.get_file_path(fileUrl)
-        if self._shared_variable["Start"] == True :
+        if self.start == True :
+            self.start = False
             self._shared_variable["Start"] = False
             self.sharedVariableChanged.emit()
             
@@ -128,3 +128,7 @@ class Backend(QObject):
             selected_files = file_dialog.selectedFiles()
             if selected_files:
                 self.receiveFile(selected_files[0])
+    @Slot()
+    def toggle_menu(self):
+        self._shared_variable["Menu"] = not self._shared_variable["Menu"]
+        self.sharedVariableChanged.emit()

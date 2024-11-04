@@ -11,10 +11,6 @@ Rectangle {
     anchors.fill: parent
     property string promptMessage: "" 
 
-    ListModel {
-        id: mediaModel
-    }
-
     ScrollView {
         anchors.fill: parent
 
@@ -83,10 +79,4 @@ Rectangle {
         }
     }
 
-    Connections {
-        target: backend
-        function onMediaAdded(filePath, mediaType) {
-            mediaModel.append({ "filePath": filePath, "mediaType": mediaType });
-        }
-    }
 }
