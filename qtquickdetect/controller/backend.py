@@ -17,11 +17,14 @@ from utils.url_handler import is_image, is_video, is_live_video, is_url, downloa
 class Backend(QObject):
 
     infoSent = Signal(str)
+    promptEnter = Signal(str)
     sharedVariableChanged = Signal()
+
+    mediaAdded = Signal(str, str)  # Paramètres : chemin du fichier, type de média ("image" ou "video")
 
     def __init__(self):
         super().__init__()
-        self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True}
+        self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Start": True}
 
 
         create_config_dir()
@@ -39,16 +42,20 @@ class Backend(QObject):
 
     @Slot(str)
     def receivePrompt(self, promptText):
-        self.infoSent.emit(f"Processed: {promptText}")
+        self.promptEnter.emit(promptText)
     
     @Slot(str)
     def receiveFile(self, fileUrl):
         file_path = self.get_file_path(fileUrl)
-        
+        if self._shared_variable["Start"] == True :
+            self._shared_variable["Start"] = False
+            self.sharedVariableChanged.emit()
+            
         if is_url(file_path):
             self.handle_url(file_path)
         else:
             self.handle_file(file_path)
+
     
     def get_file_path(self, fileUrl):
         if fileUrl.startswith("file:///"):
@@ -62,14 +69,14 @@ class Backend(QObject):
     
     def handle_url(self, file_path):
         if is_image(file_path):
-            print(f"URL est une image : {file_path}")
             destination_directory = get_base_data_dir() / "collections" / "image"
-        elif is_video(file_path):
-            print(f"URL est une vidéo : {file_path}")
+            media_type = "image"
+        elif is_video(file_path) or is_live_video(file_path):
             destination_directory = get_base_data_dir() / "collections" / "video"
+            media_type = "video"
         elif is_live_video(file_path):
-            print(f"URL est une vidéo en direct : {file_path}")
             destination_directory = get_base_data_dir() / "collections" / "video"
+            media_type = "video"
         else:
             self.infoSent.emit(f"Erreur : l'url n'est pas une image ou une vidéo.")
             return
@@ -78,21 +85,25 @@ class Backend(QObject):
         filename = os.path.basename(parsed_url.path)
         dst = destination_directory / filename
         download_file(file_path, dst)
+        
+        self.mediaAdded.emit(str(dst), media_type)
     
     def handle_file(self, file_path):
         file_extension = os.path.splitext(file_path)[1].lower()
         if file_extension in ['.jpg', '.jpeg', '.png', '.gif', '.bmp']:
-            print(f"Fichier est une image : {file_path}")
             destination_directory = get_base_data_dir() / "collections" / "image"
+            media_type = "image"
         elif file_extension in ['.mp4', '.avi', '.mkv', '.mov']:
-            print(f"Fichier est une vidéo : {file_path}")
             destination_directory = get_base_data_dir() / "collections" / "video"
+            media_type = "video"
         else:
             self.infoSent.emit(f"Erreur : le fichier n'est pas une image ou une vidéo.")
             return
     
         try:
             shutil.copy(file_path, destination_directory)
+
+            self.mediaAdded.emit(str(destination_directory / os.path.basename(file_path)), media_type)
         except Exception as e:
             self.infoSent.emit(f"Erreur : {e}")
 
