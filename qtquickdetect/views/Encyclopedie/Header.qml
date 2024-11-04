@@ -1,6 +1,7 @@
-import QtQuick
+import QtQuick 2.15
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Controls 2.15
 
 Rectangle {
     Connections {
@@ -9,7 +10,8 @@ Rectangle {
             colorManager.animateColorChange([
                 [headerRectangle, "color", "anthracite_gray"],
                 [headerLabel, "color", "default"],
-                [progressBar, "color", "default"],
+                [progressBackground, "color", "medium_gray"],
+                //[progressColor, "color", "blue_gray"],
                 [progressText, "color", "default"],
                 [_text, "color", "default"],
                 [gradientStop0, "color", "dark_bluish_gray"],
@@ -77,7 +79,28 @@ Rectangle {
         anchors.leftMargin: 50
         anchors.rightMargin: 150
         anchors.verticalCenterOffset: 0
+
+        contentItem: Item {
+            width: progressBar.width
+            height: progressBar.height
+
+            Rectangle {
+                id: progressBackground
+                width: parent.width
+                height: parent.height
+                color: (colorManager?.getColorNoNotify("medium_gray") ?? "#000000") // Couleur d'arrière-plan
+            }
+
+            // Filled portion color
+            Rectangle {
+                id: progressColor
+                width: parent.width * progressBar.value
+                height: parent.height
+                color: "blue" // Couleur de la barre de progression
+            }
+        }
     }
+
 
     Text {
         id: progressText

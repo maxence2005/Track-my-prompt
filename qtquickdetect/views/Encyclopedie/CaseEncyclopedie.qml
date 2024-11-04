@@ -6,18 +6,20 @@ Rectangle {
         target: colorManager
         function onThemeChanged() {
             colorManager.animateColorChange([
-                [container, "border.color", "default"],
+                [container, "borderColor", "default"],
                 [icon, "color", "default"],
                 [nameLabel, "color", "default"],
                 [countLabel, "color", "default"]
             ])
         }
     }
+    property color borderColor: (colorManager?.getColorNoNotify("default") ?? "#000000")
+
     id: container
     width: 150
     height: 150
     color: "transparent"
-    border.color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+    border.color: borderColor
     border.width: 1
     radius: 10
 
