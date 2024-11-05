@@ -36,9 +36,7 @@ Rectangle {
                 id: closeButtonMouseArea
                 anchors.fill: parent
                 onClicked: {
-                    var sharedVar = backend.shared_variable;
-                    sharedVar["Erreur"] = false;
-                    backend.shared_variable = sharedVar;
+                    backend.toggle_erreur();
                 }
             }
         }
@@ -91,9 +89,7 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        var sharedVar = backend.shared_variable;
-                        sharedVar["Erreur"] = false;
-                        backend.shared_variable = sharedVar;
+                        backend.toggle_erreur();
                     }
                     onEntered: {
                         closeButton.color = (colorManager?.getColor["medium_gray"] ?? "FFFFFF");
@@ -111,9 +107,7 @@ Rectangle {
         target: backend
         function onInfoSent(message) {
             erreurRectangle.errorMessage = message;
-            var sharedVar = backend.shared_variable;
-            sharedVar["Erreur"] = true;
-            backend.shared_variable = sharedVar;
+            backend.toggle_erreur();
         }
     }
 }

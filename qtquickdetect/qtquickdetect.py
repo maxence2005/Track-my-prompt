@@ -10,6 +10,7 @@ from PySide6.QtQml import QQmlApplicationEngine
 from .utils import filepaths
 from .controller.backend import Backend
 from .models.encylo import DatabaseManager
+from .models.mediaModel import DatabaseManagerMedia
 from .controller.ColorManager import ColorManager
 
 
@@ -24,34 +25,38 @@ def main():
     # Create necessary directories
     filepaths.create_cache_dir()
     filepaths.create_config_dir()
-    filepaths.create_data_dir()
+    filepaths.create_data_dir() 
 
     # Set the environment variable for the torch home directory
     os.environ['TORCH_HOME'] = str(filepaths.get_base_data_dir() / 'weights')
 
     # Change working directory to the package path
     os.chdir(package_path)
-    print("Starting QtQuickDetect")    
+    print("Starting TrackMyPrompt")    
     db_path = os.path.abspath("qtquickdetect/resources/trackmyprompts.db")
-    print(db_path)
+
     if not os.path.isfile(db_path):
         sys.exit(-1)
 
     try:
         database_manager = DatabaseManager(db_path)
+        database_media = DatabaseManagerMedia(db_path)
     except Exception as e:
         print(f"Erreur lors de l'initialisation de DatabaseManager : {e}")
         sys.exit(-1)
         
     theme = "dark"
 
-    # Create an instance of the backend
-    backend = Backend()
+    media_model = database_media
+    backend = Backend(media_model, database_media._media_model.rowCount())
     color_manager = ColorManager("qtquickdetect/resources/themes.json", theme)
     
+
     # Create an instance of QQmlApplicationEngine
     app = QApplication(sys.argv)
     engine = QQmlApplicationEngine()
+    
+    engine.rootContext().setContextProperty("mediaModel", database_media._media_model)
 
     engine.rootContext().setContextProperty("databaseManager", database_manager)
 

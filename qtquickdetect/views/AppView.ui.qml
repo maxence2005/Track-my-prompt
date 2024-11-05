@@ -13,17 +13,6 @@ import Qt5Compat.GraphicalEffects
 
 Rectangle {
     anchors.fill: parent  // Remplit l'espace du parent
-
-    ListModel {
-        id: mediaModel
-    }
-
-    Connections {
-        target: backend
-        function onMediaAdded(filePath, mediaType) {
-            mediaModel.append({ "filePath": filePath, "mediaType": mediaType });
-        }
-    }
     
     Component {
         id: promptMenuComponent

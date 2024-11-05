@@ -28,7 +28,7 @@ Grid {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        backend.selectFile(); // Appeler la méthode pour ouvrir l'explorateur de fichiers
+                        backend.nouvelleDetection();
                     }
                 }
             }

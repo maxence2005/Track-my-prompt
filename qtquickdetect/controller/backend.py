@@ -20,12 +20,19 @@ class Backend(QObject):
     promptEnter = Signal(str)
     sharedVariableChanged = Signal()
 
-    mediaAdded = Signal(str, str)  # Paramètres : chemin du fichier, type de média ("image" ou "video")
 
-    def __init__(self):
+    def __init__(self, media_model, row):
         super().__init__()
-        self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Start": True}
-        self.start = True
+        self.media_model = media_model
+        if row == 0:
+            self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Start": True}
+            self.start = True
+            self.fichier = {"lien" : "", "type" : ""}
+        else :
+            self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Start": False}
+            self.start = False
+            tmp = self.media_model.get_last_media()
+            self.fichier = {"lien" : tmp["lien"], "type" : tmp["type"]}
         create_config_dir()
         create_data_dir()
 
@@ -41,7 +48,10 @@ class Backend(QObject):
 
     @Slot(str)
     def receivePrompt(self, promptText):
-        self.promptEnter.emit(promptText)
+        if self.fichier["lien"] == "" :
+            self.infoSent.emit(f"Erreur : Aucune Image/video enregistrer.")
+        else :
+            self.media_model.addMediaItem(self.fichier["lien"], self.fichier["type"], promptText)
     
     @Slot(str)
     def receiveFile(self, fileUrl):
@@ -85,8 +95,9 @@ class Backend(QObject):
         filename = os.path.basename(parsed_url.path)
         dst = destination_directory / filename
         download_file(file_path, dst)
-        
-        self.mediaAdded.emit(str(dst), media_type)
+        self.fichier["lien"] = str(dst)
+        self.fichier["type"] = media_type
+        self.media_model.addMediaItem(str(dst), media_type, "")
     
     def handle_file(self, file_path):
         file_extension = os.path.splitext(file_path)[1].lower()
@@ -103,7 +114,9 @@ class Backend(QObject):
         try:
             shutil.copy(file_path, destination_directory)
 
-            self.mediaAdded.emit(str(destination_directory / os.path.basename(file_path)), media_type)
+            self.media_model.addMediaItem(str(destination_directory / os.path.basename(file_path)), media_type, "")
+            self.fichier["lien"] = str(destination_directory / os.path.basename(file_path))
+            self.fichier["type"] = media_type
         except Exception as e:
             self.infoSent.emit(f"Erreur : {e}")
 
@@ -132,3 +145,22 @@ class Backend(QObject):
     def toggle_menu(self):
         self._shared_variable["Menu"] = not self._shared_variable["Menu"]
         self.sharedVariableChanged.emit()
+        
+    @Slot()
+    def toggle_erreur(self):
+        self._shared_variable["Erreur"] = not self._shared_variable["Erreur"]
+        self.sharedVariableChanged.emit()
+
+    @Slot()
+    def toggle_param(self):
+        self._shared_variable["settingsMenuShowed"] = not self._shared_variable["settingsMenuShowed"]
+        self.sharedVariableChanged.emit()
+
+    @Slot()
+    def nouvelleDetection(self):
+        self.media_model.clear_all_media()
+        if self.start == False :
+            self.start = True
+            self._shared_variable["Start"] = True
+            self.sharedVariableChanged.emit()
+        self.fichier = {"lien" : "", "type" : ""}

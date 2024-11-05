@@ -38,6 +38,9 @@ RowLayout {
             onExited: {
                 wizardIconRectangle.hovered = false;
             }
+            onClicked: {
+                backend.toggle_menu();
+            }
         }
 
         ColorOverlay {
@@ -66,6 +69,10 @@ RowLayout {
             background: Rectangle {
                 color: "transparent"
             }
+            onAccepted: {
+                backend.receivePrompt(promptInputField.text);
+                promptInputField.text = "";
+            }
         }
 
         Image {
@@ -82,6 +89,7 @@ RowLayout {
                 anchors.fill: parent
                 onClicked: {
                     backend.receivePrompt(promptInputField.text);
+                    promptInputField.text = "";
                 }
             }
         }

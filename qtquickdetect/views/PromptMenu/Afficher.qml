@@ -9,7 +9,6 @@ Rectangle {
     height: parent.height
     color: "transparent"
     anchors.fill: parent
-    property string promptMessage: "" 
 
     ScrollView {
         anchors.fill: parent
@@ -32,32 +31,50 @@ Rectangle {
                 width: gridView.cellWidth
                 height: gridView.cellHeight
 
-                Rectangle {
+                ColumnLayout {
                     anchors.fill: parent
-                    color: "transparent"
-                    anchors.margins: 10
+                    spacing: 10
 
-                    Image {
-                        anchors.fill: parent
-                        source: model.mediaType === "image" ? formatFilePath(model.filePath) : ""
-                        visible: model.mediaType === "image"
-                        fillMode: Image.PreserveAspectFit
-                    }
-                    
-                    MediaPlayer {
-                        id: player
-                        source: model.mediaType === "video" ? formatFilePath(model.filePath) : ""
-                        autoPlay: true
-                        loops: MediaPlayer.Infinite
-                        videoOutput: videoOutput
+                    Rectangle {
+                        width: parent.width
+                        height: parent.height * 0.8  // Espace pour l’image/vidéo
+                        color: "transparent"
+                        anchors.horizontalCenter: parent.horizontalCenter
+
+
+                        Image {
+                            anchors.fill: parent
+                            source: model.type === "image" ? formatFilePath(model.lien) : ""
+                            visible: model.type === "image"
+                            fillMode: Image.PreserveAspectFit
+                        }
+
+                        // Afficher la vidéo si le type est "video"
+                        MediaPlayer {
+                            id: player
+                            source: model.type === "video" ? formatFilePath(model.lien) : ""
+                            autoPlay: true
+                            loops: MediaPlayer.Infinite
+                            videoOutput: videoOutput
+                        }
+
+                        VideoOutput {
+                            id: videoOutput
+                            anchors.fill: parent
+                            visible: model.type === "video" 
+                        }
                     }
 
-                    VideoOutput {
-                        id: videoOutput
-                        anchors.fill: parent
-                        visible: model.mediaType === "video" 
+                    Text {
+                        text: model.prompt ? model.prompt : ""
+                        visible: model.prompt && model.prompt.length > 0
+                        font.pixelSize: parent.width / 25
+                        color: "black"
+                        wrapMode: Text.Wrap
+                        horizontalAlignment: Text.AlignHCenter
+                        Layout.alignment: Qt.AlignHCenter
+                        width: parent.width - 20
                     }
-
                 }
             }
 
@@ -71,7 +88,7 @@ Rectangle {
         }
     }
 
-
+    // Fonction pour formater le chemin du fichier selon le système d'exploitation
     function formatFilePath(filePath) {
         if (Qt.platform.os === "windows") {
             return "file:///" + filePath.replace("\\", "/");
@@ -79,5 +96,4 @@ Rectangle {
             return "file://" + filePath;
         }
     }
-
 }

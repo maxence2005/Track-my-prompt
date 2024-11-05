@@ -23,7 +23,6 @@ Rectangle {
         anchors.fill: parent
         spacing: 10
 
-
         Rectangle {
             color: "transparent"
             height: parent.width
@@ -45,15 +44,13 @@ Rectangle {
             sourceComponent: (backend && backend.shared_variable["Start"]) ? ex : aff
         }
 
-
         ChooseFile {
             id: chooseFileComponent
-            Layout.alignment: Qt.AlignCenter
+            Layout.alignment: Qt.AlignHCenter // Alignement horizontal centré
             Layout.preferredWidth: 600
             Layout.minimumHeight: 50
             Layout.maximumHeight: 100
         }
-
 
         PromptInput {
             id: promptInputComponent

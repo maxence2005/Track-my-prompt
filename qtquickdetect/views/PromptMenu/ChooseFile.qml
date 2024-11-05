@@ -35,9 +35,11 @@ Rectangle {
 
         onDropped: function(drag) {
             if (drag.hasUrls) {
-                var fileUrl = drag.urls[0];  // Récupérer le premier fichier déposé
-                backend.receiveFile(fileUrl);  // Envoyer l'URL du fichier au backend
-                chooseFileMainRectangle.hovered = false;  // Annuler la surbrillance du rectangle
+                for (var i = 0; i < drag.urls.length; i++) {
+                    var fileUrl = drag.urls[i];
+                    backend.receiveFile(fileUrl);
+                }
+                chooseFileMainRectangle.hovered = false;
             }
         }
     }
