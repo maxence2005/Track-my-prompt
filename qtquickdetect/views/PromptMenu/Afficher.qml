@@ -21,9 +21,9 @@ Rectangle {
             id: gridView
             width: parent.width
             height: parent.height
-            cellWidth: parent.width - 20
-            cellHeight: parent.height - 20
-            bottomMargin: 100
+            cellWidth: 500
+            cellHeight: 400
+            bottomMargin: 50
             model: mediaModel
             clip: true 
 
@@ -33,11 +33,11 @@ Rectangle {
 
                 ColumnLayout {
                     anchors.fill: parent
-                    spacing: 10
+                    spacing: 20
 
                     Rectangle {
                         width: parent.width
-                        height: parent.height * 0.8  // Espace pour l’image/vidéo
+                        height: parent.height * 0.8 
                         color: "transparent"
                         anchors.horizontalCenter: parent.horizontalCenter
 

@@ -25,7 +25,7 @@ Rectangle {
 
         Rectangle {
             color: "transparent"
-            height: parent.width
+            height: 30
             Layout.fillWidth: true
         }
 
@@ -63,7 +63,7 @@ Rectangle {
         // Marge simulée en bas
         Rectangle {
             color: "transparent"
-            height: parent.width
+            height: 30
             Layout.fillWidth: true
         }
     }
