@@ -16,7 +16,7 @@ class MediaModel(QAbstractListModel):
             return None
         
         item = self._items[index.row()]
-        print(f"Fetching data for item: {item}")  # Debug line
+
         if role == self.LinkRole:
             return item["lien"]
         elif role == self.TypeRole:
