@@ -67,7 +67,7 @@ def create_data_dir() -> None:
     """
     get_base_data_dir().mkdir(exist_ok=True)
 
-    subdirs = ['weights', 'presets', 'collections']
+    subdirs = ['weights', 'presets', 'collections','models']
     subdirs += [Path('collections') / media for media in ['image', 'video']]
 
     for subdir in subdirs:
