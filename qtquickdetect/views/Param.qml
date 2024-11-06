@@ -49,9 +49,7 @@ Rectangle {
                 id: closeButtonMouseArea
                 anchors.fill: parent
                 onClicked: {
-                    var sharedVar = backend.shared_variable;
-                    sharedVar["settingsMenuShowed"] = false;
-                    backend.shared_variable = sharedVar;
+                    backend.toggle_param();
                 }
             }
         }

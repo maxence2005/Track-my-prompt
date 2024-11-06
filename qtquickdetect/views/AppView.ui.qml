@@ -13,7 +13,7 @@ import Qt5Compat.GraphicalEffects
 
 Rectangle {
     anchors.fill: parent  // Remplit l'espace du parent
-
+    
     Component {
         id: promptMenuComponent
         PromptMenu.PromptMenu {}

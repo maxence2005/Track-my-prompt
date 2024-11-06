@@ -40,9 +40,7 @@ Grid {
             labelText: qsTr("Settings")
 
             onClicked: {
-                var sharedVar = backend.shared_variable;
-                sharedVar["settingsMenuShowed"] = true;
-                backend.shared_variable = sharedVar;
+                backend.toggle_param();
             }
         }
     }

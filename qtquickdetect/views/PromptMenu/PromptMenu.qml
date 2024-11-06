@@ -12,36 +12,67 @@ Rectangle {
     }
     id: mainRectangle
     visible: true
-    width: 800
-    height: 600
     color: (colorManager?.getColorNoNotify("anthracite_gray") ?? "#000000")
+    width: parent ? parent.width : 1536
+    height: parent ? parent.height : 864
+
+    Component {
+        id: aff
+        Afficher {}
+    }
+
+    Component {
+        id: ex
+        Exemples {}
+    }
 
     ColumnLayout {
         id: mainColumnLayout
-        anchors.centerIn: parent
-        spacing: 50
+        anchors.fill: parent
+        spacing: 10
 
-        // Inclure le composant Header avec Layout.alignment
+        Rectangle {
+            color: "transparent"
+            height: 30
+            Layout.fillWidth: true
+        }
+
+        // Composant Header, aligné en haut
         Header {
             id: headerComponent
             Layout.alignment: Qt.AlignTop
+            Layout.fillWidth: true
         }
 
-        // Inclure le composant Exemples avec Layout.alignment
-        Exemples {
+        Loader {
             id: exemplesComponent
-            Layout.alignment: Qt.AlignCenter
+            Layout.alignment: Qt.AlignVCenter
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            sourceComponent: (backend && backend.shared_variable["Start"]) ? ex : aff
         }
 
-        // Inclure le composant DragDrop
         ChooseFile {
             id: chooseFileComponent
+            Layout.alignment: Qt.AlignHCenter // Alignement horizontal centré
+            Layout.preferredWidth: 600
+            Layout.minimumHeight: 50
+            Layout.maximumHeight: 100
         }
 
-        // Inclure le composant PromptInput avec Layout.alignment
         PromptInput {
             id: promptInputComponent
             Layout.alignment: Qt.AlignBottom
+            Layout.preferredWidth: parent.width - 150
+            Layout.minimumHeight: 80
+            Layout.maximumHeight: 100
+        }
+
+        // Marge simulée en bas
+        Rectangle {
+            color: "transparent"
+            height: 30
+            Layout.fillWidth: true
         }
     }
 }

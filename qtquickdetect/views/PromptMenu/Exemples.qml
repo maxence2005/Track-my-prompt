@@ -19,7 +19,7 @@ ColumnLayout {
     Label {
         id: exemplesTitleLabel
         text: "Exemples"
-        font.pixelSize: 24
+        font.pixelSize: parent.width / 20
         color: (colorManager?.getColorNoNotify("default") ?? "#000000")
         horizontalAlignment: Text.AlignHCenter
         Layout.alignment: Qt.AlignHCenter

@@ -19,7 +19,7 @@ RowLayout {
 
     id: promptRowLayout
     anchors.horizontalCenter: parent.horizontalCenter
-    width: 700
+    width: parent.width
     height: 50
     spacing: 20
 
@@ -51,6 +51,9 @@ RowLayout {
             onExited: {
                 wizardIconRectangle.hovered = false;
             }
+            onClicked: {
+                backend.toggle_menu();
+            }
         }
 
         ColorOverlay {
@@ -62,7 +65,9 @@ RowLayout {
 
     Rectangle {
         id: promptInputRectangle
-        width: 600
+        Layout.fillWidth: true
+        Layout.minimumWidth: 60
+        Layout.maximumWidth: parent.width - 80 
         height: 50
         color: (colorManager?.getColorNoNotify("dark_bluish_gray") ?? "#000000")
         radius: 10
@@ -77,6 +82,10 @@ RowLayout {
             placeholderTextColor: (colorManager?.getColorNoNotify("blue_gray") ?? "#000000")
             background: Rectangle {
                 color: "transparent"
+            }
+            onAccepted: {
+                backend.receivePrompt(promptInputField.text);
+                promptInputField.text = "";
             }
         }
 
@@ -94,6 +103,7 @@ RowLayout {
                 anchors.fill: parent
                 onClicked: {
                     backend.receivePrompt(promptInputField.text);
+                    promptInputField.text = "";
                 }
             }
         }

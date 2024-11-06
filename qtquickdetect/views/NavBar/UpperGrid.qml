@@ -28,7 +28,7 @@ Grid {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        backend.selectFile(); // Appeler la méthode pour ouvrir l'explorateur de fichiers
+                        backend.nouvelleDetection();
                     }
                 }
             }
@@ -43,9 +43,7 @@ Grid {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        var sharedVar = backend.shared_variable;
-                        sharedVar["Menu"] = !sharedVar["Menu"];
-                        backend.shared_variable = sharedVar;
+                        backend.toggle_menu();
                     }
                 }
             }
