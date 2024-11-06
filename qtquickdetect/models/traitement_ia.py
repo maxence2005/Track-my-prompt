@@ -1,9 +1,11 @@
 from ultralytics import YOLOWorld
+from ..utils import filepaths
 import os
 
 class ia:
     def traitement(filePath : str) -> str:
-        model = YOLOWorld("../resources/pre-trained_models/yolov8s-world.pt")
+        models_path = filepaths.get_base_data_dir() / 'models'
+        model = YOLOWorld(os.path.join(models_path, 'yolov8s-world.pt'))
         results = model.predict(filePath, save=True)
 
         save_dir = results[0].save_dir
@@ -13,7 +15,8 @@ class ia:
         return saved_image_path
     
     def traitementPrompt(filePath : str, classes : list) -> str:
-        model = YOLOWorld("../resources/pre-trained_models/yolov8s-world.pt")
+        models_path = filepaths.get_base_data_dir() / 'models'
+        model = YOLOWorld(os.path.join(models_path, 'yolov8s-world.pt'))
         model.set_classes(classes)
         results = model.predict(filePath, save=True)
 
