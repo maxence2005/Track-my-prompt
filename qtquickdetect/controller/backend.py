@@ -13,6 +13,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 from utils.file_explorer import open_file_explorer
 from utils.filepaths import get_base_config_dir, get_base_data_dir, create_config_dir, create_data_dir
 from utils.url_handler import is_image, is_video, is_live_video, is_url, download_file
+from models.traitement_ia import traitementPrompt, promptFiltre
 
 class Backend(QObject):
 
@@ -52,7 +53,9 @@ class Backend(QObject):
             self.infoSent.emit(f"Erreur : Aucune Image/video enregistrer.")
         else :
             if promptText != "":
-                self.media_model.addMediaItem(self.fichier["lien"], self.fichier["type"], promptText)
+                promptfiltree = promptFiltre(promptText)
+                lien = traitementPrompt(self.fichier["lien"], promptfiltree, self.fichier["type"])
+                self.media_model.addMediaItem(lien, self.fichier["type"], promptText)
     
     @Slot(str)
     def receiveFile(self, fileUrl):

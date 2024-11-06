@@ -43,8 +43,6 @@ def main():
             shutil.copy(db_path_tmp, db_path)
         except IOError as e:
             print(f"Erreur lors de la copie de la base de données : {e}")
-    else:
-        print("Le fichier trackmyprompt.db existe déjà dans le dossier de données.")
 
     if not os.path.isfile(db_path):
         sys.exit(-1)

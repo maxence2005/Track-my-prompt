@@ -72,6 +72,7 @@ class DatabaseManager(QObject):
         finally:
             if connection:
                 connection.close()
+    
 
 
     @Property(QObject, constant=True)
