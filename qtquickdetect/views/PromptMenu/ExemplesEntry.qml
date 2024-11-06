@@ -14,8 +14,8 @@ Rectangle {
     id: entryRectangle
     property string entryText
     property bool hovered: false
-    property color backgroundColor: (colorManager?.getColorNoNotify("dark_bluish_gray") ?? "#000000");
-    property color backgroundColorHover: (colorManager?.getColor["blue_gray"] ?? "#000000");
+    property color backgroundColor: (colorManager ? colorManager.getColorNoNotify("dark_bluish_gray") : "#000000");
+    property color backgroundColorHover: (colorManager ? colorManager.getColor["blue_gray"] : "#000000");
     
     width: 200
     height: 100
@@ -28,7 +28,7 @@ Rectangle {
         width: parent.width - 20
         text: entryText
         font.pixelSize: 16
-        color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+        color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
     }

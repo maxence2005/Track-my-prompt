@@ -18,9 +18,9 @@ ColumnLayout {
 
     Label {
         id: exemplesTitleLabel
-        text: "Exemples"
+        text: qsTr("Examples")
         font.pixelSize: parent.width / 20
-        color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+        color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
         horizontalAlignment: Text.AlignHCenter
         Layout.alignment: Qt.AlignHCenter
     }
@@ -32,12 +32,12 @@ ColumnLayout {
 
         ExemplesEntry {
             id: dogImagesRectangle
-            entryText: "Trouver toutes les images de chiens parmi un ensemble d'images"
+            entryText: qsTr("Find all dog images among a set of images")
         }
 
         ExemplesEntry {
             id: catVideoRectangle
-            entryText: "Détecter le nombre de chats sur une vidéo en simultané"
+            entryText: qsTr("Detect the number of cats in a video simultaneously")
         }
     }
 }

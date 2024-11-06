@@ -24,9 +24,9 @@ Button {
     background: Rectangle {
         id: buttonBackground
         property bool hovered: false
-        property color borderColor: colorManager?.getColorNoNotify("dark_bluish_gray") ?? "#000000"
+        property color borderColor: colorManager ? colorManager.getColorNoNotify("dark_bluish_gray") : "#000000"
 
-        color: hovered ? (colorManager?.getColor["dark_gray"] ?? "#000000") : "transparent"
+        color: hovered ? (colorManager ? colorManager.getColor["dark_gray"] : "#000000") : "transparent"
         border.color: borderColor
         border.width: 3
         radius: 8
@@ -73,7 +73,7 @@ Button {
                     id: colorOverlay
                     anchors.fill: buttonImage
                     source: buttonImage
-                    color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+                    color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
                 }
             }
 
@@ -82,7 +82,7 @@ Button {
                 height: 40
                 text: buttonWithHover.text
                 Layout.alignment: Qt.AlignVCenter
-                color: (colorManager?.getColorNoNotify("silver_gray") ?? "#000000")
+                color: (colorManager ? colorManager.getColorNoNotify("silver_gray") : "#000000")
                 font.pixelSize: 16
                 verticalAlignment: Text.AlignVCenter
             }

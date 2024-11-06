@@ -13,6 +13,7 @@ from .controller.backend import Backend
 from .models.encylo import DatabaseManager
 from .models.mediaModel import DatabaseManagerMedia
 from .controller.ColorManager import ColorManager
+from .controller.LanguageManager import LanguageManager
 
 
 def main():
@@ -26,7 +27,7 @@ def main():
     # Create necessary directories
     filepaths.create_cache_dir()
     filepaths.create_config_dir()
-    filepaths.create_data_dir() 
+    filepaths.create_data_dir()
 
     # Set the environment variable for the torch home directory
     os.environ['TORCH_HOME'] = str(filepaths.get_base_data_dir() / 'weights')
@@ -53,26 +54,25 @@ def main():
     except Exception as e:
         print(f"Erreur lors de l'initialisation de DatabaseManager : {e}")
         sys.exit(-1)
-        
+    
+    # Create an instance of QQmlApplicationEngine
+    app = QApplication(sys.argv)
+    engine = QQmlApplicationEngine()
+
     theme = "dark"
 
     media_model = database_media
     backend = Backend(media_model, database_media._media_model.rowCount())
     color_manager = ColorManager("qtquickdetect/resources/themes.json", theme)
-    
+    language_manager = LanguageManager(app=app, engine=engine)
 
-    # Create an instance of QQmlApplicationEngine
-    app = QApplication(sys.argv)
-    engine = QQmlApplicationEngine()
-    
-    engine.rootContext().setContextProperty("mediaModel", database_media._media_model)
-
-    engine.rootContext().setContextProperty("databaseManager", database_manager)
-
-    engine.rootContext().setContextProperty("encyclopediaModel", database_manager.encyclopediaModel)
     # Expose the backend to the QML context
+    engine.rootContext().setContextProperty("mediaModel", database_media._media_model)
+    engine.rootContext().setContextProperty("databaseManager", database_manager)
+    engine.rootContext().setContextProperty("encyclopediaModel", database_manager.encyclopediaModel)
     engine.rootContext().setContextProperty("backend", backend)
     engine.rootContext().setContextProperty("colorManager", color_manager)
+    engine.rootContext().setContextProperty("languageManager", language_manager)
 
     # Load the QML file
     engine.load(QUrl("qtquickdetect/views/App.qml"))

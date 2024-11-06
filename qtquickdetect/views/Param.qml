@@ -26,7 +26,7 @@ Rectangle {
         id: backgroundParamRectangle
         width: parent.width
         height: parent.height
-        color: (colorManager?.getColorNoNotify("very_dark_gray") ?? "#000000") // Couleur d'arrière-plan
+        color: (colorManager ? colorManager.getColorNoNotify("very_dark_gray") : "#000000") // Couleur d'arrière-plan
 
         Rectangle {
             id: closeButtonContainer
@@ -40,7 +40,7 @@ Rectangle {
             Text {
                 id: closeButtonText
                 text: "✖" // Symbole de la croix
-                color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+                color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
                 font.pixelSize: 24
                 anchors.centerIn: parent
             }
@@ -57,7 +57,7 @@ Rectangle {
             id: titleText
             text: "Paramètres"
             font.pixelSize: 40
-            color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+            color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: 20
@@ -90,13 +90,16 @@ Rectangle {
                                 id: languageLabel
                                 text: "Langue de l'application"
                                 font.pixelSize: 20
-                                color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+                                color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
                             }
 
                             ComboBox {
                                 id: languageComboBox
-                                model: ["Français"]
+                                model: languageManager ? languageManager.getLanguages : []
                                 width: 100
+                                onActivated : {
+                                    languageManager.setLanguage(languageComboBox.currentText)
+                                }
                             }
                         }
 
@@ -105,13 +108,9 @@ Rectangle {
                             text: "Installer un pack de langue"
                             width: 200
                             height: 40
-                        }
-
-                        Button {
-                            id: applyButton
-                            text: "Appliquer"
-                            width: 100
-                            height: 40
+                            onClicked: {
+                                languageManager.install_new_language()
+                            }
                         }
 
                         Row {
@@ -120,14 +119,14 @@ Rectangle {
                                 id: historyLabel
                                 text: "Historique"
                                 font.pixelSize: 20
-                                color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+                                color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
                             }
                         }
 
                         Text {
                             id: historySizeText
                             text: "L'historique prend actuellement {TODO: mettre place}."
-                            color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+                            color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
                         }
 
                         Button {
@@ -155,7 +154,7 @@ Rectangle {
                                 id: expertModeLabel
                                 text: "Mode expert"
                                 font.pixelSize: 20
-                                color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+                                color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
                             }
                         }
 
@@ -167,7 +166,7 @@ Rectangle {
                                 indicator: Rectangle {
                                     width: 20
                                     height: 20
-                                    color: expertModeCheckBox.checked ? (colorManager?.getColorNoNotify("black") ?? "#000000") : (colorManager?.getColorNoNotify("default") ?? "#000000") // Change la couleur en fonction de l'état
+                                    color: expertModeCheckBox.checked ? (colorManager ? colorManager.getColorNoNotify("black") : "#000000") : (colorManager ? colorManager.getColorNoNotify("default") : "#000000") // Change la couleur en fonction de l'état
                                 }
                             }
 

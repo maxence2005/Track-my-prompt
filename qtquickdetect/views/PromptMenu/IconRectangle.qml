@@ -13,8 +13,8 @@ Rectangle {
     id: iconRectangle
     property string imageSource: ""
     property bool hovered: false
-    property color backgroundColor: (colorManager?.getColorNoNotify("light_bluish_gray") ?? "#000000")
-    property color backgroundColorHover: (colorManager?.getColor["light_gray"] ?? "#000000")
+    property color backgroundColor: (colorManager ? colorManager.getColorNoNotify("light_bluish_gray") : "#000000")
+    property color backgroundColorHover: (colorManager ? colorManager.getColor["light_gray"] : "#000000")
 
     width: 64
     height: 64

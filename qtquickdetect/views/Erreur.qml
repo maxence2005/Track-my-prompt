@@ -19,7 +19,7 @@ Rectangle {
         id: backgroundParamRectangle
         width: parent.width
         height: parent.height
-        color: (colorManager?.getColorNoNotify("very_dark_gray") ?? "#000000") // Couleur d'arrière-plan
+        color: (colorManager ? colorManager.getColorNoNotify("very_dark_gray") : "#000000") // Couleur d'arrière-plan
 
         // Conteneur pour le bouton de fermeture (croix)
         Rectangle {
@@ -34,7 +34,7 @@ Rectangle {
             Text {
                 id: closeButtonText
                 text: "✖" // Symbole de la croix
-                color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+                color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
                 font.pixelSize: 24
                 anchors.centerIn: parent
             }
@@ -82,13 +82,13 @@ Rectangle {
                 id: closeButton
                 width: 120
                 height: 40
-                color: (colorManager?.getColorNoNotify("gray") ?? "#000000") // Couleur du bouton
+                color: (colorManager ? colorManager.getColorNoNotify("gray") : "#000000") // Couleur du bouton
                 radius: 10
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 Text {
                     text: "Ok"
-                    color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+                    color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
                     font.pixelSize: 20
                     anchors.centerIn: parent
                 }
@@ -99,11 +99,11 @@ Rectangle {
                         backend.toggle_erreur();
                     }
                     onEntered: {
-                        closeButton.color = (colorManager?.getColorNoNotify("medium_gray") ?? "#000000");
+                        closeButton.color = (colorManager ? colorManager.getColorNoNotify("medium_gray") : "#000000");
                     }
 
                     onExited: {
-                        closeButton.color = (colorManager?.getColorNoNotify("gray") ?? "#000000");
+                        closeButton.color = (colorManager ? colorManager.getColorNoNotify("gray") : "#000000");
                     }
                 }
             }

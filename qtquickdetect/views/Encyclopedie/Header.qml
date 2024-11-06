@@ -26,7 +26,7 @@ Rectangle {
     anchors.horizontalCenter: parent.horizontalCenter
     width: parent.width
     height: 140
-    color: (colorManager?.getColorNoNotify("anthracite_gray") ?? "#000000")
+    color: (colorManager ? colorManager.getColorNoNotify("anthracite_gray") : "#000000")
     anchors.margins: 15
     radius: 20
     Rectangle {
@@ -37,12 +37,12 @@ Rectangle {
             GradientStop {
                 id : gradientStop0
                 position: 0.0
-                color: (colorManager?.getColorNoNotify("dark_bluish_gray") ?? "#000000")
+                color: (colorManager ? colorManager.getColorNoNotify("dark_bluish_gray") : "#000000")
             } // Couleur supérieure
             GradientStop {
                 id : gradientStop1
                 position: 1.0
-                color: (colorManager?.getColorNoNotify("anthracite_gray") ?? "#000000")
+                color: (colorManager ? colorManager.getColorNoNotify("anthracite_gray") : "#000000")
             } // Couleur inférieure
         }
     }
@@ -57,12 +57,12 @@ Rectangle {
 
     Label {
         id: headerLabel
-        text: "Encyclopédie"
+        text: qsTr("Encyclopedia")
         anchors.verticalCenter: progressBar.verticalCenter
         anchors.bottom: progressBar.top
         anchors.bottomMargin: -75
         font.pixelSize: 32
-        color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+        color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: 0
@@ -88,7 +88,7 @@ Rectangle {
                 id: progressBackground
                 width: parent.width
                 height: parent.height
-                color: (colorManager?.getColorNoNotify("medium_gray") ?? "#000000") // Couleur d'arrière-plan
+                color: (colorManager ? colorManager.getColorNoNotify("medium_gray") : "#000000") // Couleur d'arrière-plan
             }
 
             // Filled portion color
@@ -112,17 +112,17 @@ Rectangle {
         anchors.left: progressBar.right  // Affiche la valeur en pourcentage
         anchors.leftMargin: 16  // Positionnement sous la barre de progression
         font.pixelSize: 16
-        color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+        color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
     }
 
     Text {
         id: _text
-        text: qsTr("Cliquez sur un élement pour le rechercher")
+        text: qsTr("Click on an item to search")
         anchors.top: progressBar.bottom
         anchors.topMargin: 16
         font.pixelSize: 16
         anchors.horizontalCenter: parent.horizontalCenter
-        color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+        color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
         Layout.alignment: Qt.AlignHCenter
     }
 }

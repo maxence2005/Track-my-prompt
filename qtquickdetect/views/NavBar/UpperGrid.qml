@@ -23,7 +23,7 @@ Grid {
                 id: newDetectionButton
                 width: 180
                 height: 50
-                text: "+ New detection"
+                text: qsTr("+ New detection")
                 topMargin: 10
                 MouseArea {
                     anchors.fill: parent
@@ -37,7 +37,7 @@ Grid {
                 id: encyclopediaButton
                 width: 180
                 height: 50
-                text: "Encyclopédie"
+                text: qsTr("Encyclopedia")
                 topMargin: 70
                 iconSource: "../imgs/wizard.png"
                 MouseArea {

@@ -16,8 +16,8 @@ Rectangle {
 
     id: chooseFileMainRectangle
     property bool hovered: false
-    property color backgroundColor: (colorManager?.getColorNoNotify("dark_bluish_gray") ?? "#000000")
-    property color backgroundColorHover: (colorManager?.getColor["steel_gray"] ?? "#000000")
+    property color backgroundColor: (colorManager ? colorManager.getColorNoNotify("dark_bluish_gray") : "#000000")
+    property color backgroundColorHover: (colorManager ? colorManager.getColor["steel_gray"] : "#000000")
 
     width: 600
     height: 100
@@ -25,23 +25,23 @@ Rectangle {
     radius: 10
     Layout.alignment: Qt.AlignHCenter
 
-    // Propriété pour suivre si un fichier est en cours de glisser-déposer
+    // Property to track if a file is being dragged and dropped
     property bool isFileOver: false
 
-    // Gérer les événements de drag and drop
+    // Handle drag and drop events
     DropArea {
         id: dropArea
         anchors.fill: parent
         onEntered: function(drag) {
-            // Vérifier si le drag contient des URLs (fichiers)
+            // Check if the drag contains URLs (files)
             if (drag.hasUrls) {
-                drag.accept(Qt.CopyAction);  // Accepter l'action de copier
-                chooseFileMainRectangle.hovered = true;  // Mettre en surbrillance le rectangle
+                drag.accept(Qt.CopyAction);  // Accept the copy action
+                chooseFileMainRectangle.hovered = true;  // Highlight the rectangle
             }
         }
 
         onExited: {
-            chooseFileMainRectangle.hovered = false;  // Annuler la surbrillance du rectangle
+            chooseFileMainRectangle.hovered = false;  // Cancel the rectangle highlight
         }
 
         onDropped: function(drag) {
@@ -65,24 +65,24 @@ Rectangle {
             spacing: 10
             Image {
                 id: uploadIcon
-                source: "../imgs/upload.svg" // icône pour le drag and drop
+                source: "../imgs/upload.svg" // icon for drag and drop
                 width: 40
                 height: 40
             }
 
             Text {
                 id: dragDropText
-                text: "Drag\nand Drop "
+                text: qsTr("Drag\nand Drop ")
                 font.pixelSize: 18
-                color: (colorManager?.getColorNoNotify("very_light_gray") ?? "#000000")
+                color: (colorManager ? colorManager.getColorNoNotify("very_light_gray") : "#000000")
             }
         }
 
         Text {
             id: orText
-            text: "or"
+            text: qsTr("or")
             font.pixelSize: 36
-            color: (colorManager?.getColorNoNotify("light_gray") ?? "#000000")
+            color: (colorManager ? colorManager.getColorNoNotify("light_gray") : "#000000")
         }
 
         RowLayout {
@@ -91,23 +91,23 @@ Rectangle {
 
             IconRectangle {
                 id: camIcon
-                imageSource: "../imgs/cam.svg" // Remplace par ton fichier SVG
+                imageSource: "../imgs/cam.svg"
             }
 
             IconRectangle {
                 id: fileIcon
-                imageSource: "../imgs/file.svg" // Remplace par ton fichier SVG
+                imageSource: "../imgs/file.svg"
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        backend.openFileExplorer(); // Appeler la méthode pour ouvrir l'explorateur de fichiers
+                        backend.openFileExplorer(); // Call the method to open the file explorer
                     }
                 }
             }
 
             IconRectangle {
                 id: linkIcon
-                imageSource: "../imgs/link.svg" // Remplace par ton fichier SVG
+                imageSource: "../imgs/link.svg"
                 MouseArea {
                     anchors.fill: parent
                     onClicked: linkDialog.open()
@@ -118,7 +118,7 @@ Rectangle {
 
     Dialog {
         id: linkDialog
-        title: "Saisir le lien"
+        title: qsTr("Enter the link")
         standardButtons: Dialog.Ok | Dialog.Cancel
         modal: true
 
@@ -126,7 +126,7 @@ Rectangle {
             spacing: 10
             TextField {
                 id: linkInput
-                placeholderText: "Entrez le lien ici"
+                placeholderText: qsTr("Enter the link here")
                 Layout.preferredWidth: 500
                 Layout.fillWidth: true
             }

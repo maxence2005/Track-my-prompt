@@ -13,7 +13,7 @@ Rectangle {
             ])
         }
     }
-    property color borderColor: (colorManager?.getColorNoNotify("default") ?? "#000000")
+    property color borderColor: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
 
     id: container
     width: 150
@@ -37,7 +37,7 @@ Rectangle {
             id: icon
             text: iconSource
             font.pixelSize: 50  // Taille de l'émoticône (à ajuster si nécessaire)
-            color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+            color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
             anchors.horizontalCenter: parent.horizontalCenter
 
             // Animation lors du survol
@@ -73,16 +73,16 @@ Rectangle {
             id: nameLabel
             text: name
             font.pixelSize: 18
-            color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+            color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
         Text {
             id: countLabel
-            text: "Trouvé " + count + "x"
+            text: qsTr("Found ") + count + qsTr(" times")
             font.pixelSize: 14
-            color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+            color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter
         }

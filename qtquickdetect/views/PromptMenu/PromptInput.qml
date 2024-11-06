@@ -26,8 +26,8 @@ RowLayout {
     Rectangle {
         id: wizardIconRectangle
         property bool hovered: false
-        property color backgroundColor: (colorManager?.getColorNoNotify("dark_gray") ?? "#000000")
-        property color backgroundColorHover: (colorManager?.getColor["blue_gray"] ?? "#000000")
+        property color backgroundColor: (colorManager ? colorManager.getColorNoNotify("dark_gray") : "#000000")
+        property color backgroundColorHover: (colorManager ? colorManager.getColor["blue_gray"] : "#000000")
         width: 50
         height: 50
         radius: 50
@@ -59,7 +59,7 @@ RowLayout {
         ColorOverlay {
             anchors.fill: wizardIconImage
             source: wizardIconImage
-            color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+            color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
         }
     }
 
@@ -69,17 +69,17 @@ RowLayout {
         Layout.minimumWidth: 60
         Layout.maximumWidth: parent.width - 80 
         height: 50
-        color: (colorManager?.getColorNoNotify("dark_bluish_gray") ?? "#000000")
+        color: (colorManager ? colorManager.getColorNoNotify("dark_bluish_gray") : "#000000")
         radius: 10
 
         TextField {
             id: promptInputField
-            placeholderText: "Enter your prompt..."
+            placeholderText: qsTr("Enter your prompt...")
             font.pixelSize: 18
             width: parent.width - 50 // Réduire la largeur pour faire de la place à l'image
             height: parent.height
-            color: (colorManager?.getColorNoNotify("light_gray") ?? "#000000")
-            placeholderTextColor: (colorManager?.getColorNoNotify("blue_gray") ?? "#000000")
+            color: (colorManager ? colorManager.getColorNoNotify("light_gray") : "#000000")
+            placeholderTextColor: (colorManager ? colorManager.getColorNoNotify("blue_gray") : "#000000")
             background: Rectangle {
                 color: "transparent"
             }
@@ -112,7 +112,7 @@ RowLayout {
             id: sendColorOverlay
             anchors.fill: sendIconImage
             source: sendIconImage
-            color: (colorManager?.getColorNoNotify("light_bluish_gray") ?? "#000000")
+            color: (colorManager ? colorManager.getColorNoNotify("light_bluish_gray") : "#000000")
         }
     }
 }

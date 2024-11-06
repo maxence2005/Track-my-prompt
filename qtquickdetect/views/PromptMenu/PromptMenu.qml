@@ -12,7 +12,7 @@ Rectangle {
     }
     id: mainRectangle
     visible: true
-    color: (colorManager?.getColorNoNotify("anthracite_gray") ?? "#000000")
+    color: (colorManager ? colorManager.getColorNoNotify("anthracite_gray") : "#000000")
     width: parent ? parent.width : 1536
     height: parent ? parent.height : 864
 

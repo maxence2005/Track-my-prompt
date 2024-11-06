@@ -15,7 +15,7 @@ Rectangle {
     visible: true
     width: parent.width - 50
     height: parent.height
-    color: (colorManager?.getColorNoNotify("anthracite_gray") ?? "#000000")
+    color: (colorManager ? colorManager.getColorNoNotify("anthracite_gray") : "#000000")
 
     ColumnLayout {
         id: mainColumnLayout

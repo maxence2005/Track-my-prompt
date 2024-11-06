@@ -34,7 +34,7 @@ Rectangle {
             width: parent.width * 0.2
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            enabled: (!backend?.shared_variable["settingsMenuShowed"] ?? true) && (!backend?.shared_variable["Erreur"] ?? true)
+            enabled: (backend ? !backend.shared_variable["settingsMenuShowed"] : true) && (backend ? !backend.shared_variable["Erreur"] : true)
         }
 
         Loader {
@@ -42,7 +42,7 @@ Rectangle {
             width: parent.width * 0.8
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            enabled: (!backend?.shared_variable["settingsMenuShowed"] ?? true) && (!backend?.shared_variable["Erreur"] ?? true)
+            enabled: (backend ? !backend.shared_variable["settingsMenuShowed"] : true) && (backend ? !backend.shared_variable["Erreur"] : true)
             sourceComponent: (backend ? (backend.shared_variable["Menu"] ? promptMenuComponent : encyclopedie) : promptMenuComponent )
         }
     }
@@ -52,7 +52,7 @@ Rectangle {
         id: interactionBlocker
         color: "transparent"
         anchors.fill: parent
-        visible: (backend?.shared_variable["settingsMenuShowed"] ?? false) || (backend?.shared_variable["Erreur"] ?? false)
+        visible: (backend ? backend.shared_variable["settingsMenuShowed"] : false) || (backend ? backend.shared_variable["Erreur"] : false)
         MouseArea {
             anchors.fill: parent
             enabled: true
@@ -62,7 +62,7 @@ Rectangle {
 
     FastBlur {
         id: blurEffect
-        visible: (backend?.shared_variable["settingsMenuShowed"] ?? false ) || (backend?.shared_variable["Erreur"] ?? false)
+        visible: (backend ? backend.shared_variable["settingsMenuShowed"] : false ) || (backend ? backend.shared_variable["Erreur"] : false)
         anchors.fill: parent
         source: appView
         radius: 50
@@ -70,7 +70,7 @@ Rectangle {
 
     Param {
         id: param
-        visible: (backend?.shared_variable["settingsMenuShowed"] ?? false)
+        visible: (backend ? backend.shared_variable["settingsMenuShowed"] : false)
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         width: parent.width * 0.8
@@ -79,7 +79,7 @@ Rectangle {
 
     Erreur {
         id: erreur
-        visible: (backend?.shared_variable["Erreur"] ?? false)
+        visible: (backend ? backend.shared_variable["Erreur"] : false)
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         width: parent.width * 0.8
