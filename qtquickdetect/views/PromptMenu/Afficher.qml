@@ -25,9 +25,17 @@ Rectangle {
             cellHeight: 400
             bottomMargin: 50
             model: mediaModel
-            clip: true 
+            clip: true
 
             delegate: Item {
+                Connections {
+                    target: colorManager
+                    function onThemeChanged() {
+                        colorManager.animateColorChange([
+                            [iaPromptText, "color", "default"]
+                        ]);
+                    }
+                }
                 width: gridView.cellWidth
                 height: gridView.cellHeight
 
@@ -66,10 +74,11 @@ Rectangle {
                     }
 
                     Text {
+                        id: iaPromptText
                         text: model.prompt ? model.prompt : ""
                         visible: model.prompt && model.prompt.length > 0
                         font.pixelSize: parent.width / 25
-                        color: "black"
+                        color: (colorManager?.getColorNoNotify("default") ?? "#000000")
                         wrapMode: Text.Wrap
                         horizontalAlignment: Text.AlignHCenter
                         Layout.alignment: Qt.AlignHCenter
