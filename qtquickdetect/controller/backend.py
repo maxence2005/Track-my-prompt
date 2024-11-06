@@ -51,7 +51,7 @@ class Backend(QObject):
         if self.fichier["lien"] == "" :
             self.infoSent.emit(f"Erreur : Aucune Image/video enregistrer.")
         else :
-            if promptText == " ":
+            if promptText != "":
                 self.media_model.addMediaItem(self.fichier["lien"], self.fichier["type"], promptText)
     
     @Slot(str)

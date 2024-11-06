@@ -2,6 +2,7 @@ import logging
 import os
 import pathlib
 import sys
+import shutil
 
 from PySide6.QtCore import QObject, Slot, Signal, QUrl
 from PySide6.QtWidgets import QApplication
@@ -32,8 +33,18 @@ def main():
 
     # Change working directory to the package path
     os.chdir(package_path)
-    print("Starting TrackMyPrompt")    
-    db_path = os.path.abspath("qtquickdetect/resources/trackmyprompts.db")
+    print("Starting TrackMyPrompt") 
+    db_path_tmp = os.path.abspath("qtquickdetect/resources/trackmyprompts.db")
+    data_dir = filepaths.get_base_data_dir()
+    db_path = os.path.join(data_dir, "trackmyprompt.db")
+
+    if not os.path.exists(db_path):
+        try:
+            shutil.copy(db_path_tmp, db_path)
+        except IOError as e:
+            print(f"Erreur lors de la copie de la base de données : {e}")
+    else:
+        print("Le fichier trackmyprompt.db existe déjà dans le dossier de données.")
 
     if not os.path.isfile(db_path):
         sys.exit(-1)
