@@ -87,6 +87,9 @@ class DatabaseManagerMedia(QObject):
         self.insert_into_database(file_path, media_type, prompt)
 
     def insert_into_database(self, file_path, media_type, prompt):
+        file_path = str(file_path)
+        media_type = str(media_type)
+        prompt = str(prompt)
         try:
             connection = sqlite3.connect(self.db_path)
             cursor = connection.cursor()
