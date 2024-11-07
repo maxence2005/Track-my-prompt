@@ -4,15 +4,17 @@ import QtQuick.Layouts 1.15
 import QtMultimedia 6.8
 
 Item {
-    property string sourceMedia: ""
+    property var modelData
+    property bool isIAimage: false
+    property string pathImg: isIAimage ? modelData.lienIA : modelData.lien
     width: parent.width
     height: parent.height
-    visible: model.type === "video"
+    visible: modelData.type === "video"
     anchors.horizontalCenter: parent.horizontalCenter
 
     MediaPlayer {
         id: player
-        source: sourceMedia
+        source: modelData.type === "video" ? formatFilePath(pathImg) : ""
         autoPlay: true
         loops: MediaPlayer.Infinite
         videoOutput: videoOutput
@@ -21,6 +23,14 @@ Item {
     VideoOutput {
         id: videoOutput
         anchors.fill: parent
-        visible: model.type === "video"
+        visible: modelData.type === "video"
+    }
+
+    function formatFilePath(filePath) {
+        if (Qt.platform.os === "windows") {
+            return "file:///" + filePath.replace("\\", "/");
+        } else {
+            return "file://" + filePath;
+        }
     }
 }

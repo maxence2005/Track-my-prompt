@@ -51,13 +51,40 @@ Rectangle {
 
                         EntryImage {
                             id: entryImage
-                            source: model.type === "image" ? formatFilePath(model.lien) : ""
+                            modelData: model
                         }
 
                         // Afficher la vidéo si le type est "video"
                         EntryVideo {
                             id: entryVideo
-                            sourceMedia: model.type === "video" ? formatFilePath(model.lien) : ""
+                            modelData: model
+                        }
+                        MouseArea {
+                            id: mouseArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onEntered: overlay.visible = true
+                            onExited: overlay.visible = false
+                        }
+
+                        Item {
+                            anchors.fill: parent
+                            id: overlay
+                            visible: false
+
+                            Row {
+                                spacing: 5
+
+                                Button {
+                                    text: qsTr("Change content")
+                                    visible: model.lienIA ? true : false
+                                    onClicked: {
+                                        entryImage.isIAimage = !entryImage.isIAimage
+                                        entryVideo.isIAimage = !entryVideo.isIAimage
+                                        console.log(model.lienIA)
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -82,15 +109,6 @@ Rectangle {
                     color: "transparent"
                 }
             }
-        }
-    }
-
-    // Fonction pour formater le chemin du fichier selon le système d'exploitation
-    function formatFilePath(filePath) {
-        if (Qt.platform.os === "windows") {
-            return "file:///" + filePath.replace("\\", "/");
-        } else {
-            return "file://" + filePath;
         }
     }
 }
