@@ -53,7 +53,7 @@ def promptFiltre(phrase: str) -> list:
         "teddy bear", "hair drier", "toothbrush", "scissors", "clock", "book", "vase"]
 
     phrase = phrase.lower()
-    phrase = re.sub(r'[^\w\s]', '', phrase)  
+    phrase = re.sub(r'[^\w\s]', '', phrase)
     
 
     words = phrase.split()

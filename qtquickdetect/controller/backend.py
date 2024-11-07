@@ -14,6 +14,7 @@ from utils.file_explorer import open_file_explorer
 from utils.filepaths import get_base_config_dir, get_base_data_dir, create_config_dir, create_data_dir
 from utils.url_handler import is_image, is_video, is_live_video, is_url, download_file
 from models.traitement_ia import traitementPrompt, promptFiltre
+from models.mediaModel import DatabaseManagerMedia
 
 class Backend(QObject):
 
@@ -22,7 +23,7 @@ class Backend(QObject):
     sharedVariableChanged = Signal()
 
 
-    def __init__(self, media_model, row):
+    def __init__(self, media_model: DatabaseManagerMedia, row):
         super().__init__()
         self.media_model = media_model
         self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True}
@@ -30,12 +31,12 @@ class Backend(QObject):
         if row == 0:
             self._shared_variable["Start"] = True
             self.start = True
-            self.fichier = {"lien" : "", "type" : ""}
+            self.fichier = {"id": -1, "lien" : "", "type" : ""}
         else :
             self._shared_variable["Start"] = False
             self.start = False
             tmp = self.media_model.get_last_media()
-            self.fichier = {"lien" : tmp["lien"], "type" : tmp["type"]}
+            self.fichier = {"id": tmp["id"], "lien" : tmp["lien"], "type" : tmp["type"]}
         create_config_dir()
         create_data_dir()
 
@@ -57,7 +58,7 @@ class Backend(QObject):
             if promptText != "":
                 promptfiltree = promptFiltre(promptText)
                 lien = traitementPrompt(self.fichier["lien"], promptfiltree, self.fichier["type"])
-                self.media_model.addMediaItem(lien, self.fichier["type"], promptText)
+                self.media_model.updateMediaItem(id = self.fichier["id"], file_path_ia=lien, prompt=promptText)
     
     @Slot(str)
     def receiveFile(self, fileUrl):
@@ -112,7 +113,8 @@ class Backend(QObject):
             
             self.fichier["lien"] = str(dst)
             self.fichier["type"] = media_type
-            self.media_model.addMediaItem(str(dst), media_type, "")
+            id_row = self.media_model.addMediaItem(str(dst), media_type)
+            self.fichier["id"] = id_row
         except Exception as e:
             self.infoSent.emit(f"Erreur : {e}")
     

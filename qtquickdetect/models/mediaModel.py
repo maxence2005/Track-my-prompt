@@ -1,14 +1,17 @@
 import sqlite3
 from PySide6.QtCore import QObject, Signal, Slot, Property, QAbstractListModel, QModelIndex, Qt
 
+
 class MediaModel(QAbstractListModel):
     """
-    MediaModel is a QAbstractListModel that holds media items with roles for link, type, and prompt.
+    MediaModel is a QAbstractListModel that holds media items with roles for id, link, type, prompt, and lienIA.
     """
     # Define the roles for the model elements
-    LinkRole = Qt.UserRole + 1
-    TypeRole = Qt.UserRole + 2
-    PromptRole = Qt.UserRole + 3
+    IdRole = Qt.UserRole + 1
+    LinkRole = Qt.UserRole + 2
+    TypeRole = Qt.UserRole + 3
+    PromptRole = Qt.UserRole + 4
+    LienIARole = Qt.UserRole + 5
 
     def __init__(self, *args, **kwargs):
         """
@@ -30,15 +33,19 @@ class MediaModel(QAbstractListModel):
         """
         if not index.isValid() or not (0 <= index.row() < len(self._items)):
             return None
-        
-        item = self._items[index.row()]
 
-        if role == self.LinkRole:
+        item = self._items[index.row()]
+        item["index"] = index.row()
+        if role == self.IdRole:
+            return str(item["id"])
+        elif role == self.LinkRole:
             return item["lien"]
         elif role == self.TypeRole:
             return item["type"]
         elif role == self.PromptRole:
             return item["prompt"]
+        elif role == self.LienIARole:
+            return item["lienIA"]
         return None
 
     def rowCount(self, parent=QModelIndex()):
@@ -57,9 +64,11 @@ class MediaModel(QAbstractListModel):
         :return: dict
         """
         return {
+            self.IdRole: b"id",
             self.LinkRole: b"lien",
             self.TypeRole: b"type",
             self.PromptRole: b"prompt",
+            self.LienIARole: b"lienIA",
         }
 
     def update_data(self, data):
@@ -73,20 +82,48 @@ class MediaModel(QAbstractListModel):
         self._items = data
         self.endResetModel()
 
-    @Slot(str, str, str)
-    def addMediaItem(self, file_path, media_type, prompt=""):
+    @Slot(str, str, str, str)
+    def addMediaItem(self, id, file_path, media_type, prompt="", lienIA=""):
         """
         Add a new media item to the model.
 
+        :param id: int
         :param file_path: str
+        :param media_type: str
+        :param prompt: str
+        :param lienIA: str
+        :return: None
+        """
+        self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
+        self._items.append({"id": id, "lien": file_path,
+                           "type": media_type, "prompt": prompt, "lienIA": lienIA})
+        self.endInsertRows()
+
+    def updateMediaItem(self, id, file_path=None, file_path_ia=None, media_type=None, prompt=None):
+        """
+        Update an existing media item in the model.
+
+        :param id: int
+        :param file_path: str
+        :param file_path_ia: str
         :param media_type: str
         :param prompt: str
         :return: None
         """
-        self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
-        self._items.append({"lien": file_path, "type": media_type, "prompt": prompt})
-        self.endInsertRows()
-    
+        for row in self._items:
+            if row["id"] == id:
+                if file_path:
+                    row["lien"] = file_path
+                if file_path_ia:
+                    row["lienIA"] = file_path_ia
+                if media_type:
+                    row["type"] = media_type
+                if prompt:
+                    row["prompt"] = prompt
+                self.dataChanged.emit(self.index(
+                    row["index"]), self.index(row["index"]))
+                break
+
 
 class DatabaseManagerMedia(QObject):
     """
@@ -116,11 +153,13 @@ class DatabaseManagerMedia(QObject):
         try:
             connection = sqlite3.connect(self.db_path)
             cursor = connection.cursor()
-            cursor.execute("SELECT lien, type, prompt FROM MediaData")
+            cursor.execute(
+                "SELECT id, lien, type, prompt, lienIA FROM MediaData")
             rows = cursor.fetchall()
 
             # Convert data to dictionaries for the model
-            data = [{"lien": row[0], "type": row[1], "prompt": row[2] if row[2] else ""} for row in rows]
+            data = [{"id": row[0], "lien": row[1], "type": row[2], "prompt": row[3]
+                     if row[3] else "", "lienIA": row[4] if row[4] else ""} for row in rows]
             self._media_model.update_data(data)  # Update the media model
 
             self.dataLoaded.emit()  # Emit the signal to indicate data has been loaded
@@ -131,43 +170,81 @@ class DatabaseManagerMedia(QObject):
             if connection:
                 connection.close()
 
-    @Slot(str, str, str)
-    def addMediaItem(self, file_path, media_type, prompt=""):
+    @Slot(str, str, str, str)
+    def addMediaItem(self, file_path, media_type):
         """
         Add a new media item to the model and insert it into the database.
 
         :param file_path: str
         :param media_type: str
-        :param prompt: str
-        :return: None
+        :return: int
         """
-        self._media_model.addMediaItem(file_path, media_type, prompt)
-        self.insert_into_database(file_path, media_type, prompt)
+        id_row = self.insert_into_database(
+            file_path=file_path, media_type=media_type)
+        self._media_model.addMediaItem(id_row, file_path, media_type)
+        return id_row
 
-    def insert_into_database(self, file_path, media_type, prompt):
+    @Slot(int, str, str, str, str)
+    def updateMediaItem(self, id, file_path=None, file_path_ia=None, media_type=None, prompt=None):
         """
-        Insert a new media item into the database.
+        Update an existing media item in the model and database.
 
+        :param id: int
         :param file_path: str
+        :param file_path_ia: str
         :param media_type: str
         :param prompt: str
         :return: None
         """
-        file_path = str(file_path)
-        media_type = str(media_type)
-        prompt = str(prompt)
+        self._media_model.updateMediaItem(
+            id, file_path, file_path_ia, media_type, prompt)
+        self.insert_into_database(
+            file_path=file_path, lienIA=file_path_ia, media_type=media_type, prompt=prompt, id_row=id)
+
+    def insert_into_database(self, file_path=None, media_type=None, prompt=None, lienIA=None, id_row=None):
+        """
+        Insert or update a new media item into the database.
+
+        :param file_path: str
+        :param media_type: str
+        :param prompt: str
+        :param lienIA: str
+        :return: None
+        """
         try:
             connection = sqlite3.connect(self.db_path)
             cursor = connection.cursor()
-            # Use a prepared statement to avoid SQL injection
-            cursor.execute("INSERT INTO MediaData (lien, type, prompt) VALUES (?, ?, ?)", 
-                           (file_path, media_type, prompt))
+
+            fields = {
+                "lien": file_path,
+                "type": media_type,
+                "prompt": prompt,
+                "lienIA": lienIA
+            }
+
+            if id_row:
+                update_fields = [f"{key} = ?" for key,
+                                 value in fields.items() if value is not None]
+                update_values = [
+                    value for value in fields.values() if value is not None]
+                update_values.append(id_row)
+                cursor.execute(f"UPDATE MediaData SET {', '.join(
+                    update_fields)} WHERE id = ?", update_values)
+            else:
+                insert_fields = [key for key,
+                                 value in fields.items() if value is not None]
+                insert_values = [
+                    value for value in fields.values() if value is not None]
+                cursor.execute(f"INSERT INTO MediaData ({', '.join(insert_fields)}) VALUES ({
+                               ', '.join(['?'] * len(insert_values))})", insert_values)
+                id_row = cursor.lastrowid
             connection.commit()
         except sqlite3.Error as e:
             print(f"Error inserting into the database: {e}")
         finally:
             if connection:
                 connection.close()
+        return id_row
 
     @Slot(result=dict)
     def get_last_media(self):
@@ -179,10 +256,11 @@ class DatabaseManagerMedia(QObject):
         try:
             connection = sqlite3.connect(self.db_path)
             cursor = connection.cursor()
-            cursor.execute("SELECT lien, type, prompt FROM MediaData ORDER BY id DESC LIMIT 1")
+            cursor.execute(
+                "SELECT id, lien, type, prompt, lienIA FROM MediaData ORDER BY id DESC LIMIT 1")
             row = cursor.fetchone()
             if row:
-                return {"lien": row[0], "type": row[1], "prompt": row[2]}
+                return {"id": row[0], "lien": row[1], "type": row[2], "prompt": row[3], "lienIA": row[4]}
             else:
                 return {}  # Return an empty dictionary if no media found
         except sqlite3.Error as e:
