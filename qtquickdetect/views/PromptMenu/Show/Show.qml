@@ -59,34 +59,34 @@ Rectangle {
                             id: entryVideo
                             modelData: model
                         }
+                        
                         MouseArea {
                             id: mouseArea
                             anchors.fill: parent
                             hoverEnabled: true
                             onEntered: overlay.visible = true
                             onExited: overlay.visible = false
-                        }
+                            Item {
+                                anchors.fill: parent
+                                id: overlay
+                                visible: false
 
-                        Item {
-                            anchors.fill: parent
-                            id: overlay
-                            visible: false
+                                Row {
+                                    spacing: 5
 
-                            Row {
-                                spacing: 5
-
-                                Button {
-                                    text: qsTr("Change content")
-                                    visible: model.lienIA ? true : false
-                                    onClicked: {
-                                        switch (model.type) {
-                                            case "image":
-                                                entryImage.isIAimage = !entryImage.isIAimage
-                                                break
-                                            case "video":
-                                                entryVideo.isIAimage = !entryVideo.isIAimage
-                                                entryVideo.videoPlayer.play()
-                                                break
+                                    Button {
+                                        text: qsTr("Change content")
+                                        visible: model.lienIA ? true : false
+                                        onClicked: {
+                                            switch (model.type) {
+                                                case "image":
+                                                    entryImage.isIAimage = !entryImage.isIAimage
+                                                    break
+                                                case "video":
+                                                    entryVideo.isIAimage = !entryVideo.isIAimage
+                                                    entryVideo.videoPlayer.play()
+                                                    break
+                                            }
                                         }
                                     }
                                 }
