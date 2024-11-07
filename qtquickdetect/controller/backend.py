@@ -25,12 +25,14 @@ class Backend(QObject):
     def __init__(self, media_model, row):
         super().__init__()
         self.media_model = media_model
+        self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True}
+
         if row == 0:
-            self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Start": True}
+            self._shared_variable["Start"] = True
             self.start = True
             self.fichier = {"lien" : "", "type" : ""}
         else :
-            self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Start": False}
+            self._shared_variable["Start"] = False
             self.start = False
             tmp = self.media_model.get_last_media()
             self.fichier = {"lien" : tmp["lien"], "type" : tmp["type"]}
@@ -81,30 +83,15 @@ class Backend(QObject):
                 return fileUrl[7:]
         return fileUrl
     
-    def handle_url(self, file_path):
-        if is_image(file_path):
-            destination_directory = get_base_data_dir() / "collections" / "image"
-            media_type = "image"
-        elif is_video(file_path) or is_live_video(file_path):
-            destination_directory = get_base_data_dir() / "collections" / "video"
-            media_type = "video"
-        elif is_live_video(file_path):
-            destination_directory = get_base_data_dir() / "collections" / "video"
-            media_type = "video"
+    def handle_media(self, file_path, is_url=False):
+        if is_url:
+            parsed_url = urlparse(file_path)
+            filename = os.path.basename(parsed_url.path)
         else:
-            self.infoSent.emit(f"Erreur : l'url n'est pas une image ou une vidéo.")
-            return
-    
-        parsed_url = urlparse(file_path)
-        filename = os.path.basename(parsed_url.path)
-        dst = destination_directory / filename
-        download_file(file_path, dst)
-        self.fichier["lien"] = str(dst)
-        self.fichier["type"] = media_type
-        self.media_model.addMediaItem(str(dst), media_type, "")
-    
-    def handle_file(self, file_path):
-        file_extension = os.path.splitext(file_path)[1].lower()
+            filename = os.path.basename(file_path)
+        
+        file_extension = os.path.splitext(filename)[1].lower()
+        
         if file_extension in ['.jpg', '.jpeg', '.png', '.gif', '.bmp']:
             destination_directory = get_base_data_dir() / "collections" / "image"
             media_type = "image"
@@ -114,15 +101,26 @@ class Backend(QObject):
         else:
             self.infoSent.emit(f"Erreur : le fichier n'est pas une image ou une vidéo.")
             return
-    
+        
+        dst = destination_directory / filename
+        
         try:
-            shutil.copy(file_path, destination_directory)
-
-            self.media_model.addMediaItem(str(destination_directory / os.path.basename(file_path)), media_type, "")
-            self.fichier["lien"] = str(destination_directory / os.path.basename(file_path))
+            if is_url:
+                download_file(file_path, dst)
+            else:
+                shutil.copy(file_path, dst)
+            
+            self.fichier["lien"] = str(dst)
             self.fichier["type"] = media_type
+            self.media_model.addMediaItem(str(dst), media_type, "")
         except Exception as e:
             self.infoSent.emit(f"Erreur : {e}")
+    
+    def handle_url(self, file_path):
+        self.handle_media(file_path, is_url=True)
+    
+    def handle_file(self, file_path):
+        self.handle_media(file_path, is_url=False)
 
     @Slot()
     def selectFile(self):
