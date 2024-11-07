@@ -11,6 +11,7 @@ class EncyclopediaModel(QAbstractListModel):
     def __init__(self, *args, **kwargs):
         super(EncyclopediaModel, self).__init__(*args, **kwargs)
         self._items = []
+        self._all_items = [] 
 
     def data(self, index, role):
         if not index.isValid() or not (0 <= index.row() < len(self._items)):
@@ -34,10 +35,28 @@ class EncyclopediaModel(QAbstractListModel):
             self.TimeFoundRole: b"timeFound",
         }
 
+
+    def filter_data(self, search_text):
+        if not search_text:
+            self.update_data_bis(self._all_items)
+        else:
+            filtered_items = [
+                item for item in self._all_items
+                if search_text.lower() in item["englishName"].lower()
+            ]
+            self.update_data_bis(filtered_items)
+
     def update_data(self, data):
         self.beginResetModel()
         self._items = data
+        self._all_items = data
         self.endResetModel()
+
+    def update_data_bis(self, data):
+        self.beginResetModel()
+        self._items = data
+        self.endResetModel()
+    
 
 class DatabaseManager(QObject):
     
@@ -73,7 +92,10 @@ class DatabaseManager(QObject):
             if connection:
                 connection.close()
     
-
+    @Slot(str)
+    def set_search_text(self, text):
+        """Met à jour la recherche dans le modèle."""
+        self.model.filter_data(text)
 
     @Property(QObject, constant=True)
     def encyclopediaModel(self):

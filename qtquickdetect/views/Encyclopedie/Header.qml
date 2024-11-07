@@ -25,7 +25,7 @@ Rectangle {
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
     width: parent.width
-    height: 140
+    height: parent.height * 0.3
     color: (colorManager?.getColorNoNotify("anthracite_gray") ?? "#000000")
     anchors.margins: 15
     radius: 20
@@ -57,11 +57,11 @@ Rectangle {
 
     Label {
         id: headerLabel
-        text: "Encyclopédie"
+        text: "Encyclopédie : Cliquez sur un élement pour le rechercher"
         anchors.verticalCenter: progressBar.verticalCenter
         anchors.bottom: progressBar.top
         anchors.bottomMargin: -75
-        font.pixelSize: 32
+        font.pixelSize: parent.width / 30
         color: (colorManager?.getColorNoNotify("default") ?? "#000000")
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenter: parent.horizontalCenter
@@ -115,14 +115,19 @@ Rectangle {
         color: (colorManager?.getColorNoNotify("default") ?? "#000000")
     }
 
-    Text {
-        id: _text
-        text: qsTr("Cliquez sur un élement pour le rechercher")
+    TextField {
+        id: searchField
+        placeholderText: qsTr("Rechercher un élément")
         anchors.top: progressBar.bottom
         anchors.topMargin: 16
-        font.pixelSize: 16
         anchors.horizontalCenter: parent.horizontalCenter
+        width: parent.width * 0.8
+        font.pixelSize: 16
         color: (colorManager?.getColorNoNotify("default") ?? "#000000")
-        Layout.alignment: Qt.AlignHCenter
+        background: Rectangle {
+            color: (colorManager?.getColorNoNotify("medium_gray") ?? "#888888")
+            radius: 10
+        }
+        onTextChanged: databaseManager.set_search_text(searchField.text)
     }
 }
