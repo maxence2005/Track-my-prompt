@@ -79,9 +79,15 @@ Rectangle {
                                     text: qsTr("Change content")
                                     visible: model.lienIA ? true : false
                                     onClicked: {
-                                        entryImage.isIAimage = !entryImage.isIAimage
-                                        entryVideo.isIAimage = !entryVideo.isIAimage
-                                        console.log(model.lienIA)
+                                        switch (model.type) {
+                                            case "image":
+                                                entryImage.isIAimage = !entryImage.isIAimage
+                                                break
+                                            case "video":
+                                                entryVideo.isIAimage = !entryVideo.isIAimage
+                                                entryVideo.videoPlayer.play()
+                                                break
+                                        }
                                     }
                                 }
                             }

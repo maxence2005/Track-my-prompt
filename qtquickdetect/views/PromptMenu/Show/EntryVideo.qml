@@ -7,6 +7,7 @@ Item {
     property var modelData
     property bool isIAimage: false
     property string pathImg: isIAimage ? modelData.lienIA : modelData.lien
+    property var videoPlayer: player
     width: parent.width
     height: parent.height
     visible: modelData.type === "video"
@@ -14,7 +15,7 @@ Item {
 
     MediaPlayer {
         id: player
-        source: modelData.type === "video" ? formatFilePath(pathImg) : ""
+        source: formatFilePath(pathImg)
         autoPlay: true
         loops: MediaPlayer.Infinite
         videoOutput: videoOutput
