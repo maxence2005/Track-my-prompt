@@ -45,31 +45,19 @@ Rectangle {
 
                     Rectangle {
                         width: parent.width
-                        height: parent.height * 0.8 
+                        height: parent.height * 0.8
                         color: "transparent"
                         anchors.horizontalCenter: parent.horizontalCenter
 
-
-                        Image {
-                            anchors.fill: parent
+                        EntryImage {
+                            id: entryImage
                             source: model.type === "image" ? formatFilePath(model.lien) : ""
-                            visible: model.type === "image"
-                            fillMode: Image.PreserveAspectFit
                         }
 
                         // Afficher la vidéo si le type est "video"
-                        MediaPlayer {
-                            id: player
-                            source: model.type === "video" ? formatFilePath(model.lien) : ""
-                            autoPlay: true
-                            loops: MediaPlayer.Infinite
-                            videoOutput: videoOutput
-                        }
-
-                        VideoOutput {
-                            id: videoOutput
-                            anchors.fill: parent
-                            visible: model.type === "video" 
+                        EntryVideo {
+                            id: entryVideo
+                            sourceMedia: model.type === "video" ? formatFilePath(model.lien) : ""
                         }
                     }
 
