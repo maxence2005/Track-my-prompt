@@ -44,32 +44,66 @@ Rectangle {
                     spacing: 20
 
                     Rectangle {
+                        property bool haveLienIA: model.lienIA ? true : false
+
+                        id: imageContainer
                         width: parent.width
-                        height: parent.height * 0.8 
+                        height: parent.height * 0.8
                         color: "transparent"
                         anchors.horizontalCenter: parent.horizontalCenter
 
-
-                        Image {
-                            anchors.fill: parent
-                            source: model.type === "image" ? formatFilePath(model.lien) : ""
-                            visible: model.type === "image"
-                            fillMode: Image.PreserveAspectFit
+                        EntryImage {
+                            id: entryImage
+                            modelData: model
                         }
 
                         // Afficher la vidéo si le type est "video"
-                        MediaPlayer {
-                            id: player
-                            source: model.type === "video" ? formatFilePath(model.lien) : ""
-                            autoPlay: true
-                            loops: MediaPlayer.Infinite
-                            videoOutput: videoOutput
+                        EntryVideo {
+                            id: entryVideo
+                            modelData: model
+                        }
+                        
+                        MouseArea {
+                            id: mouseArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onEntered: overlay.visible = true
+                            onExited: overlay.visible = false
+                            Item {
+                                anchors.fill: parent
+                                id: overlay
+                                visible: false
+
+                                Row {
+                                    spacing: 5
+
+                                    Button {
+                                        text: qsTr("Change content")
+                                        visible: haveLienIA
+                                        onClicked: {
+                                            imageContainer.changeContent()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+                        onHaveLienIAChanged: {
+                            if (haveLienIA) {
+                                imageContainer.changeContent()
+                            }
                         }
 
-                        VideoOutput {
-                            id: videoOutput
-                            anchors.fill: parent
-                            visible: model.type === "video" 
+                        function changeContent() {
+                            switch (model.type) {
+                                case "image":
+                                    entryImage.isIAimage = !entryImage.isIAimage
+                                    break
+                                case "video":
+                                    entryVideo.isIAimage = !entryVideo.isIAimage
+                                    entryVideo.videoPlayer.play()
+                                    break
+                            }
                         }
                     }
 
@@ -94,15 +128,6 @@ Rectangle {
                     color: "transparent"
                 }
             }
-        }
-    }
-
-    // Fonction pour formater le chemin du fichier selon le système d'exploitation
-    function formatFilePath(filePath) {
-        if (Qt.platform.os === "windows") {
-            return "file:///" + filePath.replace("\\", "/");
-        } else {
-            return "file://" + filePath;
         }
     }
 }
