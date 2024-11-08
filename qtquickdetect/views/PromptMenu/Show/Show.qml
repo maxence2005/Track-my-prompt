@@ -51,13 +51,19 @@ Rectangle {
                         height: parent.height * 0.8
                         color: "transparent"
                         anchors.horizontalCenter: parent.horizontalCenter
+                        
+                        Connections {
+                            target: backend 
+                            function onLoad(visible) {
+                                overlayImage.visible = visible
+                            }
+                        }
 
                         EntryImage {
                             id: entryImage
                             modelData: model
                         }
 
-                        // Afficher la vidéo si le type est "video"
                         EntryVideo {
                             id: entryVideo
                             modelData: model
@@ -86,6 +92,20 @@ Rectangle {
                                     }
                                 }
                             }
+                        }
+                        Item {
+                            id: imageOverlay
+                            width: gridView.cellWidth / 100
+                            height: gridView.cellHeight / 100
+                            anchors.centerIn: parent
+                            AnimatedImage {
+                                id: overlayImage
+                                source: "../../imgs/chargement.gif"
+                                anchors.centerIn: parent
+                                visible: false
+                                fillMode: Image.PreserveAspectFit
+                            }
+                        
                         }
                         
                         onHaveLienIAChanged: {
