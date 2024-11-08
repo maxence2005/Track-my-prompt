@@ -13,9 +13,10 @@ Rectangle {
                 [progressBackground, "color", "medium_gray"],
                 //[progressColor, "color", "blue_gray"],
                 [progressText, "color", "default"],
-                [_text, "color", "default"],
                 [gradientStop0, "color", "dark_bluish_gray"],
-                [gradientStop1, "color", "anthracite_gray"]
+                [gradientStop1, "color", "anthracite_gray"],
+                [searchField, "color", "default"],
+                [searchFieldBackground, "color", "medium_gray"]
             ])
         }
     }
@@ -125,6 +126,7 @@ Rectangle {
         font.pixelSize: 16
         color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
         background: Rectangle {
+            id: searchFieldBackground
             color: (colorManager?.getColorNoNotify("medium_gray") ?? "#888888")
             radius: 10
         }
