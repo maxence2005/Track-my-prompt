@@ -2,16 +2,16 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-Grid {
+Column {
     id: upperGrid
     width: parent.width
     height: 470
-    columns: 1
-    rows: 2
+    anchors.fill: parent
+    spacing: 10
 
     Column {
         id: mainColumn
-        anchors.fill: parent
+        width: parent.width
         spacing: 10
 
         Column {

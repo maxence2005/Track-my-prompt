@@ -23,8 +23,6 @@ Rectangle {
 
     id: headerRectangle
     property double progression: 0
-    anchors.top: parent.top
-    anchors.horizontalCenter: parent.horizontalCenter
     width: parent.width
     height: parent.height * 0.3
     color: (colorManager ? colorManager.getColorNoNotify("anthracite_gray") : "#000000")

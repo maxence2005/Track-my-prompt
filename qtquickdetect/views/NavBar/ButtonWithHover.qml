@@ -48,12 +48,13 @@ Button {
 
     contentItem: ColumnLayout {
         id: buttonContent
-        anchors.fill: parent
+        Layout.fillWidth: true
+        Layout.fillHeight: true
         Layout.alignment: Qt.AlignVCenter
 
         RowLayout {
             id: buttonRow
-            anchors.horizontalCenter: parent.horizontalCenter
+            Layout.alignment: Qt.AlignHCenter
             spacing: 10
 
             Row {
@@ -71,7 +72,8 @@ Button {
 
                 ColorOverlay {
                     id: colorOverlay
-                    anchors.fill: buttonImage
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
                     source: buttonImage
                     color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
                 }

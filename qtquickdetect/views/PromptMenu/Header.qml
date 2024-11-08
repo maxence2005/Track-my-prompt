@@ -13,8 +13,6 @@ Rectangle {
     }
 
     id: headerRectangle
-    anchors.top: parent.top
-    anchors.horizontalCenter: parent.horizontalCenter
     width: parent.width
     height: 60
     color: "transparent"

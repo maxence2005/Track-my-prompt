@@ -2,13 +2,12 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-Grid {
-    id: lowerGrid
+Column {
+    id: lowerColumn
     width: parent.width
     height: 160
-    columns: 1
-    rows: 3
     anchors.bottom: parent.bottom
+    anchors.margins: 20
 
     SeparatorLine {
         id: lowerSeparatorLine

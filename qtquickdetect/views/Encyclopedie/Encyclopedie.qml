@@ -25,7 +25,7 @@ Rectangle {
         Header {
             progression: 0.5
             id: headerComponent
-            Layout.alignment: Qt.AlignTop
+            Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
         }
 
         Affiche {

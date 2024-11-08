@@ -23,7 +23,6 @@ Rectangle {
     height: 100
     color: hovered ? backgroundColorHover : backgroundColor
     radius: 10
-    Layout.alignment: Qt.AlignHCenter
 
     // Property to track if a file is being dragged and dropped
     property bool isFileOver: false
