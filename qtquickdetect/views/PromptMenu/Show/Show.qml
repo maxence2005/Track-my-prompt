@@ -44,6 +44,9 @@ Rectangle {
                     spacing: 20
 
                     Rectangle {
+                        property bool haveLienIA: model.lienIA ? true : false
+
+                        id: imageContainer
                         width: parent.width
                         height: parent.height * 0.8
                         color: "transparent"
@@ -76,20 +79,30 @@ Rectangle {
 
                                     Button {
                                         text: qsTr("Change content")
-                                        visible: model.lienIA ? true : false
+                                        visible: haveLienIA
                                         onClicked: {
-                                            switch (model.type) {
-                                                case "image":
-                                                    entryImage.isIAimage = !entryImage.isIAimage
-                                                    break
-                                                case "video":
-                                                    entryVideo.isIAimage = !entryVideo.isIAimage
-                                                    entryVideo.videoPlayer.play()
-                                                    break
-                                            }
+                                            imageContainer.changeContent()
                                         }
                                     }
                                 }
+                            }
+                        }
+                        
+                        onHaveLienIAChanged: {
+                            if (haveLienIA) {
+                                imageContainer.changeContent()
+                            }
+                        }
+
+                        function changeContent() {
+                            switch (model.type) {
+                                case "image":
+                                    entryImage.isIAimage = !entryImage.isIAimage
+                                    break
+                                case "video":
+                                    entryVideo.isIAimage = !entryVideo.isIAimage
+                                    entryVideo.videoPlayer.play()
+                                    break
                             }
                         }
                     }
