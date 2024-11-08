@@ -228,15 +228,13 @@ class DatabaseManagerMedia(QObject):
                 update_values = [
                     value for value in fields.values() if value is not None]
                 update_values.append(id_row)
-                cursor.execute(f"UPDATE MediaData SET {', '.join(
-                    update_fields)} WHERE id = ?", update_values)
+                cursor.execute(f"UPDATE MediaData SET {', '.join(update_fields)} WHERE id = ?", update_values)
             else:
                 insert_fields = [key for key,
                                  value in fields.items() if value is not None]
                 insert_values = [
                     value for value in fields.values() if value is not None]
-                cursor.execute(f"INSERT INTO MediaData ({', '.join(insert_fields)}) VALUES ({
-                               ', '.join(['?'] * len(insert_values))})", insert_values)
+                cursor.execute(f"INSERT INTO MediaData ({', '.join(insert_fields)}) VALUES ({', '.join(['?'] * len(insert_values))})", insert_values)
                 id_row = cursor.lastrowid
             connection.commit()
         except sqlite3.Error as e:
