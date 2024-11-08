@@ -117,7 +117,7 @@ Rectangle {
 
     TextField {
         id: searchField
-        placeholderText: qsTr("Rechercher un élément")
+        placeholderText: qsTr("Search for an item")
         anchors.top: progressBar.bottom
         anchors.topMargin: 16
         anchors.horizontalCenter: parent.horizontalCenter
