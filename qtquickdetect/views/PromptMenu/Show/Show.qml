@@ -28,96 +28,12 @@ Rectangle {
             clip: true
 
             delegate: Item {
-                Connections {
-                    target: colorManager
-                    function onThemeChanged() {
-                        colorManager.animateColorChange([
-                            [iaPromptText, "color", "default"]
-                        ]);
-                    }
-                }
                 width: gridView.cellWidth
                 height: gridView.cellHeight
 
-                ColumnLayout {
-                    anchors.fill: parent
-                    spacing: 20
-
-                    Rectangle {
-                        property bool haveLienIA: model.lienIA ? true : false
-
-                        id: imageContainer
-                        width: parent.width
-                        height: parent.height * 0.8
-                        color: "transparent"
-                        anchors.horizontalCenter: parent.horizontalCenter
-
-                        EntryImage {
-                            id: entryImage
-                            modelData: model
-                        }
-
-                        // Afficher la vidéo si le type est "video"
-                        EntryVideo {
-                            id: entryVideo
-                            modelData: model
-                        }
-                        
-                        MouseArea {
-                            id: mouseArea
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            onEntered: overlay.visible = true
-                            onExited: overlay.visible = false
-                            Item {
-                                anchors.fill: parent
-                                id: overlay
-                                visible: false
-
-                                Row {
-                                    spacing: 5
-
-                                    Button {
-                                        text: qsTr("Change content")
-                                        visible: haveLienIA
-                                        onClicked: {
-                                            imageContainer.changeContent()
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        
-                        onHaveLienIAChanged: {
-                            if (haveLienIA) {
-                                imageContainer.changeContent()
-                            }
-                        }
-
-                        function changeContent() {
-                            switch (model.type) {
-                                case "image":
-                                    entryImage.isIAimage = !entryImage.isIAimage
-                                    break
-                                case "video":
-                                    entryVideo.isIAimage = !entryVideo.isIAimage
-                                    entryVideo.videoPlayer.play()
-                                    break
-                            }
-                        }
-                    }
-
-                    Text {
-                        id: iaPromptText
-                        text: model.prompt ? model.prompt : ""
-                        visible: model.prompt && model.prompt.length > 0
-                        font.pixelSize: parent.width / 25
-                        color: (colorManager?.getColorNoNotify("default") ?? "#000000")
-                        wrapMode: Text.Wrap
-                        horizontalAlignment: Text.AlignHCenter
-                        Layout.alignment: Qt.AlignHCenter
-                        width: parent.width - 20
-                    }
+                Entry {
+                    id: entry
+                    modelEntry: model
                 }
             }
 
