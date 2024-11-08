@@ -13,7 +13,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 from utils.file_explorer import open_file_explorer
 from utils.filepaths import get_base_config_dir, get_base_data_dir, create_config_dir, create_data_dir
 from utils.url_handler import is_image, is_video, is_live_video, is_url, download_file
-from models.traitement_ia import traitementPrompt, promptFiltre
+from models.traitement_ia import traitementPrompt, promptFiltre, PipelinePrompt
 from models.mediaModel import DatabaseManagerMedia
 
 class Backend(QObject):
@@ -21,12 +21,15 @@ class Backend(QObject):
     infoSent = Signal(str)
     promptEnter = Signal(str)
     sharedVariableChanged = Signal()
+    load = Signal(bool)
 
 
     def __init__(self, media_model: DatabaseManagerMedia, row):
         super().__init__()
         self.media_model = media_model
         self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True}
+        self.pipeline = PipelinePrompt()
+        self.pipeline.processingComplete.connect(self.on_processing_complete)
 
         if row == 0:
             self._shared_variable["Start"] = True
@@ -57,8 +60,8 @@ class Backend(QObject):
         else :
             if promptText != "":
                 promptfiltree = promptFiltre(promptText)
-                lien = traitementPrompt(self.fichier["lien"], promptfiltree, self.fichier["type"])
-                self.media_model.updateMediaItem(id = self.fichier["id"], file_path_ia=lien, prompt=promptText)
+                self.load.emit(True)
+                self.pipeline.start_processing(self.fichier["lien"], promptfiltree, self.fichier["type"])
     
     @Slot(str)
     def receiveFile(self, fileUrl):
@@ -73,7 +76,10 @@ class Backend(QObject):
         else:
             self.handle_file(file_path)
 
-    
+    def on_processing_complete(self, result, promptText):
+        self.media_model.updateMediaItem(id=self.fichier["id"], file_path_ia=result, prompt=promptText)
+        self.load.emit(False)
+
     def get_file_path(self, fileUrl):
         if fileUrl.startswith("file:///"):
             if sys.platform == 'win32':
