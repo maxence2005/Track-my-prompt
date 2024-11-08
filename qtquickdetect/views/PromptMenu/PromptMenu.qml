@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import "Show" as Show
+
 Rectangle {
     Connections {
         target: colorManager
@@ -62,7 +63,7 @@ Rectangle {
 
         PromptInput {
             id: promptInputComponent
-            Layout.alignment: Qt.AlignBottom
+            Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter
             Layout.preferredWidth: parent.width - 150
             Layout.minimumHeight: 80
             Layout.maximumHeight: 100

@@ -18,7 +18,6 @@ RowLayout {
     }
 
     id: promptRowLayout
-    anchors.horizontalCenter: parent.horizontalCenter
     width: parent.width
     height: 50
     spacing: 20

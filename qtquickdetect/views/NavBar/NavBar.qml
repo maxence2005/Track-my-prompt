@@ -17,12 +17,10 @@ Rectangle {
     height: parent.height
     color: (colorManager ? colorManager.getColorNoNotify("very_dark_gray") : "#000000")
 
-    Grid {
-        id: navBarGrid
+    Item {
+        id: navBarColumn
         width: parent.width
         height: parent.height
-        columns: 1
-        rows: 2
 
         UpperGrid {
             id: upperGrid
