@@ -61,7 +61,7 @@ class Backend(QObject):
             if promptText != "":
                 promptfiltree = promptFiltre(promptText)
                 self.load.emit(True)
-                self.pipeline.start_processing(self.fichier["lien"], promptfiltree, self.fichier["type"])
+                self.pipeline.start_processing(self.fichier["lien"], promptfiltree, self.fichier["type"], promptText)
     
     @Slot(str)
     def receiveFile(self, fileUrl):

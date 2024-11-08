@@ -24,6 +24,13 @@ ColumnLayout {
         color: "transparent"
         anchors.horizontalCenter: parent.horizontalCenter
 
+        Connections {
+            target: backend
+            function onLoad(visible) {
+                overlayImage.visible = visible
+            }
+        }
+
         EntryImage {
             id: entryImage
             modelData: modelEntry
@@ -59,6 +66,20 @@ ColumnLayout {
                 }
             }
         }
+
+        Item {
+            id: imageOverlay
+            width: gridView.cellWidth / 100
+            height: gridView.cellHeight / 100
+            anchors.centerIn: parent
+            AnimatedImage {
+                id: overlayImage
+                source: "../../imgs/chargement.gif"
+                anchors.centerIn: parent
+                visible: false
+                fillMode: Image.PreserveAspectFit
+            }
+        }
         
         onHaveLienIAChanged: {
             if (haveLienIA) {
@@ -67,6 +88,7 @@ ColumnLayout {
         }
 
         function changeContent() {
+            print(modelEntry.prompt)
             switch (modelEntry.type) {
                 case "image":
                     entryImage.isIAimage = !entryImage.isIAimage
