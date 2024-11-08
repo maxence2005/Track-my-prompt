@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import Qt5Compat.GraphicalEffects
 
 ColumnLayout {
     property var modelEntry
@@ -28,6 +29,7 @@ ColumnLayout {
             target: backend
             function onLoad(visible) {
                 overlayImage.visible = visible
+                blurEffect.visible = visible
             }
         }
 
@@ -67,6 +69,14 @@ ColumnLayout {
             }
         }
 
+        FastBlur {
+            id: blurEffect
+            visible: false
+            anchors.fill: parent
+            source: parent
+            radius: 1
+        }
+
         Item {
             id: imageOverlay
             width: gridView.cellWidth / 100
@@ -74,7 +84,7 @@ ColumnLayout {
             anchors.centerIn: parent
             AnimatedImage {
                 id: overlayImage
-                source: "../../imgs/chargement.gif"
+                source: "../../imgs/loading.gif"
                 anchors.centerIn: parent
                 visible: false
                 fillMode: Image.PreserveAspectFit
@@ -88,7 +98,6 @@ ColumnLayout {
         }
 
         function changeContent() {
-            print(modelEntry.prompt)
             switch (modelEntry.type) {
                 case "image":
                     entryImage.isIAimage = !entryImage.isIAimage
