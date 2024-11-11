@@ -125,7 +125,7 @@ Rectangle {
         color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
         background: Rectangle {
             id: searchFieldBackground
-            color: (colorManager?.getColorNoNotify("medium_gray") ?? "#888888")
+            color: (colorManager ? colorManager.getColorNoNotify("medium_gray") : "#888888")
             radius: 10
         }
         onTextChanged: databaseManager.set_search_text(searchField.text)

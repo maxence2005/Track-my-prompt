@@ -3,6 +3,9 @@ from PySide6.QtWidgets import QApplication, QFileDialog
 from ..utils import filepaths
 import shutil
 from pathlib import Path
+from ..models.encylo import EncyclopediaModel
+import json
+import zipfile
 
 class LanguageManager(QObject):
     newLanguage = Signal()
@@ -12,19 +15,37 @@ class LanguageManager(QObject):
     languages = {
         "English": ""
     }
+    
+    def check_structure(self, path):
+        good = True
+        if path.exists() and path.is_dir():
+            required_files = ["language.ts", "language.qm", "encyclopedia.json"]
+            for file_name in required_files:
+                file_path = path / file_name
+                if not file_path.exists():
+                    good = False
+                    break
+        else :
+            good = False
+        
+        return good
 
-    def __init__(self, app, engine, language="en"):
+    def __init__(self, app, engine, encyclo: EncyclopediaModel, language="en"):
         super().__init__()
         self.app = app
         self.engine = engine
         self.language = language
+        self.encyclopedia = encyclo
         filepaths.create_data_dir()
         path = filepaths.get_base_data_dir() / "languages"
         if path.exists() and path.is_dir():
-            for file in path.iterdir():
-                if file.is_file():
-                    if file.suffix == ".qm":
-                        self.languages[file.stem] = str(file)
+            for dir in path.iterdir():
+                if dir.is_dir() and self.check_structure(dir):
+                    self.languages[dir.stem] = str(dir)
+
+    def load_json_encyclopedia(self, path):
+        with open(path, 'r', encoding='utf-8') as file:
+            return json.load(file)
 
     @Property("QVariant", notify=newLanguage)
     def getLanguages(self):
@@ -33,7 +54,12 @@ class LanguageManager(QObject):
     @Slot(str)
     def setLanguage(self, language):
         if language:
-            self.translator.load(self.languages[language])
+            self.translator.load(self.languages[language] + "/language.qm")
+            if language == "English":
+                self.encyclopedia.restoreName()
+            else:
+                newEncyclopedia = self.load_json_encyclopedia(self.languages[language] + "/encyclopedia.json")
+                self.encyclopedia.changeName(newEncyclopedia)
             self.app.installTranslator(self.translator)
             self.engine.retranslate()
         else:
@@ -44,7 +70,7 @@ class LanguageManager(QObject):
         file_dialog = QFileDialog()
         file_dialog.setFileMode(QFileDialog.ExistingFiles)
         file_dialog.setNameFilter(
-            "Qm file (*.qm)")
+            "Track-My-Prompt Translation (*.tmpts)")
         file_dialog.setViewMode(QFileDialog.List)
 
         if file_dialog.exec():
@@ -52,7 +78,11 @@ class LanguageManager(QObject):
             if selected_files:
                 for file in selected_files:
                     if file:
-                        shutil.copy(file, filepaths.get_base_data_dir() / "languages")
-                        file_path = Path(file)
-                        self.languages[file_path.stem] = str(file_path)
+                        with zipfile.ZipFile(file, 'r') as zip_ref:
+                            extract_path = filepaths.get_base_data_dir() / "languages" / Path(file).stem
+                            zip_ref.extractall(extract_path)
+                            if self.check_structure(extract_path):
+                                self.languages[Path(file).stem] = str(extract_path)
+                            else:
+                                shutil.rmtree(extract_path)
                 self.newLanguage.emit()

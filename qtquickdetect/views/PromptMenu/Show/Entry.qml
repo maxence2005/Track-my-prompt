@@ -105,7 +105,7 @@ ColumnLayout {
         id: iaPromptText
         text: modelEntry.prompt ? modelEntry.prompt : ""
         font.pixelSize: parent.width / 25
-        color: (colorManager?.getColorNoNotify("default") ?? "#000000")
+        color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
         wrapMode: Text.Wrap
         horizontalAlignment: Text.AlignHCenter
         Layout.alignment: Qt.AlignHCenter
