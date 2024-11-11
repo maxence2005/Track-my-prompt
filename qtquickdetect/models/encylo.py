@@ -1,6 +1,7 @@
 import sqlite3
 import os
 from PySide6.QtCore import QObject, Signal, Slot, Property, QAbstractListModel, QModelIndex, Qt
+import copy
 
 # Définir le modèle QML pour les éléments de l'encyclopédie
 class EncyclopediaModel(QAbstractListModel):
@@ -49,7 +50,7 @@ class EncyclopediaModel(QAbstractListModel):
 
     def initialize_data(self, data):
         self.beginResetModel()
-        self._items_base = data
+        self._items_base = copy.deepcopy(data)
         self._items = data
         self._all_items = data
         self.endResetModel()
@@ -76,11 +77,10 @@ class EncyclopediaModel(QAbstractListModel):
         for oldName, newName in newDict.items():
             for i in range(len(self._items_base)):
                 if self._items_base[i]["englishName"] == oldName:
-                    self._items[i]["englishName"] = newName
+                    self._all_items[i]["englishName"] = newName
                     index = self.index(i)
                     self.dataChanged.emit(index, index, [self.NameRole])
                     break
-        self.update_data_bis(self._items)
         self.update_data_bis(self._all_items)
     
     def restoreName(self):
@@ -88,10 +88,9 @@ class EncyclopediaModel(QAbstractListModel):
         Restaure le nom anglais de l'élément de l'encyclopédie à son nom original.
         """
         for i in range(len(self._items_base)):
-            self._items[i]["englishName"] = self._items_base[i]["englishName"]
+            self._all_items[i]["englishName"] = self._items_base[i]["englishName"]
             index = self.index(i)
             self.dataChanged.emit(index, index, [self.NameRole])
-        self.update_data_bis(self._items_base)
         self.update_data_bis(self._all_items)
     
 

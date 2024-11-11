@@ -21,6 +21,13 @@ Rectangle {
         }
     }
 
+    Connections {
+        target: languageManager
+        function onLanguageChanged() {
+            searchField.text = ""
+        }
+    }
+
     id: headerRectangle
     property double progression: 0
     width: parent.width

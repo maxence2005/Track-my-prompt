@@ -64,6 +64,7 @@ class LanguageManager(QObject):
             self.engine.retranslate()
         else:
             self.app.removeTranslator(self.translator)
+        self.languageChanged.emit()
 
     @Slot()
     def install_new_language(self):
