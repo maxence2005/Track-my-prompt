@@ -92,6 +92,10 @@ class EncyclopediaModel(QAbstractListModel):
             index = self.index(i)
             self.dataChanged.emit(index, index, [self.NameRole])
         self.update_data_bis(self._all_items)
+
+    def get_all_names(self):
+        return {item["englishName"] for item in self._all_items}
+
     
 
 class DatabaseManager(QObject):

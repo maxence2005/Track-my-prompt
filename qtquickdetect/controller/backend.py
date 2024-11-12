@@ -13,7 +13,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 from utils.file_explorer import open_file_explorer
 from utils.filepaths import get_base_config_dir, get_base_data_dir, create_config_dir, create_data_dir
 from utils.url_handler import is_image, is_video, is_live_video, is_url, download_file
-from models.traitement_ia import traitementPrompt, promptFiltre, PipelinePrompt
+from pipeline.pipelinePrompt import PipelinePrompt
 from models.mediaModel import DatabaseManagerMedia
 
 class Backend(QObject):
@@ -21,13 +21,13 @@ class Backend(QObject):
     infoSent = Signal(str)
     promptEnter = Signal(str)
     sharedVariableChanged = Signal()
-    load = Signal(bool)
-
+    idChargementSignal = Signal()
 
     def __init__(self, media_model: DatabaseManagerMedia, row):
         super().__init__()
         self.media_model = media_model
-        self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True}
+        
+        self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Chargement" : False}
         self.pipeline = PipelinePrompt()
         self.pipeline.processingComplete.connect(self.on_processing_complete)
 
@@ -35,11 +35,13 @@ class Backend(QObject):
             self._shared_variable["Start"] = True
             self.start = True
             self.fichier = {"id": -1, "lien" : "", "type" : ""}
+            self._idChargement = None
         else :
             self._shared_variable["Start"] = False
             self.start = False
             tmp = self.media_model.get_last_media()
             self.fichier = {"id": tmp["id"], "lien" : tmp["lien"], "type" : tmp["type"]}
+            self._idChargement = tmp["id"]
         create_config_dir()
         create_data_dir()
 
@@ -53,15 +55,21 @@ class Backend(QObject):
             self._shared_variable = value
             self.sharedVariableChanged.emit()
 
+    @Property('QVariant', notify=idChargementSignal)
+    def idChargement(self):
+        return self._idChargement
+    
     @Slot(str)
     def receivePrompt(self, promptText):
         if self.fichier["lien"] == "" :
             self.infoSent.emit(f"Erreur : Aucune Image/video enregistrer.")
         else :
             if promptText != "":
-                promptfiltree = promptFiltre(promptText)
-                self.load.emit(True)
-                self.pipeline.start_processing(self.fichier["lien"], promptfiltree, self.fichier["type"], promptText)
+                self._shared_variable["Chargement"] = True
+                self._idChargement = self.fichier["id"]
+                self.sharedVariableChanged.emit()
+                self.idChargementSignal.emit()
+                self.pipeline.start_processing(self.fichier["lien"], self.fichier["type"], promptText)
     
     @Slot(str)
     def receiveFile(self, fileUrl):
@@ -78,7 +86,8 @@ class Backend(QObject):
 
     def on_processing_complete(self, result, promptText):
         self.media_model.updateMediaItem(id=self.fichier["id"], file_path_ia=result, prompt=promptText)
-        self.load.emit(False)
+        self._shared_variable["Chargement"] = False
+        self.sharedVariableChanged.emit()
 
     def get_file_path(self, fileUrl):
         if fileUrl.startswith("file:///"):
@@ -174,3 +183,4 @@ class Backend(QObject):
             self._shared_variable["Start"] = True
             self.sharedVariableChanged.emit()
         self.fichier = {"lien" : "", "type" : ""}
+    
