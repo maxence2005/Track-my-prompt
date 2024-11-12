@@ -174,3 +174,31 @@ class Backend(QObject):
             self._shared_variable["Start"] = True
             self.sharedVariableChanged.emit()
         self.fichier = {"lien" : "", "type" : ""}
+        
+    @Property(str, notify=sharedVariableChanged)
+    def getSizeOfHistory(self):
+        image_dir = get_base_data_dir() / "collections" / "image"
+        video_dir = get_base_data_dir() / "collections" / "video"
+        image_value = sum(f.stat().st_size for f in image_dir.glob('**/*') if f.is_file())
+        video_value = sum(f.stat().st_size for f in video_dir.glob('**/*') if f.is_file())
+        total_size = image_value + video_value
+        
+        for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
+            if total_size < 1024.0 or unit == 'TB':
+                return f"{total_size:.2f} {unit}"
+            total_size /= 1024.0
+    
+    @Slot()
+    def deleteHistory(self):
+        self.nouvelleDetection()
+        image_dir = get_base_data_dir() / "collections" / "image"
+        video_dir = get_base_data_dir() / "collections" / "video"
+        def delete_files(directory):
+            for file in directory.glob('**/*'):
+                if file.is_file():
+                    file.unlink()
+                if file.is_dir():
+                    shutil.rmtree(file)
+        delete_files(image_dir)
+        delete_files(video_dir)
+        self.sharedVariableChanged.emit()

@@ -26,7 +26,7 @@ Rectangle {
         id: backgroundParamRectangle
         width: parent.width
         height: parent.height
-        color: (colorManager ? colorManager.getColorNoNotify("very_dark_gray") : "#000000") // Couleur d'arrière-plan
+        color: (colorManager ? colorManager.getColorNoNotify("very_dark_gray") : "#000000") // Background color
 
         Rectangle {
             id: closeButtonContainer
@@ -35,11 +35,11 @@ Rectangle {
             anchors.top: parent.top
             anchors.right: parent.right
             anchors.margins: 10
-            color: "transparent" // Pas de couleur pour que la croix elle-même reste visible
+            color: "transparent" // No color so the cross itself remains visible
 
             Text {
                 id: closeButtonText
-                text: "✖" // Symbole de la croix
+                text: "✖" // Cross symbol
                 color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
                 font.pixelSize: 24
                 anchors.centerIn: parent
@@ -55,7 +55,7 @@ Rectangle {
         }
         Text {
             id: titleText
-            text: "Paramètres"
+            text: qsTr("Settings")
             font.pixelSize: 40
             color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
             anchors.horizontalCenter: parent.horizontalCenter
@@ -88,7 +88,7 @@ Rectangle {
 
                             Text {
                                 id: languageLabel
-                                text: "Langue de l'application"
+                                text: qsTr("Application Language")
                                 font.pixelSize: 20
                                 color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
                             }
@@ -105,7 +105,7 @@ Rectangle {
 
                         Button {
                             id: installLanguageButton
-                            text: "Installer un pack de langue"
+                            text: qsTr("Install a Language Pack")
                             width: 200
                             height: 40
                             onClicked: {
@@ -117,7 +117,7 @@ Rectangle {
                             id: historyLabelRow
                             Text {
                                 id: historyLabel
-                                text: "Historique"
+                                text: qsTr("History")
                                 font.pixelSize: 20
                                 color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
                             }
@@ -125,15 +125,19 @@ Rectangle {
 
                         Text {
                             id: historySizeText
-                            text: "L'historique prend actuellement {TODO: mettre place}."
+                            text: qsTr("The history currently takes up ") + backend.getSizeOfHistory
                             color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
                         }
 
                         Button {
                             id: clearHistoryButton
-                            text: "Supprimer l'historique"
+                            text: qsTr("Clear History")
                             width: 200
                             height: 40
+
+                            onClicked: {
+                                backend.deleteHistory()
+                            }
                         }
                     }
                 }
@@ -152,7 +156,7 @@ Rectangle {
                             id: expertModeLabelRow
                             Text {
                                 id: expertModeLabel
-                                text: "Mode expert"
+                                text: qsTr("Expert Mode")
                                 font.pixelSize: 20
                                 color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
                             }
@@ -166,13 +170,13 @@ Rectangle {
                                 indicator: Rectangle {
                                     width: 20
                                     height: 20
-                                    color: expertModeCheckBox.checked ? (colorManager ? colorManager.getColorNoNotify("black") : "#000000") : (colorManager ? colorManager.getColorNoNotify("default") : "#000000") // Change la couleur en fonction de l'état
+                                    color: expertModeCheckBox.checked ? (colorManager ? colorManager.getColorNoNotify("black") : "#000000") : (colorManager ? colorManager.getColorNoNotify("default") : "#000000") // Change color based on state
                                 }
                             }
 
                             Text {
                                 id: expertModeToggleText
-                                text: "Activer le mode expert"
+                                text: qsTr("Enable Expert Mode")
                                 color: "red"
                             }
                         }
