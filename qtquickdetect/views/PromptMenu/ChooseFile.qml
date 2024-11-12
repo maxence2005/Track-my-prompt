@@ -99,7 +99,7 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        backend.openFileExplorer(); // Call the method to open the file explorer
+                        backend.openFileExplorer(); // Select file in the file explorer
                     }
                 }
             }

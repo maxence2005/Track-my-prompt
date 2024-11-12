@@ -65,7 +65,6 @@ Rectangle {
         id: headerLabel
         text: qsTr("Encyclopedia")
         anchors.verticalCenter: progressBar.verticalCenter
-        anchors.bottom: progressBar.top
         anchors.bottomMargin: -75
         font.pixelSize: parent.width / 30
         color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
@@ -73,6 +72,8 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: 0
         Layout.alignment: Qt.AlignHCenter
+        anchors.top: headerRectangle.top
+        anchors.topMargin: 10
     }
 
     ProgressBar {
