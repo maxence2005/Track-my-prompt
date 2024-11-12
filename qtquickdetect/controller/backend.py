@@ -21,7 +21,7 @@ class Backend(QObject):
     infoSent = Signal(str)
     promptEnter = Signal(str)
     sharedVariableChanged = Signal()
-    load = Signal(bool)
+    load = Signal(bool, int)
 
 
     def __init__(self, media_model: DatabaseManagerMedia, row):
@@ -60,7 +60,7 @@ class Backend(QObject):
         else :
             if promptText != "":
                 promptfiltree = promptFiltre(promptText)
-                self.load.emit(True)
+                self.load.emit(True, self.fichier["id"])
                 self.pipeline.start_processing(self.fichier["lien"], promptfiltree, self.fichier["type"], promptText)
     
     @Slot(str)
@@ -78,7 +78,7 @@ class Backend(QObject):
 
     def on_processing_complete(self, result, promptText):
         self.media_model.updateMediaItem(id=self.fichier["id"], file_path_ia=result, prompt=promptText)
-        self.load.emit(False)
+        self.load.emit(False, self.fichier["id"])
 
     def get_file_path(self, fileUrl):
         if fileUrl.startswith("file:///"):

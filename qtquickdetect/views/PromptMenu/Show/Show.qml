@@ -26,6 +26,7 @@ Rectangle {
             snapMode: ListView.SnapToItem
             clip: true
             anchors.fill: parent
+            anchors.margins: 20
 
             // Ajout des propriétés pour un défilement plus fluide
             flickDeceleration: 1000
