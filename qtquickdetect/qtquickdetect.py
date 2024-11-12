@@ -64,7 +64,7 @@ def main():
     media_model = database_media
     backend = Backend(media_model, database_media._media_model.rowCount())
     color_manager = ColorManager("qtquickdetect/resources/themes.json", theme)
-    language_manager = LanguageManager(app=app, engine=engine)
+    language_manager = LanguageManager(app=app, engine=engine, encyclo=database_manager.encyclopediaModel)
 
     # Expose the backend to the QML context
     engine.rootContext().setContextProperty("mediaModel", database_media._media_model)

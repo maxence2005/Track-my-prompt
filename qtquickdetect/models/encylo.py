@@ -1,6 +1,7 @@
 import sqlite3
 import os
 from PySide6.QtCore import QObject, Signal, Slot, Property, QAbstractListModel, QModelIndex, Qt
+import copy
 
 # Définir le modèle QML pour les éléments de l'encyclopédie
 class EncyclopediaModel(QAbstractListModel):
@@ -10,8 +11,9 @@ class EncyclopediaModel(QAbstractListModel):
 
     def __init__(self, *args, **kwargs):
         super(EncyclopediaModel, self).__init__(*args, **kwargs)
+        self._items_base = []
         self._items = []
-        self._all_items = [] 
+        self._all_items = []
 
     def data(self, index, role):
         if not index.isValid() or not (0 <= index.row() < len(self._items)):
@@ -46,6 +48,13 @@ class EncyclopediaModel(QAbstractListModel):
             ]
             self.update_data_bis(filtered_items)
 
+    def initialize_data(self, data):
+        self.beginResetModel()
+        self._items_base = copy.deepcopy(data)
+        self._items = data
+        self._all_items = data
+        self.endResetModel()
+
     def update_data(self, data):
         self.beginResetModel()
         self._items = data
@@ -56,6 +65,33 @@ class EncyclopediaModel(QAbstractListModel):
         self.beginResetModel()
         self._items = data
         self.endResetModel()
+    
+    def changeName(self, newDict):
+        """
+        Change le nom anglais de l'élément de l'encyclopédie par un autre nom donné dans newDict.
+        Structure de newDict: {"oldName": "newName", "oldName2": "newName2", ...}
+
+        Args:
+            newDict (dict): Dictionnaire contenant les anciens noms et les nouveaux noms.
+        """
+        for oldName, newName in newDict.items():
+            for i in range(len(self._items_base)):
+                if self._items_base[i]["englishName"] == oldName:
+                    self._all_items[i]["englishName"] = newName
+                    index = self.index(i)
+                    self.dataChanged.emit(index, index, [self.NameRole])
+                    break
+        self.update_data_bis(self._all_items)
+    
+    def restoreName(self):
+        """
+        Restaure le nom anglais de l'élément de l'encyclopédie à son nom original.
+        """
+        for i in range(len(self._items_base)):
+            self._all_items[i]["englishName"] = self._items_base[i]["englishName"]
+            index = self.index(i)
+            self.dataChanged.emit(index, index, [self.NameRole])
+        self.update_data_bis(self._all_items)
     
 
 class DatabaseManager(QObject):
@@ -82,7 +118,7 @@ class DatabaseManager(QObject):
             # Debug: afficher les données chargées
 
             # Met à jour le modèle
-            self.model.update_data(data)
+            self.model.initialize_data(data)
             self.dataLoaded.emit()
             # Debug: afficher le contenu du modèle
 
