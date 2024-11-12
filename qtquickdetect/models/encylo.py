@@ -106,6 +106,7 @@ class DatabaseManager(QObject):
 
     @Slot()
     def load_data(self):
+        connection = None
         # Charge les données de la base de données
         try:
             connection = sqlite3.connect(self.db_path)
@@ -124,6 +125,7 @@ class DatabaseManager(QObject):
 
         except sqlite3.Error as e:
             print(f"Erreur lors de l'accès à la base de données: {e}")
+            raise
         finally:
             if connection:
                 connection.close()

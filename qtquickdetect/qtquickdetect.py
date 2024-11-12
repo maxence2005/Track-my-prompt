@@ -11,6 +11,7 @@ from PySide6.QtQml import QQmlApplicationEngine
 from .utils import filepaths
 from .controller.backend import Backend
 from .models.encylo import DatabaseManager
+from .models.historique import DatabaseManagerHistorique
 from .models.mediaModel import DatabaseManagerMedia
 from .controller.ColorManager import ColorManager
 from .controller.LanguageManager import LanguageManager
@@ -50,6 +51,8 @@ def main():
 
     try:
         database_manager = DatabaseManager(db_path)
+        database_manager_historique = DatabaseManagerHistorique(db_path)
+
         database_media = DatabaseManagerMedia(db_path)
     except Exception as e:
         print(f"Erreur lors de l'initialisation de DatabaseManager : {e}")
@@ -69,7 +72,10 @@ def main():
     # Expose the backend to the QML context
     engine.rootContext().setContextProperty("mediaModel", database_media._media_model)
     engine.rootContext().setContextProperty("databaseManager", database_manager)
+    engine.rootContext().setContextProperty("databaseManagerHistorique", database_manager_historique)
     engine.rootContext().setContextProperty("encyclopediaModel", database_manager.encyclopediaModel)
+    engine.rootContext().setContextProperty("historiqueModel", database_manager_historique.historiqueModel)
+
     engine.rootContext().setContextProperty("backend", backend)
     engine.rootContext().setContextProperty("colorManager", color_manager)
     engine.rootContext().setContextProperty("languageManager", language_manager)
