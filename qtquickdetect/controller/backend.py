@@ -150,7 +150,8 @@ class Backend(QObject):
         if file_dialog.exec():
             selected_files = file_dialog.selectedFiles()
             if selected_files:
-                self.receiveFile(selected_files[0])
+                for file in selected_files:
+                    self.receiveFile(file)
     @Slot()
     def toggle_menu(self):
         self._shared_variable["Menu"] = not self._shared_variable["Menu"]
