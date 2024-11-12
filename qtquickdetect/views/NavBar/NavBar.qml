@@ -26,12 +26,14 @@ Rectangle {
             id: upperGrid
         }
 
+        /*
         Historique {
             id: historique
             width: parent.width
             height: parent.height * 0.5  // 50% de la hauteur totale
         }
-
+        */
+        
         LowerGrid {
             id: lowerGrid
         }
