@@ -10,6 +10,10 @@ Rectangle {
     ScrollView {
         anchors.fill: parent
 
+        ScrollBar.vertical: ScrollBar {
+            policy: ScrollBar.AlwaysOff
+        }        
+
         GridView {
             id: gridView
             width: parent.width
