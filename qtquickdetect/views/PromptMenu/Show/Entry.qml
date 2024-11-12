@@ -25,14 +25,6 @@ ColumnLayout {
         color: "transparent"
         anchors.horizontalCenter: parent.horizontalCenter
 
-        Connections {
-            target: backend
-            function onLoad(visible) {
-                overlayImage.visible = visible
-                blurEffect.visible = visible
-            }
-        }
-
         EntryImage {
             id: entryImage
             modelData: modelEntry
@@ -71,7 +63,7 @@ ColumnLayout {
 
         FastBlur {
             id: blurEffect
-            visible: false
+            visible: (backend ? backend.shared_variable["Chargement"] : false) && (modelEntry.id == backend.idChargement)
             anchors.fill: parent
             source: parent
             radius: 1
@@ -86,7 +78,7 @@ ColumnLayout {
                 id: overlayImage
                 source: "../../imgs/loading.gif"
                 anchors.centerIn: parent
-                visible: false
+                visible: (backend ? backend.shared_variable["Chargement"] : false) && (modelEntry.id == backend.idChargement)
                 fillMode: Image.PreserveAspectFit
             }
         }
