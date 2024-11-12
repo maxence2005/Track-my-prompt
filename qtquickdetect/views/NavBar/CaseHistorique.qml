@@ -5,7 +5,7 @@ Rectangle {
     id: container
     width: 180
     height: 40
-    color: (colorManager?.getColorNoNotify("anthracite_gray") ?? "#000000")
+    color: (colorManager ? colorManager.getColorNoNotify("anthracite_gray") : "#000000")
     border.width: 1
     radius: 8
     anchors.horizontalCenter: parent.horizontalCenter
@@ -15,9 +15,9 @@ Rectangle {
         id: backgroundRectangle
         anchors.fill: parent
         property bool hovered: hoverArea.containsMouse
-        property color borderColor: colorManager?.getColorNoNotify("dark_bluish_gray") ?? "#000000"
+        property color borderColor: colorManager ? colorManager.getColorNoNotify("dark_bluish_gray") : "#000000"
 
-        color: hovered ? (colorManager?.getColor["dark_gray"] ?? "#333333") : "transparent"
+        color: hovered ? (colorManager ? colorManager.getColor["dark_gray"] : "#333333") : "transparent"
         border.color: borderColor
         border.width: 3
         radius: 8

@@ -167,6 +167,7 @@ Rectangle {
 
                             CheckBox {
                                 id: expertModeCheckBox
+                                enabled: false
                                 indicator: Rectangle {
                                     width: 20
                                     height: 20
@@ -176,7 +177,7 @@ Rectangle {
 
                             Text {
                                 id: expertModeToggleText
-                                text: qsTr("Enable Expert Mode")
+                                text: qsTr("Enable Expert Mode (Coming Soon)")
                                 color: "red"
                             }
                         }
