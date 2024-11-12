@@ -7,6 +7,7 @@ ColumnLayout {
     property var modelEntry
     anchors.leftMargin: 50
     anchors.fill: parent
+    Layout.alignment: Qt.AlignHCenter
 
     Connections {
         target: colorManager
@@ -23,7 +24,6 @@ ColumnLayout {
         width: parent.width
         height: parent.height * 0.8
         color: "transparent"
-        anchors.horizontalCenter: parent.horizontalCenter
 
         Connections {
             target: backend
@@ -79,8 +79,6 @@ ColumnLayout {
 
         Item {
             id: imageOverlay
-            width: gridView.cellWidth / 100
-            height: gridView.cellHeight / 100
             anchors.centerIn: parent
             AnimatedImage {
                 id: overlayImage

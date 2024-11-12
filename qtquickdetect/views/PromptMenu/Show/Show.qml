@@ -17,23 +17,28 @@ Rectangle {
             policy: ScrollBar.AlwaysOff
         }
 
-        GridView {
-            id: gridView
+        ListView {
+            id: listView
             width: parent.width
             height: parent.height
-            cellWidth: 500
-            cellHeight: 400
-            bottomMargin: 50
             model: mediaModel
+            orientation: ListView.Vertical
+            snapMode: ListView.SnapToItem
             clip: true
+            anchors.fill: parent
+
+            // Ajout des propriétés pour un défilement plus fluide
+            flickDeceleration: 1000
+            maximumFlickVelocity: 2500
 
             delegate: Item {
-                width: gridView.cellWidth
-                height: gridView.cellHeight
+                width: listView.width
+                height: listView.height
 
                 Entry {
                     id: entry
                     modelEntry: model
+                    anchors.fill: parent
                 }
             }
 
