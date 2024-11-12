@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 
 Rectangle {
     Connections {
@@ -17,19 +16,26 @@ Rectangle {
     height: parent.height
     color: (colorManager?.getColorNoNotify("very_dark_gray") ?? "#000000")
 
-    Grid {
-        id: navBarGrid
+    UpperGrid {
+        id: upperGrid
         width: parent.width
-        height: parent.height
-        columns: 1
-        rows: 2
+        height: parent.height * 0.2  // 20% de la hauteur totale
+        anchors.top: parent.top
+    }
 
-        UpperGrid {
-            id: upperGrid
-        }
+    Historique {
+        id: historique
+        width: parent.width
+        height: parent.height * 0.5  // 50% de la hauteur totale
+        anchors.top: upperGrid.bottom
+        anchors.topMargin: 0  // Assurez-vous qu'il n'y a pas de marge inutile
+    }
 
-        LowerGrid {
-            id: lowerGrid
-        }
+    LowerGrid {
+        id: lowerGrid
+        width: parent.width
+        height: parent.height * 0.3  // 30% de la hauteur totale
+        anchors.top: historique.bottom
+        anchors.topMargin: 0  // Assurez-vous qu'il n'y a pas de marge inutile
     }
 }
