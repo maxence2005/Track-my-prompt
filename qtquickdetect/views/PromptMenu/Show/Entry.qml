@@ -5,7 +5,8 @@ import Qt5Compat.GraphicalEffects
 
 ColumnLayout {
     property var modelEntry
-    anchors.leftMargin: 50
+    height: parent.height
+    width: parent.width
     anchors.fill: parent
 
     Connections {
@@ -20,10 +21,18 @@ ColumnLayout {
     Rectangle {
         property bool haveLienIA: modelEntry.lienIA ? true : false
         id: imageContainer
-        width: parent.width
-        height: parent.height * 0.8
+        Layout.fillWidth: true
+        Layout.fillHeight: true
         color: "transparent"
         anchors.horizontalCenter: parent.horizontalCenter
+
+        Connections {
+            target: backend
+            function onLoad(visible) {
+                overlayImage.visible = visible
+                blurEffect.visible = visible
+            }
+        }
 
         EntryImage {
             id: entryImage
@@ -36,26 +45,19 @@ ColumnLayout {
             modelData: modelEntry
         }
         
-        MouseArea {
-            id: mouseArea
+        Item {
             anchors.fill: parent
-            hoverEnabled: true
-            onEntered: overlay.visible = true
-            onExited: overlay.visible = false
-            Item {
-                anchors.fill: parent
-                id: overlay
-                visible: false
+            id: overlay
+            visible: true
 
-                Row {
-                    spacing: 5
+            Row {
+                spacing: 5
 
-                    Button {
-                        text: qsTr("Change content")
-                        visible: modelEntry.lienIA ? true : false
-                        onClicked: {
-                            imageContainer.changeContent()
-                        }
+                Button {
+                    text: qsTr("Change content")
+                    visible: modelEntry.lienIA ? true : false
+                    onClicked: {
+                        imageContainer.changeContent()
                     }
                 }
             }
@@ -71,15 +73,18 @@ ColumnLayout {
 
         Item {
             id: imageOverlay
-            width: gridView.cellWidth / 100
-            height: gridView.cellHeight / 100
             anchors.centerIn: parent
+            width: parent.width
+            height: parent.height
+            clip: true
             AnimatedImage {
                 id: overlayImage
                 source: "../../imgs/loading.gif"
                 anchors.centerIn: parent
                 visible: (backend ? backend.shared_variable["Chargement"] : false) && (modelEntry.id == backend.idChargement)
                 fillMode: Image.PreserveAspectFit
+                width: parent.width
+                height: parent.height
             }
         }
         
@@ -108,7 +113,6 @@ ColumnLayout {
         font.pixelSize: parent.width / 25
         color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
         wrapMode: Text.Wrap
-        horizontalAlignment: Text.AlignHCenter
         Layout.alignment: Qt.AlignHCenter
         width: parent.width - 20
     }
