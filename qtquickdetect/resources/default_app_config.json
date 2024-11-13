@@ -1,6 +1,6 @@
 {
-    "localization": "en",
-    "qss": "app",
+    "language": "English",
+    "style": "dark",
     "pipelines": {
         "Yolo Detect": "qtquickdetect.pipeline.yolo_detect_pipeline.YoloDetectPipeline",
         "Yolo Segment": "qtquickdetect.pipeline.yolo_segment_pipeline.YoloSegmentPipeline",

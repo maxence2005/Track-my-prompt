@@ -14,18 +14,16 @@ class AppConfig:
     ensuring the config values are valid, and providing default values if needed.
     """
 
-    def __init__(self):
+    def __init__(self, languages: dict):
         """
         Initializes the AppConfig instance, setting default values and loading
         configuration from the config file if it exists. Creates a config file
         with default values if it doesn't exist.
         """
-        self.localization: str = 'en'
-        self.qss: str = 'dark'
-        # pipeline_name: pipeline class
-        self.pipelines: dict[str, str] = {}
-        # model_name: {pipeline_name, task, model_builders: {model_builder: [weights]}}
-        self.models: dict[str, dict[str, str | dict[str, list[str]]]] = {}
+        self.language: str = 'English'
+        self.style: str = 'dark'
+        self.expertMode: bool = False
+        self.languages: dict = languages
 
         filepaths.create_config_dir()
         self.path: Path = filepaths.get_base_config_dir() / 'app_config.json'
@@ -71,15 +69,15 @@ class AppConfig:
         :return: True if any values were changed, False otherwise.
         """
         changed = False
-
-        if self.localization not in ['en', 'fr']:
-            logging.warning(f'Invalid localization in config: {self.localization}')
-            self.localization = 'en'
+        
+        if self.language not in self.languages.keys():
+            logging.warning(f'Invalid language in config: {self.language}')
+            self.language = 'English'
             changed = True
 
-        if self.qss not in ['dark', 'light', 'sys']:
-            logging.warning(f'Invalid qss in config: {self.qss}')
-            self.qss = 'dark'
+        if self.style not in ['dark', 'light']:
+            logging.warning(f'Invalid theme in config: {self.style}')
+            self.style = 'dark'
             changed = True
 
         return changed

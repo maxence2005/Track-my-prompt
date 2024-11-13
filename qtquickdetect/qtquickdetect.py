@@ -16,6 +16,7 @@ from .models.historique import DatabaseManagerHistorique
 from .models.mediaModel import DatabaseManagerMedia
 from .controller.ColorManager import ColorManager
 from .controller.LanguageManager import LanguageManager
+from .models.app_config import AppConfig
 
 
 def main():
@@ -69,13 +70,16 @@ def main():
     # Create an instance of QQmlApplicationEngine
     app = QApplication(sys.argv)
     engine = QQmlApplicationEngine()
+    language_manager = LanguageManager(app=app, engine=engine, encyclo=database_manager.encyclopediaModel)
+    app_config = AppConfig(language_manager.languages)
 
-    theme = "dark"
+    language_manager.setLanguage(app_config.language)
+    theme = app_config.style
 
     media_model = database_media
     backend = Backend(media_model, database_media._media_model.rowCount())
     color_manager = ColorManager("qtquickdetect/resources/themes.json", theme)
-    language_manager = LanguageManager(app=app, engine=engine, encyclo=database_manager.encyclopediaModel)
+    
 
     # Expose the backend to the QML context
     engine.rootContext().setContextProperty("mediaModel", database_media._media_model)
@@ -95,4 +99,10 @@ def main():
         sys.exit(-1)
 
     # Lancer la boucle d'événements de l'application
-    sys.exit(app.exec())
+    statut = app.exec()
+
+    app_config.style = color_manager.current_theme
+    app_config.language = language_manager.language
+    app_config.save()
+    sys.exit(statut)
+    
