@@ -30,7 +30,7 @@ class LanguageManager(QObject):
         
         return good
 
-    def __init__(self, app, engine, encyclo: EncyclopediaModel, language="en"):
+    def __init__(self, app, engine, encyclo: EncyclopediaModel, language="English"):
         super().__init__()
         self.app = app
         self.engine = engine
@@ -53,7 +53,8 @@ class LanguageManager(QObject):
 
     @Slot(str)
     def setLanguage(self, language):
-        if language:
+        if language in self.languages.keys():
+            self.language = language
             self.translator.load(self.languages[language] + "/language.qm")
             if language == "English":
                 self.encyclopedia.restoreName()
