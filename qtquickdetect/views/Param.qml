@@ -143,94 +143,102 @@ Rectangle {
                 }
 
                 Rectangle {
-                    id: expertModeContainer
-                    width: 200
-                    height: 200
-                    color: "transparent"
-
-                    Column {
-                        id: expertModeColumn
-                        spacing: 20
-
-                        Row {
-                            id: expertModeLabelRow
-                            Text {
-                                id: expertModeLabel
-                                text: qsTr("Expert Mode")
-                                font.pixelSize: 20
-                                color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
-                            }
-                        }
-
-                        Row {
-                            id: expertModeToggleRow
-
-                            CheckBox {
-                                id: expertModeCheckBox
-                                enabled: false
-                                indicator: Rectangle {
-                                    width: 20
-                                    height: 20
-                                    color: expertModeCheckBox.checked ? (colorManager ? colorManager.getColorNoNotify("black") : "#000000") : (colorManager ? colorManager.getColorNoNotify("default") : "#000000") // Change color based on state
-                                }
-                            }
-
-                            Text {
-                                id: expertModeToggleText
-                                text: qsTr("Enable Expert Mode (Coming Soon)")
-                                color: "red"
-                            }
-                        }
-                    }
-                }
-
-                Rectangle {
-                    id: promptInterpreterContainer
                     width: 300
                     height: 200
                     color: "transparent"
-
                     Column {
-                        id: promptInterpreterColumn
-                        spacing: 20
 
-                        Text {
-                            id: promptInterpreterLabel
-                            text: qsTr("Changer l'interpréteur de prompt")
-                            font.pixelSize: 20
-                            color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
-                        }
+                        Rectangle {
+                            id: expertModeContainer
+                            width: 200
+                            height: 100
+                            color: "transparent"
 
-                        ComboBox {
-                            id: promptInterpreterComboBox
-                            model: ListModel {
-                                ListElement { elementId: "dumb"; name: qsTr("Dumb") }
-                                ListElement { elementId: "mistral"; name: "Mistral" }
-                            }
-                            width: 100
-                            textRole: "name"
-                            onActivated: {
-                                var selectedItem = promptInterpreterComboBox.model.get(promptInterpreterComboBox.currentIndex);
-                                var selectedId = selectedItem.elementId;
-                                backend.change_prompt_recognition(selectedId, "");
-                                if (selectedId === "mistral") {
-                                    promptInterpreterApiKeyField.visible = true;
-                                } else {
-                                    promptInterpreterApiKeyField.visible = false;
+                            Column {
+                                id: expertModeColumn
+                                spacing: 20
+
+                                Row {
+                                    id: expertModeLabelRow
+                                    Text {
+                                        id: expertModeLabel
+                                        text: qsTr("Expert Mode")
+                                        font.pixelSize: 20
+                                        color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
+                                    }
+                                }
+
+                                Row {
+                                    id: expertModeToggleRow
+
+                                    CheckBox {
+                                        id: expertModeCheckBox
+                                        enabled: false
+                                        indicator: Rectangle {
+                                            width: 20
+                                            height: 20
+                                            color: expertModeCheckBox.checked ? (colorManager ? colorManager.getColorNoNotify("black") : "#000000") : (colorManager ? colorManager.getColorNoNotify("default") : "#000000") // Change color based on state
+                                        }
+                                    }
+
+                                    Text {
+                                        id: expertModeToggleText
+                                        text: qsTr("Enable Expert Mode (Coming Soon)")
+                                        color: "red"
+                                    }
                                 }
                             }
                         }
 
-                        TextField {
-                            id: promptInterpreterApiKeyField
-                            placeholderText: qsTr("Mistral API Key")
-                            visible: false
+                        Rectangle {
+                            id: promptInterpreterContainer
                             width: 200
+                            height: 100
+                            color: "transparent"
 
-                            onEditingFinished: {
-                                var selectedItem = promptInterpreterComboBox.model.get(promptInterpreterComboBox.currentIndex);
-                                var selectedId = selectedItem.elementId;
-                                backend.change_prompt_recognition(selectedId, text)
+                            Column {
+                                id: promptInterpreterColumn
+                                spacing: 20
+
+                                Text {
+                                    id: promptInterpreterLabel
+                                    text: qsTr("Change the prompt interpreter")
+                                    font.pixelSize: 20
+                                    color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
+                                }
+
+                                ComboBox {
+                                    id: promptInterpreterComboBox
+                                    model: ListModel {
+                                        ListElement { elementId: "dumb"; name: qsTr("Dumb") }
+                                        ListElement { elementId: "mistral"; name: "Mistral" }
+                                    }
+                                    width: 100
+                                    textRole: "name"
+                                    onActivated: {
+                                        var selectedItem = promptInterpreterComboBox.model.get(promptInterpreterComboBox.currentIndex);
+                                        var selectedId = selectedItem.elementId;
+                                        backend.change_prompt_recognition(selectedId, "");
+                                        if (selectedId === "mistral") {
+                                            promptInterpreterApiKeyField.visible = true;
+                                        } else {
+                                            promptInterpreterApiKeyField.visible = false;
+                                        }
+                                    }
+                                }
+
+                                TextField {
+                                    id: promptInterpreterApiKeyField
+                                    placeholderText: qsTr("Mistral API Key")
+                                    visible: false
+                                    width: 200
+
+                                    onEditingFinished: {
+                                        var selectedItem = promptInterpreterComboBox.model.get(promptInterpreterComboBox.currentIndex);
+                                        var selectedId = selectedItem.elementId;
+                                        backend.change_prompt_recognition(selectedId, text)
+                                    }
+                                }
                             }
                         }
                     }
