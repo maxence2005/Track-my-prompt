@@ -203,18 +203,35 @@ Rectangle {
 
                         ComboBox {
                             id: promptInterpreterComboBox
-                            model: ["Idiot", "Mistral"]
+                            model: ListModel {
+                                ListElement { elementId: "dumb"; name: qsTr("Dumb") }
+                                ListElement { elementId: "mistral"; name: "Mistral" }
+                            }
                             width: 100
+                            textRole: "name"
                             onActivated: {
-                                promptInterpreterApiKeyField.visible = (promptInterpreterComboBox.currentText === "Mistral")
+                                var selectedItem = promptInterpreterComboBox.model.get(promptInterpreterComboBox.currentIndex);
+                                var selectedId = selectedItem.elementId;
+                                backend.change_prompt_recognition(selectedId, "");
+                                if (selectedId === "mistral") {
+                                    promptInterpreterApiKeyField.visible = true;
+                                } else {
+                                    promptInterpreterApiKeyField.visible = false;
+                                }
                             }
                         }
 
                         TextField {
                             id: promptInterpreterApiKeyField
-                            placeholderText: "api_key"
+                            placeholderText: qsTr("Mistral API Key")
                             visible: false
                             width: 200
+
+                            onEditingFinished: {
+                                var selectedItem = promptInterpreterComboBox.model.get(promptInterpreterComboBox.currentIndex);
+                                var selectedId = selectedItem.elementId;
+                                backend.change_prompt_recognition(selectedId, text)
+                            }
                         }
                     }
                 }

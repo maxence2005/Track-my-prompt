@@ -18,7 +18,10 @@ class Worker(QObject):
 
     def run_task(self):
         if self._is_running:
-            classes = promptFiltre(self.prompt, self.method, self.api_key)
+            try:
+                classes = promptFiltre(self.prompt, self.method, self.api_key)
+            except ValueError as e:
+                pass # TODO: handle error
             result = traitementPrompt(self.filePath, classes, self.typ)
             self.resultReady.emit(result)
 

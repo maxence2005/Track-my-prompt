@@ -25,7 +25,7 @@ def promptFiltre(phrase: str, method: str, api_key:str = "") -> list:
     elif method == "mistral":
         return traitement_mistral(phrase, api_key)
     else:
-        raise ValueError("Invalid method")
+        raise ValueError(f"Invalid method : must be 'dumb' or 'mistral' but got {method}")
 
 def traitement_dumb(phrase):
     nltk_file = get_base_data_dir() / 'nltk'

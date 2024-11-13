@@ -62,7 +62,9 @@ class Backend(QObject):
     @Slot(str)
     def receivePrompt(self, promptText):
         if self.fichier["lien"] == "" :
-            self.infoSent.emit(f"Erreur : Aucune Image/video enregistrer.")
+            self.infoSent.emit("Erreur : Aucune Image/video enregistrer.")
+        if self._shared_variable["prompt_ia"] == "mistral" and self._shared_variable["api_key_mistral"] == "":
+            self.infoSent.emit("Erreur : Veuillez renseigner une clé API pour Mistral.")
         else :
             if promptText != "":
                 self._shared_variable["Chargement"] = True
@@ -72,7 +74,7 @@ class Backend(QObject):
                 self.pipeline.start_processing(self.fichier["lien"], self.fichier["type"], promptText, self._shared_variable["prompt_ia"], self._shared_variable["api_key_mistral"])
     
     @Slot(str, str)
-    def change_prompt_recognition(self, prompt_ia, api_key_mistral):
+    def change_prompt_recognition(self, prompt_ia, api_key_mistral = ""):
         self._shared_variable["prompt_ia"] = prompt_ia
         self._shared_variable["api_key_mistral"] = api_key_mistral
         self.sharedVariableChanged.emit()
