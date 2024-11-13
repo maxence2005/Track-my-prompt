@@ -125,7 +125,7 @@ Rectangle {
 
                         Text {
                             id: historySizeText
-                            text: qsTr("The history currently takes up ") + backend.getSizeOfHistory
+                            text: qsTr("The history currently takes up ") + backend ? backend.getSizeOfHistory : "0B"
                             color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
                         }
 

@@ -26,14 +26,6 @@ ColumnLayout {
         color: "transparent"
         anchors.horizontalCenter: parent.horizontalCenter
 
-        Connections {
-            target: backend
-            function onLoad(visible) {
-                overlayImage.visible = visible
-                blurEffect.visible = visible
-            }
-        }
-
         EntryImage {
             id: entryImage
             modelData: modelEntry
