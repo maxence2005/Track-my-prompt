@@ -75,9 +75,11 @@ def main():
 
     language_manager.setLanguage(app_config.language)
     theme = app_config.style
-
+    ia_method = "dumb"
+    api_key = ""
+    
     media_model = database_media
-    backend = Backend(media_model, database_media._media_model.rowCount())
+    backend = Backend(media_model, database_media._media_model.rowCount(), ia_method, api_key)
     color_manager = ColorManager("qtquickdetect/resources/themes.json", theme)
     
 

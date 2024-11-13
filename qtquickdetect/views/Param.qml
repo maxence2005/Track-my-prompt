@@ -183,6 +183,41 @@ Rectangle {
                         }
                     }
                 }
+
+                Rectangle {
+                    id: promptInterpreterContainer
+                    width: 300
+                    height: 200
+                    color: "transparent"
+
+                    Column {
+                        id: promptInterpreterColumn
+                        spacing: 20
+
+                        Text {
+                            id: promptInterpreterLabel
+                            text: qsTr("Changer l'interpréteur de prompt")
+                            font.pixelSize: 20
+                            color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
+                        }
+
+                        ComboBox {
+                            id: promptInterpreterComboBox
+                            model: ["Idiot", "Mistral"]
+                            width: 100
+                            onActivated: {
+                                promptInterpreterApiKeyField.visible = (promptInterpreterComboBox.currentText === "Mistral")
+                            }
+                        }
+
+                        TextField {
+                            id: promptInterpreterApiKeyField
+                            placeholderText: "api_key"
+                            visible: false
+                            width: 200
+                        }
+                    }
+                }
             }
         }
     }

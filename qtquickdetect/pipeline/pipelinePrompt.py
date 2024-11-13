@@ -7,16 +7,18 @@ from PySide6.QtCore import QObject, Signal, Slot, QThread
 class Worker(QObject):
     resultReady = Signal(str)
 
-    def __init__(self, filePath, promptText="", typ="image", parent=None):
+    def __init__(self, filePath, promptText="", typ="image", parent=None, method="dumb", api_key=""):
         super().__init__(parent)
         self.filePath = filePath
         self.prompt = promptText
         self.typ = typ
         self._is_running = True
+        self.method = method
+        self.api_key = api_key
 
     def run_task(self):
         if self._is_running:
-            classes = promptFiltre(self.prompt)
+            classes = promptFiltre(self.prompt, self.method, self.api_key)
             result = traitementPrompt(self.filePath, classes, self.typ)
             self.resultReady.emit(result)
 
@@ -34,9 +36,9 @@ class PipelinePrompt(QObject):
         self.promptText = None
 
     @Slot(str, list, str, str)
-    def start_processing(self, filePath, typ="image", promptText=""):
+    def start_processing(self, filePath, typ="image", promptText="", method="dumb", api_key=""):
         self.thread = QThread()
-        self.worker = Worker(filePath, promptText, typ)
+        self.worker = Worker(filePath, promptText, typ, method=method, api_key=api_key)
         self.promptText = promptText
         # Connecter le signal du worker au signal du pipeline
         self.worker.resultReady.connect(self.on_processing_complete)
