@@ -7,12 +7,6 @@ Rectangle {
         function onThemeChanged() {
             colorManager.animateColorChange([
                 [backgroundParamRectangle, "color", "very_dark_gray"],
-                [closeButtonText, "color", "default"],
-                [titleText, "color", "default"],
-                [languageLabel, "color", "default"],
-                [historyLabel, "color", "default"],
-                [historySizeText, "color", "default"],
-                [expertModeLabel, "color", "default"]
             ])
         }
     }
@@ -28,43 +22,11 @@ Rectangle {
         height: parent.height
         color: (colorManager ? colorManager.getColorNoNotify("very_dark_gray") : "#000000") // Background color
 
-        Rectangle {
-            id: closeButtonContainer
-            width: 30
-            height: 30
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.margins: 10
-            color: "transparent" // No color so the cross itself remains visible
-
-            Text {
-                id: closeButtonText
-                text: "✖" // Cross symbol
-                color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
-                font.pixelSize: 24
-                anchors.centerIn: parent
-            }
-
-            MouseArea {
-                id: closeButtonMouseArea
-                anchors.fill: parent
-                onClicked: {
-                    closeButtonMouseArea.forceActiveFocus();
-                    backend.toggle_param();
-                }
-            }
-        }
-        Text {
-            id: titleText
-            text: qsTr("Settings")
-            font.pixelSize: 40
-            color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: 20
-        }
-
+        CloseButton { }
+        TitleText { }
         Column {
+            property int separatorHeight: 20
+
             id: allSettingsColumn
             anchors.centerIn: parent
             spacing: 20
@@ -73,203 +35,28 @@ Rectangle {
                 id: settingsRow
                 spacing: 50
 
-                Rectangle {
-                    id: languageSettingsContainer
-                    width: 300
-                    height: 200
-                    color: "transparent"
-
-                    Column {
-                        id: languageSettingsColumn
-                        spacing: 20
-
-                        Row {
-                            id: languageRow
-                            spacing: 10
-
-                            Text {
-                                id: languageLabel
-                                text: qsTr("Application Language")
-                                font.pixelSize: 20
-                                color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
-                            }
-
-                            ComboBox {
-                                id: languageComboBox
-                                model: languageManager ? languageManager.getLanguages : []
-                                width: 100
-                                onActivated : {
-                                    languageManager.setLanguage(languageComboBox.currentText)
-                                }
-                            }
-                            Component.onCompleted: {
-                                var currentLanguage = languageManager.getCurrentLanguage;
-                                for (var i = 0; i < languageComboBox.count; i++) {
-                                    if (languageComboBox.model[i] === currentLanguage) {
-                                        languageComboBox.currentIndex = i;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-
-                        Button {
-                            id: installLanguageButton
-                            text: qsTr("Install a Language Pack")
-                            width: 200
-                            height: 40
-                            onClicked: {
-                                languageManager.install_new_language()
-                            }
-                        }
-
-                        Row {
-                            id: historyLabelRow
-                            Text {
-                                id: historyLabel
-                                text: qsTr("History")
-                                font.pixelSize: 20
-                                color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
-                            }
-                        }
-
-                        Text {
-                            id: historySizeText
-                            text: qsTr("The history currently takes up ") + (backend ? backend.getSizeOfHistory : "0B")
-                            color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
-                        }
-
-                        Button {
-                            id: clearHistoryButton
-                            text: qsTr("Clear History")
-                            width: 200
-                            height: 40
-
-                            onClicked: {
-                                backend.deleteHistory()
-                            }
-                        }
+                Column {
+                    spacing: 20
+                    LanguageSettings { }
+                    
+                    Rectangle {
+                        height: allSettingsColumn.separatorHeight
+                        width: 1
+                        color: "transparent"
                     }
+                    
+                    HistorySettings { }
                 }
+                Column {
+                    ExpertModeSettings { }
 
-                Rectangle {
-                    width: 300
-                    height: 200
-                    color: "transparent"
-                    Column {
-
-                        Rectangle {
-                            id: expertModeContainer
-                            width: 200
-                            height: 100
-                            color: "transparent"
-
-                            Column {
-                                id: expertModeColumn
-                                spacing: 20
-
-                                Row {
-                                    id: expertModeLabelRow
-                                    Text {
-                                        id: expertModeLabel
-                                        text: qsTr("Expert Mode")
-                                        font.pixelSize: 20
-                                        color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
-                                    }
-                                }
-
-                                Row {
-                                    id: expertModeToggleRow
-
-                                    CheckBox {
-                                        id: expertModeCheckBox
-                                        enabled: false
-                                        indicator: Rectangle {
-                                            width: 20
-                                            height: 20
-                                            color: expertModeCheckBox.checked ? (colorManager ? colorManager.getColorNoNotify("black") : "#000000") : (colorManager ? colorManager.getColorNoNotify("default") : "#000000") // Change color based on state
-                                        }
-                                    }
-
-                                    Text {
-                                        id: expertModeToggleText
-                                        text: qsTr("Enable Expert Mode (Coming Soon)")
-                                        color: "red"
-                                    }
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            id: promptInterpreterContainer
-                            width: 200
-                            height: 100
-                            color: "transparent"
-
-                            Column {
-                                id: promptInterpreterColumn
-                                spacing: 20
-
-                                Text {
-                                    id: promptInterpreterLabel
-                                    text: qsTr("Change the prompt interpreter")
-                                    font.pixelSize: 20
-                                    color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
-                                }
-
-                                ComboBox {
-                                    id: promptInterpreterComboBox
-                                    model: ListModel {
-                                        ListElement { elementId: "dumb"; name: qsTr("Dumb") }
-                                        ListElement { elementId: "mistral"; name: "Mistral" }
-                                    }
-                                    width: 100
-                                    textRole: "name"
-                                    onActivated: {
-                                        var selectedItem = promptInterpreterComboBox.model.get(promptInterpreterComboBox.currentIndex);
-                                        var selectedId = selectedItem.elementId;
-                                        backend.change_prompt_recognition(selectedId, "");
-                                        verifyMistralField(selectedId);
-                                    }
-                                }
-
-                                TextField {
-                                    id: promptInterpreterApiKeyField
-                                    placeholderText: qsTr("Mistral API Key")
-                                    text: backend ? backend.shared_variable["api_key_mistral"] : ""
-                                    visible: false
-                                    width: 200
-                                    echoMode: TextInput.PasswordEchoOnEdit
-
-                                    onEditingFinished: {
-                                        var selectedItem = promptInterpreterComboBox.model.get(promptInterpreterComboBox.currentIndex);
-                                        var selectedId = selectedItem.elementId;
-                                        backend.change_prompt_recognition(selectedId, text)
-                                    }
-                                }
-
-                                Component.onCompleted: {
-                                    var currentPromptInterpreter = backend.shared_variable["prompt_ia"];
-                                    for (var i = 0; i < promptInterpreterComboBox.count; i++) {
-                                        var item = promptInterpreterComboBox.model.get(i);
-                                        if (item.elementId === currentPromptInterpreter) {
-                                            promptInterpreterComboBox.currentIndex = i;
-                                            break;
-                                        }
-                                    }
-                                    verifyMistralField(item.elementId);
-                                }
-
-                                function verifyMistralField(id) {
-                                    if (id === "mistral") {
-                                        promptInterpreterApiKeyField.visible = true;
-                                    } else {
-                                        promptInterpreterApiKeyField.visible = false;
-                                    }
-                                }
-                            }
-                        }
+                    Rectangle {
+                        height: allSettingsColumn.separatorHeight
+                        width: 1
+                        color: "transparent"
                     }
+
+                    PromptInterpreterSettings { }
                 }
             }
         }

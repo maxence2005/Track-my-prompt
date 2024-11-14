@@ -8,7 +8,8 @@ import QtQuick
 import QtQuick.Controls
 import "PromptMenu" as PromptMenu
 import "NavBar" as NavBar
-import "Encyclopedie" as  Encyclopedie
+import "Encyclopedie" as Encyclopedie
+import "Settings" as Settings
 import Qt5Compat.GraphicalEffects
 
 Rectangle {
@@ -68,7 +69,7 @@ Rectangle {
         radius: 50
     }
 
-    Param {
+    Settings.Param {
         id: param
         visible: (backend ? backend.shared_variable["settingsMenuShowed"] : false)
         anchors.horizontalCenter: parent.horizontalCenter
