@@ -24,6 +24,8 @@ class AppConfig:
         self.style: str = 'dark'
         self.expertMode: bool = False
         self.languages: dict = languages
+        self.prompt_interpreter: str = 'dumb'
+        self.api_key: str = ''
 
         filepaths.create_config_dir()
         self.path: Path = filepaths.get_base_config_dir() / 'app_config.json'
@@ -78,6 +80,11 @@ class AppConfig:
         if self.style not in ['dark', 'light']:
             logging.warning(f'Invalid theme in config: {self.style}')
             self.style = 'dark'
+            changed = True
+        
+        if self.prompt_interpreter not in ['dumb', 'mistral']:
+            logging.warning(f'Invalid prompt interpreter in config: {self.prompt_interpreter}')
+            self.prompt_interpreter = 'dumb'
             changed = True
 
         return changed

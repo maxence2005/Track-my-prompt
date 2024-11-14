@@ -75,8 +75,8 @@ def main():
 
     language_manager.setLanguage(app_config.language)
     theme = app_config.style
-    ia_method = "dumb"
-    api_key = ""
+    ia_method = app_config.prompt_interpreter
+    api_key = app_config.api_key
     
     media_model = database_media
     backend = Backend(media_model, database_media._media_model.rowCount(), ia_method, api_key)
@@ -105,6 +105,8 @@ def main():
 
     app_config.style = color_manager.current_theme
     app_config.language = language_manager.language
+    app_config.prompt_interpreter = backend.shared_variable["prompt_ia"]
+    app_config.api_key = backend.shared_variable["api_key_mistral"]
     app_config.save()
     sys.exit(statut)
     
