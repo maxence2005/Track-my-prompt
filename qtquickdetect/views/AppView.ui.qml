@@ -12,6 +12,15 @@ import "Encyclopedie" as  Encyclopedie
 import Qt5Compat.GraphicalEffects
 
 Rectangle {
+    property var mediaModel: appContext.mediaModel
+    property var databaseManager: appContext.databaseManager
+    property var databaseManagerHistorique: appContext.databaseManagerHistorique
+    property var encyclopediaModel: appContext.encyclopediaModel
+    property var historiqueModel: appContext.historiqueModel
+    property var backend: appContext.backend
+    property var colorManager: appContext.colorManager
+    property var languageManager: appContext.languageManager
+
     anchors.fill: parent  // Remplit l'espace du parent
     
     Component {
