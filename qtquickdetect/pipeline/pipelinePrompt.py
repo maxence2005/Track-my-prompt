@@ -70,7 +70,7 @@ class PipelinePrompt(QObject):
     @Slot(str)
     def on_error_occurred(self, error):
         """Réceptionne les erreurs et émet un signal vers le thread principal."""
-        self.processingComplete.emit(error, self.promptText)
+        self.processingComplete.emit(None, None)
         if error == "prompt":
             self.infoSentSignal.emit("Erreur lors du traitement du prompt, essayez de réessayer, vérifier votre connexion internet, réecrire le prompt, vérifier votre clé API ou changer de méthode.")
         self.stop_processing()
