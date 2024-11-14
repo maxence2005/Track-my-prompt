@@ -10,6 +10,7 @@ from PySide6.QtWidgets import QApplication
 from PySide6.QtQml import QQmlApplicationEngine
 # from models.app_state import AppState
 from .utils import filepaths
+from .models.imageProvider import ImageProvider
 from .controller.backend import Backend
 from .models.encylo import DatabaseManager
 from .models.historique import DatabaseManagerHistorique
@@ -77,7 +78,8 @@ def main():
     theme = app_config.style
 
     media_model = database_media
-    backend = Backend(media_model, database_media._media_model.rowCount())
+    frame_provider = ImageProvider()
+    backend = Backend(media_model, database_media._media_model.rowCount(), frame_provider)
     color_manager = ColorManager("qtquickdetect/resources/themes.json", theme)
     
 
@@ -91,6 +93,8 @@ def main():
     engine.rootContext().setContextProperty("backend", backend)
     engine.rootContext().setContextProperty("colorManager", color_manager)
     engine.rootContext().setContextProperty("languageManager", language_manager)
+
+    engine.addImageProvider("frameProvider", frame_provider)
 
     # Load the QML file
     engine.load(QUrl("qtquickdetect/views/App.qml"))

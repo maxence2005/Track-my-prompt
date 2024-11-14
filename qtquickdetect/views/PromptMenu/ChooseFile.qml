@@ -91,6 +91,12 @@ Rectangle {
             IconRectangle {
                 id: camIcon
                 imageSource: "../imgs/cam.svg"
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        backend.toggle_camera();
+                    }
+                }
             }
 
             IconRectangle {

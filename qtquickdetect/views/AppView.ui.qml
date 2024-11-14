@@ -34,7 +34,7 @@ Rectangle {
             width: parent.width * 0.2
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            enabled: (backend ? !backend.shared_variable["settingsMenuShowed"] : true) && (backend ? !backend.shared_variable["Erreur"] : true)
+            enabled: (backend ? !backend.shared_variable["settingsMenuShowed"] : true) && (backend ? !backend.shared_variable["Erreur"] : true) && (backend ? !backend.shared_variable["Camera"] : true)
         }
 
         Loader {
@@ -42,7 +42,7 @@ Rectangle {
             width: parent.width * 0.8
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            enabled: (backend ? !backend.shared_variable["settingsMenuShowed"] : true) && (backend ? !backend.shared_variable["Erreur"] : true)
+            enabled: (backend ? !backend.shared_variable["settingsMenuShowed"] : true) && (backend ? !backend.shared_variable["Erreur"] : true) && (backend ? !backend.shared_variable["Camera"] : true)
             sourceComponent: (backend ? (backend.shared_variable["Menu"] ? promptMenuComponent : encyclopedie) : promptMenuComponent )
         }
     }
@@ -52,7 +52,7 @@ Rectangle {
         id: interactionBlocker
         color: "transparent"
         anchors.fill: parent
-        visible: (backend ? backend.shared_variable["settingsMenuShowed"] : false) || (backend ? backend.shared_variable["Erreur"] : false)
+        visible: (backend ? backend.shared_variable["settingsMenuShowed"] : false) || (backend ? backend.shared_variable["Erreur"] : false) || (backend ? backend.shared_variable["Camera"] : false)
         MouseArea {
             anchors.fill: parent
             enabled: true
@@ -62,7 +62,7 @@ Rectangle {
 
     FastBlur {
         id: blurEffect
-        visible: (backend ? backend.shared_variable["settingsMenuShowed"] : false ) || (backend ? backend.shared_variable["Erreur"] : false)
+        visible: (backend ? backend.shared_variable["settingsMenuShowed"] : false ) || (backend ? backend.shared_variable["Erreur"] : false) || (backend ? backend.shared_variable["Camera"] : false)
         anchors.fill: parent
         source: appView
         radius: 50
@@ -85,4 +85,14 @@ Rectangle {
         width: parent.width * 0.8
         height: parent.height * 0.8
     }
+
+    WebCam {
+        id: webcam
+        visible: (backend ? backend.shared_variable["Camera"] : false)
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        width: parent.width * 0.8
+        height: parent.height * 0.8
+    }
+    
 }

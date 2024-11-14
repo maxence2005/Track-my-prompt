@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtMultimedia 6.8
 import Qt5Compat.GraphicalEffects
 
 ColumnLayout {
@@ -36,7 +37,8 @@ ColumnLayout {
             id: entryVideo
             modelData: modelEntry
         }
-        
+
+
         Item {
             anchors.fill: parent
             id: overlay
@@ -50,6 +52,17 @@ ColumnLayout {
                     visible: modelEntry.lienIA ? true : false
                     onClicked: {
                         imageContainer.changeContent()
+                    }
+                }
+                Button {
+                    text: qsTr("Pause")
+                    visible: (modelData.type == "video")
+                    onClicked: {
+                        if (entryVideo.videoPlayer.playbackState === MediaPlayer.PlayingState) {
+                            entryVideo.videoPlayer.pause()
+                        } else {
+                            entryVideo.videoPlayer.play()
+                        }
                     }
                 }
             }
