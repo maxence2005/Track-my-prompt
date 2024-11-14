@@ -9,6 +9,7 @@ RowLayout {
         function onThemeChanged() {
             colorManager.animateColorChange([
                 [wizardIconRectangle, "backgroundColor", "dark_gray"],
+                [wizardColorOverlay, "color", "default"],
                 [promptInputRectangle, "color", "dark_bluish_gray"],
                 [promptInputField, "color", "light_gray"],
                 [promptInputField, "placeholderTextColor", "blue_gray"],
@@ -56,6 +57,7 @@ RowLayout {
         }
 
         ColorOverlay {
+            id: wizardColorOverlay
             anchors.fill: wizardIconImage
             source: wizardIconImage
             color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
