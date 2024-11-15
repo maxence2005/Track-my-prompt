@@ -111,7 +111,7 @@ class InitBackend(QObject):
         return self.controller._database_media._media_model
     
     @Property(QObject, constant=True)
-    def encycloModel(self):
+    def encyclopediaModel(self):
         self.raiseIfNotLoaded()
         return self.controller._database_manager.encyclopediaModel
     
