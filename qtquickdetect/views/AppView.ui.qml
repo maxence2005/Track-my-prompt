@@ -13,6 +13,15 @@ import "Settings" as Settings
 import Qt5Compat.GraphicalEffects
 
 Rectangle {
+    property var mediaModel: (appContext ? appContext.mediaModel : null)
+    property var databaseManager: (appContext ? appContext.databaseManager : null)
+    property var databaseManagerHistorique: (appContext ? appContext.databaseManagerHistorique : null)
+    property var encyclopediaModel: (appContext ? appContext.encyclopediaModel : null)
+    property var historiqueModel: (appContext ? appContext.historiqueModel : null)
+    property var backend: (appContext ? appContext.backend : null)
+    property var colorManager: (appContext ? appContext.colorManager : null)
+    property var languageManager: (appContext ? appContext.languageManager : null)
+
     anchors.fill: parent  // Remplit l'espace du parent
     
     Component {

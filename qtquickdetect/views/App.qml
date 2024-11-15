@@ -6,15 +6,26 @@ import QtQuick
 Window {
     minimumWidth: 1100
     minimumHeight: 600
-    width: mainScreen.width
-    height: mainScreen.height
 
     visible: true
     title: "TrackMyPrompts"
 
-    AppView {
-        id: mainScreen
+    property bool isLoaded: false
+
+    Loader {
+        anchors.fill: parent
+        id: pageLoader
+        sourceComponent: isLoaded ? appViewComponent : loadingScreenComponent
     }
 
+    Component {
+        id: appViewComponent
+        AppView {}
+    }
+
+    Component {
+        id: loadingScreenComponent
+        LoadingScreen {}
+    }
 }
 
