@@ -55,7 +55,7 @@ def main():
 
     appContext.appConfig.style = appContext.colorManager.current_theme
     appContext.appConfig.language = appContext.languageManager.language
-    appContext.app_config.prompt_interpreter = appContext.backend.shared_variable["prompt_ia"]
-    appContext.app_config.api_key = appContext.backend.shared_variable["api_key_mistral"]
+    appContext.appConfig.prompt_interpreter = appContext.backend.shared_variable["prompt_ia"]
+    appContext.appConfig.api_key = appContext.backend.shared_variable["api_key_mistral"]
     appContext.appConfig.save()
     sys.exit(statut)

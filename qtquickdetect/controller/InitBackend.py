@@ -3,10 +3,11 @@ from PySide6.QtCore import QObject, Property, QThread, Signal, QCoreApplication,
 class Controller(QObject):
     controller_loading_finished = Signal()
     
-    def __init__(self, app, engine):
+    def __init__(self, app, engine, frame_provider):
         super().__init__()
         self.app = app
         self.engine = engine
+        self.frame_provider = frame_provider
 
     def start(self):
         # Useful imports with threading
@@ -70,7 +71,7 @@ class Controller(QObject):
         ia_method = self._app_config.prompt_interpreter
         api_key = self._app_config.api_key
 
-        self._backend = Backend(self._media_model, self._database_media._media_model.rowCount(), self.frame_provider, ia_method, api_key)
+        self._backend = Backend(self._database_media, self._database_media._media_model.rowCount(), self.frame_provider, ia_method, api_key)
         self._color_manager = ColorManager("qtquickdetect/resources/themes.json", theme)
         
         self._database_manager.moveToThread(QCoreApplication.instance().thread())
@@ -96,7 +97,7 @@ class InitBackend(QObject):
     def start_loading(self):
         # Démarrer un thread séparé pour simuler le chargement
         self.thread = QThread()
-        self.controller = Controller(self.app, self.engine)
+        self.controller = Controller(self.app, self.engine, self.frame_provider)
         self.controller.controller_loading_finished.connect(self.on_loading_finished)
         self.controller.moveToThread(self.thread)
         self.thread.started.connect(self.controller.start)

@@ -56,7 +56,7 @@ ColumnLayout {
                 }
                 Button {
                     text: qsTr("Pause")
-                    visible: (modelData.type == "video")
+                    visible: (modelEntry.type == "video")
                     onClicked: {
                         if (entryVideo.videoPlayer.playbackState === MediaPlayer.PlayingState) {
                             entryVideo.videoPlayer.pause()

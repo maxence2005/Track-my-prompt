@@ -31,11 +31,9 @@ class Backend(QObject):
         self.media_model = media_model
         self.image_provider = im_pro
         self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Chargement" : False, "prompt_ia" : prompt_ia, "api_key_mistral" : api_key_mistral, "Camera" : False}
-        self.pipeline = PipelinePrompt(self.infoSent)
-        self.pipelineCamera = CameraPipeline()
-        self.pipelineCamera.processingComplete.connect(self.on_recording_complete)
+        self.pipeline = PipelinePrompt(self, self.infoSent)
+        self.pipelineCamera = CameraPipeline(self)
         self.pipelineCamera.frame_send.connect(self.frame_send)
-        self.pipeline.processingComplete.connect(self.on_processing_complete)
 
         if row == 0:
             self._shared_variable["Start"] = True

@@ -5,9 +5,6 @@ from models.filtre import promptFiltre
 from PySide6.QtCore import QObject, Signal, Slot, QThread
 
 class Worker(QObject):
-    resultReady = Signal(str)
-    errorOccurred = Signal(str)
-
     def __init__(self, pipelinePrompt, filePath, promptText="", typ="image", parent=None, method="dumb", api_key=""):
         super().__init__(parent)
         self.filePath = filePath
@@ -22,8 +19,8 @@ class Worker(QObject):
         if self._is_running:
             try:
                 classes = promptFiltre(self.prompt, self.method, self.api_key)
-            except ValueError as e:
-                self.errorOccurred.emit("prompt")
+            except Exception as e:
+                self.pipelinePrompt.on_error_occurred("prompt")
                 return
             result = traitementPrompt(self.filePath, classes, self.typ)
             self.pipelinePrompt.on_processing_complete(result)
@@ -46,7 +43,6 @@ class PipelinePrompt(QObject):
         self.thread = QThread()
         self.worker = Worker(self, filePath, promptText, typ, method=method, api_key=api_key)
         self.promptText = promptText
-        self.worker.errorOccurred.connect(self.on_error_occurred)
 
         # Déplacer le worker dans le thread séparé et démarrer le thread
         self.worker.moveToThread(self.thread)
@@ -70,15 +66,7 @@ class PipelinePrompt(QObject):
     @Slot(str)
     def on_error_occurred(self, error):
         """Réceptionne les erreurs et émet un signal vers le thread principal."""
-        self.processingComplete.emit(None, None)
-        if error == "prompt":
-            self.infoSentSignal.emit("Erreur lors du traitement du prompt, essayez de réessayer, vérifier votre connexion internet, réecrire le prompt, vérifier votre clé API ou changer de méthode.")
-        self.stop_processing()
-        
-    @Slot(str)
-    def on_error_occurred(self, error):
-        """Réceptionne les erreurs et émet un signal vers le thread principal."""
-        self.processingComplete.emit(None, None)
+        self.backend.on_processing_complete(None, None)
         if error == "prompt":
             self.infoSentSignal.emit("Erreur lors du traitement du prompt, essayez de réessayer, vérifier votre connexion internet, réecrire le prompt, vérifier votre clé API ou changer de méthode.")
         self.stop_processing()

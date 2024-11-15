@@ -6,22 +6,21 @@ from PySide6.QtGui import QImage
 from utils.filepaths import get_base_data_dir
 
 class CameraWorker(QObject):
-    resultReady = Signal(str)      # Signal pour transmettre le chemin du fichier
-    errorOccurred = Signal(str)
-    frameCaptured = Signal(QImage) 
+    frameCaptured = Signal(QImage)
 
-    def __init__(self, parent=None):
+    def __init__(self, pipeline, parent=None):
         super().__init__(parent)
         self._is_running = True     # État d'enregistrement
         self.file_path = None       # Chemin du fichier à sauvegarder
-
+        self.pipeline = pipeline
+        
     def run_task(self):
         # Ouvre la caméra
         capture = cv2.VideoCapture(0)
         if not capture.isOpened():
             capture =cv2.VideoCapture(1)
             if not capture.isOpened():
-                self.errorOccurred.emit("Erreur : Impossible d'ouvrir la caméra.")
+                self.pipeline.on_error_occurred("Erreur : Impossible d'ouvrir la caméra.")
                 return
 
         # Prépare le dossier et le nom du fichier
@@ -48,8 +47,7 @@ class CameraWorker(QObject):
             q_image = QImage(rgb_frame.data, w, h, bytes_per_line, QImage.Format_RGB888)
 
             # Émettre le signal avec l'image capturée
-            self.frameCaptured.emit(q_image)
-
+            self.pipeline.captured_image(q_image)
             out.write(frame)
 
         # Libération des ressources
@@ -57,7 +55,7 @@ class CameraWorker(QObject):
         out.release()
 
         # Émettre le signal avec le chemin du fichier, qu'il y ait interruption ou fin normale
-        self.resultReady.emit(str(self.file_path))
+        self.pipeline.on_processing_complete(str(self.file_path))
 
     def stop(self):
         """Interrompt la capture en fixant _is_running à False."""
@@ -65,25 +63,20 @@ class CameraWorker(QObject):
 
 
 class CameraPipeline(QObject):
-    processingComplete = Signal(str)   # Signal pour transmettre le fichier terminé
-    on_error = Signal(str)  
+    on_error = Signal(str)
     frame_send = Signal(QImage)
 
-    def __init__(self, parent=None):
+    def __init__(self, backend, parent=None):
         super().__init__(parent)
         self.thread = None
         self.worker = None
+        self.backend = backend
 
     @Slot()
     def start_camera_recording(self):
         """Démarre l'enregistrement de la caméra dans un thread séparé."""
         self.thread = QThread()
-        self.worker = CameraWorker()
-        
-        # Connecter les signaux du worker
-        self.worker.resultReady.connect(self.on_processing_complete)
-        self.worker.frameCaptured.connect(self.captured_image)
-        self.worker.errorOccurred.connect(self.on_error_occurred)
+        self.worker = CameraWorker(self)
         
         # Déplacer le worker dans le thread et démarrer le thread
         self.worker.moveToThread(self.thread)
@@ -104,7 +97,7 @@ class CameraPipeline(QObject):
     @Slot(str)
     def on_processing_complete(self, file_path):
         """Recevoir le chemin du fichier généré à la fin de l'enregistrement."""
-        self.processingComplete.emit(file_path)
+        self.backend.on_recording_complete(file_path)
         self.stop_processing()
     
     @Slot(QImage)
