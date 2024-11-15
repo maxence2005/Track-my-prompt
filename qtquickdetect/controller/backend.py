@@ -7,13 +7,15 @@ from PySide6.QtCore import QObject, Slot, Signal, QUrl, Property
 from PySide6.QtWidgets import QApplication, QFileDialog
 from PySide6.QtQml import QQmlApplicationEngine
 
+
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-
+from models.imageProvider import ImageProvider
 from utils.file_explorer import open_file_explorer
 from utils.filepaths import get_base_config_dir, get_base_data_dir, create_config_dir, create_data_dir
 from utils.url_handler import is_image, is_video, is_live_video, is_url, download_file
 from pipeline.pipelinePrompt import PipelinePrompt
+from pipeline.pipelineCamera import CameraPipeline
 from models.mediaModel import DatabaseManagerMedia
 
 class Backend(QObject):
@@ -23,12 +25,16 @@ class Backend(QObject):
     sharedVariableChanged = Signal()
     idChargementSignal = Signal()
 
-    def __init__(self, media_model: DatabaseManagerMedia, row, prompt_ia, api_key_mistral):
+
+    def __init__(self, media_model: DatabaseManagerMedia, row, im_pro: ImageProvider, prompt_ia, api_key_mistral):
         super().__init__()
         self.media_model = media_model
-        
-        self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Chargement" : False, "prompt_ia" : prompt_ia, "api_key_mistral" : api_key_mistral}
+        self.image_provider = im_pro
+        self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Chargement" : False, "prompt_ia" : prompt_ia, "api_key_mistral" : api_key_mistral, "Camera" : False}
         self.pipeline = PipelinePrompt(self.infoSent)
+        self.pipelineCamera = CameraPipeline()
+        self.pipelineCamera.processingComplete.connect(self.on_recording_complete)
+        self.pipelineCamera.frame_send.connect(self.frame_send)
         self.pipeline.processingComplete.connect(self.on_processing_complete)
 
         if row == 0:
@@ -148,6 +154,25 @@ class Backend(QObject):
         self.handle_media(file_path, is_url=False)
 
     @Slot()
+    def start_Camera(self):
+        self.pipelineCamera.start_camera_recording()
+
+    @Slot()
+    def stop_Camera(self):
+        self.pipelineCamera.stop_camera_recording()
+    
+    def on_recording_complete(self, lien):
+        self.fichier["lien"] = str(lien)
+        self.fichier["type"] = 'video'
+        if self.start == True :
+            self.start = False
+            self._shared_variable["Start"] = False
+            self.sharedVariableChanged.emit()
+        id_row = self.media_model.addMediaItem(str(lien), 'video')
+        self.fichier["id"] = id_row
+
+
+    @Slot()
     def selectFile(self):
         try:
             destination_directory = get_base_data_dir() / "collections"
@@ -177,6 +202,11 @@ class Backend(QObject):
     @Slot()
     def toggle_erreur(self):
         self._shared_variable["Erreur"] = not self._shared_variable["Erreur"]
+        self.sharedVariableChanged.emit()
+
+    @Slot()
+    def toggle_camera(self):
+        self._shared_variable["Camera"] = not self._shared_variable["Camera"]
         self.sharedVariableChanged.emit()
 
     @Slot()
@@ -220,3 +250,6 @@ class Backend(QObject):
         delete_files(image_dir)
         delete_files(video_dir)
         self.sharedVariableChanged.emit()
+    
+    def frame_send(self, frame):
+        self.image_provider.set_image(frame)
