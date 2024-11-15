@@ -44,9 +44,16 @@ Rectangle {
                 id: closeButtonMouseArea
                 anchors.fill: parent
                 onClicked: {
-                    refreshTimer.running = false
-                    backend.stop_Camera();
-                    backend.toggle_camera();
+                    if (text_start_stop.text == "Stop"){
+                        text_start_stop.text = "Start";
+                        refreshTimer.running = false
+                        backend.stop_Camera();
+                        backend.toggle_camera();
+                    }
+                    else{
+                        text_start_stop.text = "Start";
+                        backend.toggle_camera();
+                    }
                 }
             }
         }
@@ -83,7 +90,7 @@ Rectangle {
         Rectangle {
             id: startButton
             width: 120
-            height: 40
+            height: 25
             color: (colorManager ? colorManager.getColorNoNotify("gray") : "#000000")
             radius: 10
             anchors.horizontalCenter: parent.horizontalCenter
@@ -91,17 +98,26 @@ Rectangle {
             anchors.bottomMargin: 20
 
             Text {
+                id: text_start_stop
                 text: "Start"
                 color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
-                font.pixelSize: 20
+                font.pixelSize: 15
                 anchors.centerIn: parent
             }
 
             MouseArea {
                 anchors.fill: parent
-                onClicked: {    
-                    backend.start_Camera();
-                    refreshTimer.running = true;
+                onClicked: {
+                    if (text_start_stop.text == "Start") {
+                        text_start_stop.text = "Stop";
+                        backend.start_Camera();
+                        refreshTimer.running = true;
+                    } else {
+                        text_start_stop.text = "Start";
+                        refreshTimer.running = false;
+                        backend.stop_Camera();
+                        backend.toggle_camera();
+                    }
                 }
 
                 onEntered: {

@@ -19,8 +19,10 @@ class CameraWorker(QObject):
         # Ouvre la caméra
         capture = cv2.VideoCapture(0)
         if not capture.isOpened():
-            self.errorOccurred.emit("Erreur : Impossible d'ouvrir la caméra.")
-            return
+            capture =cv2.VideoCapture(1)
+            if not capture.isOpened():
+                self.errorOccurred.emit("Erreur : Impossible d'ouvrir la caméra.")
+                return
 
         # Prépare le dossier et le nom du fichier
         destination_directory = get_base_data_dir() / "collections" / "video"
