@@ -70,7 +70,8 @@ def main():
     # Create an instance of QQmlApplicationEngine
     app = QApplication(sys.argv)
     engine = QQmlApplicationEngine()
-    language_manager = LanguageManager(app=app, engine=engine, encyclo=database_manager.encyclopediaModel)
+    encyclo_model = database_manager.encyclopediaModel
+    language_manager = LanguageManager(app=app, engine=engine, encyclo=encyclo_model)
     app_config = AppConfig(language_manager.languages)
 
     language_manager.setLanguage(app_config.language)

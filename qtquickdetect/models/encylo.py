@@ -2,6 +2,7 @@ import sqlite3
 import os
 from PySide6.QtCore import QObject, Signal, Slot, Property, QAbstractListModel, QModelIndex, Qt
 import copy
+from utils import filepaths
 
 # Définir le modèle QML pour les éléments de l'encyclopédie
 class EncyclopediaModel(QAbstractListModel):
@@ -9,12 +10,27 @@ class EncyclopediaModel(QAbstractListModel):
     EmoticonRole = Qt.UserRole + 2
     TimeFoundRole = Qt.UserRole + 3
 
-    def __init__(self, *args, **kwargs):
-        super(EncyclopediaModel, self).__init__(*args, **kwargs)
-        self._items_base = []
-        self._items = []
-        self._all_items = []
+    _instance = None  # Attribut de classe pour stocker l'instance unique
+    _initialized = False
 
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(EncyclopediaModel, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
+
+    def __init__(self, *args, **kwargs):
+        # L'initialisation réelle ne doit s'exécuter qu'une seule fois
+        if not self._initialized:
+            super(EncyclopediaModel, self).__init__(*args, **kwargs)
+            self._items_base = []
+            self._items = []
+            self._all_items = []
+            self._initialized = True
+    
+    @staticmethod
+    def get_instance() -> 'EncyclopediaModel':
+        return EncyclopediaModel()
+    
     def data(self, index, role):
         if not index.isValid() or not (0 <= index.row() < len(self._items)):
             return None
@@ -95,8 +111,40 @@ class EncyclopediaModel(QAbstractListModel):
 
     def get_all_names(self):
         return {item["englishName"] for item in self._all_items}
-
     
+    def changeTimeFound(self, dict):
+        print("Change time found :")
+        print(dict)
+        for name, timeFound in dict.items():
+            print(len(self._items_base))
+            for i in range(len(self._items_base)):
+                print("coucou")
+                if self._items_base[i]["englishName"] == name:
+                    self._all_items[i]["timeFound"] = timeFound
+                    index = self.index(i)
+                    self.dataChanged.emit(index, index, [self.TimeFoundRole])
+                    break
+        self.update_data_bis(self._all_items)
+
+    def incrementTimeFound(self, classes):
+        db_path = os.path.join(filepaths.get_base_data_dir(), 'trackmyprompt.db')
+        connection = sqlite3.connect(db_path)
+        cursor = connection.cursor()
+        dict = {}
+        print("increment time found")
+        print(self._items)
+        print(self._items_base)
+        print(self._all_items)
+        for obj in classes:
+            rows = cursor.execute(f"SELECT timeFound FROM Encyclopedie WHERE englishName = ?", [obj]).fetchone()
+            val = rows[0]
+            val += 1
+            cursor.execute(f"UPDATE Encyclopedie SET timeFound = ? WHERE englishName = ?", [val,obj])
+            dict[obj] = val
+        connection.commit()
+        connection.close()
+
+        self.changeTimeFound(dict)
 
 class DatabaseManager(QObject):
     
@@ -105,7 +153,7 @@ class DatabaseManager(QObject):
     def __init__(self, db_path, parent=None):
         super().__init__(parent)
         self.db_path = db_path
-        self.model = EncyclopediaModel()
+        self.model = EncyclopediaModel.get_instance()
         self.load_data()
 
     @Slot()
