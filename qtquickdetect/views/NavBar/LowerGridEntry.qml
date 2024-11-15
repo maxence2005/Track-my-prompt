@@ -16,7 +16,7 @@ Rectangle {
     property string iconSource
     property string labelText
     property bool hovered: false
-    property color textColor: colorManager ? colorManager.getColorNoNotify("silver_gray") : "#000000"
+    property color textColor: colorManager ? colorManager.getColor["silver_gray"] : "#000000"
     property color textColorHover: (colorManager ? colorManager.getColor["default"] : "#000000")
     
     signal clicked

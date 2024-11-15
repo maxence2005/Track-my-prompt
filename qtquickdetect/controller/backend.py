@@ -23,12 +23,12 @@ class Backend(QObject):
     sharedVariableChanged = Signal()
     idChargementSignal = Signal()
 
-    def __init__(self, media_model: DatabaseManagerMedia, row):
+    def __init__(self, media_model: DatabaseManagerMedia, row, prompt_ia, api_key_mistral):
         super().__init__()
         self.media_model = media_model
         
-        self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Chargement" : False}
-        self.pipeline = PipelinePrompt()
+        self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Chargement" : False, "prompt_ia" : prompt_ia, "api_key_mistral" : api_key_mistral}
+        self.pipeline = PipelinePrompt(self.infoSent)
         self.pipeline.processingComplete.connect(self.on_processing_complete)
 
         if row == 0:
@@ -62,14 +62,22 @@ class Backend(QObject):
     @Slot(str)
     def receivePrompt(self, promptText):
         if self.fichier["lien"] == "" :
-            self.infoSent.emit(f"Erreur : Aucune Image/video enregistrer.")
+            self.infoSent.emit("Erreur : Aucune Image/video enregistrer.")
+        if self._shared_variable["prompt_ia"] == "mistral" and self._shared_variable["api_key_mistral"] == "":
+            self.infoSent.emit("Erreur : Veuillez renseigner une clé API pour Mistral.")
         else :
             if promptText != "":
                 self._shared_variable["Chargement"] = True
                 self._idChargement = self.fichier["id"]
                 self.sharedVariableChanged.emit()
                 self.idChargementSignal.emit()
-                self.pipeline.start_processing(self.fichier["lien"], self.fichier["type"], promptText)
+                self.pipeline.start_processing(self.fichier["lien"], self.fichier["type"], promptText, self._shared_variable["prompt_ia"], self._shared_variable["api_key_mistral"])
+    
+    @Slot(str, str)
+    def change_prompt_recognition(self, prompt_ia, api_key_mistral = ""):
+        self._shared_variable["prompt_ia"] = prompt_ia
+        self._shared_variable["api_key_mistral"] = api_key_mistral
+        self.sharedVariableChanged.emit()
     
     @Slot(str)
     def receiveFile(self, fileUrl):

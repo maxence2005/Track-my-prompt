@@ -2,24 +2,32 @@ import os
 from nltk.stem import WordNetLemmatizer
 import re
 from utils.filepaths import get_base_data_dir
+import requests
+import ast
 
-
-def promptFiltre(phrase: str) -> list:
-
-    available_classes = {
-        "person", "backpack", "umbrella", "handbag", "suitcase", "tie", "bicycle", "car", 
-        "motorcycle", "airplane", "train", "bus", "truck", "boat", "traffic light", 
-        "fire hydrant", "stop sign", "parking meter", "bench", "sheep", "cow", "cat", 
-        "horse", "dog", "bird", "elephant", "bear", "baseball glove", "kite", "giraffe", 
-        "zebra", "tennis racket", "skateboard", "sports ball", "baseball bat", 
-        "snowboard", "frisbee", "skis", "bottle", "wine glass", "fork", "cup", "knife", 
-        "spoon", "bowl", "cake", "donut", "hot dog", "pizza", "carrot", "broccoli", 
-        "sandwich", "orange", "apple", "banana", "couch", "chair", "potted plant", 
-        "bed", "toilet", "dining table", "keyboard", "cell phone", "remote", "laptop", 
-        "tv", "mouse", "microwave", "oven", "sink", "toaster", "refrigerator", 
+available_classes = {
+        "person", "backpack", "umbrella", "handbag", "suitcase", "tie", "bicycle", "car",
+        "motorcycle", "airplane", "train", "bus", "truck", "boat", "traffic light",
+        "fire hydrant", "stop sign", "parking meter", "bench", "sheep", "cow", "cat",
+        "horse", "dog", "bird", "elephant", "bear", "baseball glove", "kite", "giraffe",
+        "zebra", "tennis racket", "skateboard", "sports ball", "baseball bat",
+        "snowboard", "frisbee", "skis", "bottle", "wine glass", "fork", "cup", "knife",
+        "spoon", "bowl", "cake", "donut", "hot dog", "pizza", "carrot", "broccoli",
+        "sandwich", "orange", "apple", "banana", "couch", "chair", "potted plant",
+        "bed", "toilet", "dining table", "keyboard", "cell phone", "remote", "laptop",
+        "tv", "mouse", "microwave", "oven", "sink", "toaster", "refrigerator",
         "teddy bear", "hair drier", "toothbrush", "scissors", "clock", "book", "vase"
     }
 
+def promptFiltre(phrase: str, method: str, api_key:str = "") -> list:
+    if method == "dumb":
+        return traitement_dumb(phrase)
+    elif method == "mistral":
+        return traitement_mistral(phrase, api_key)
+    else:
+        raise ValueError(f"Invalid method : must be 'dumb' or 'mistral' but got {method}")
+
+def traitement_dumb(phrase):
     nltk_file = get_base_data_dir() / 'nltk'
     
     os.environ['NLTK_DATA'] = str(nltk_file)
@@ -33,3 +41,49 @@ def promptFiltre(phrase: str) -> list:
     filtered_classes = [word for word in lemmatized_words if word in available_classes]
     
     return filtered_classes
+
+
+def traitement_mistral(phrase, API_KEY):
+    MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions"
+
+    def get_list_filter(prompt):
+        headers = {
+            "Authorization": f"Bearer {API_KEY}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "model": "mistral-large-2407",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            
+            "max_tokens": 100,
+            "temperature": 0.5,
+            "top_p": 0.9
+        }
+
+        response = requests.post(MISTRAL_API_URL, json=payload, headers=headers)
+        
+        if response.status_code == 200:
+            try:
+                result = response.json()
+                return result["choices"][0]["message"]["content"]
+            except ValueError:
+                print("Erreur lors de la conversion de la réponse en JSON")
+                return None
+        else:
+            print(f"Erreur API: {response.status_code}")
+            print(response.text)
+            return None
+
+    # Exemple d'utilisation
+    prompt = f"""You are an AI that aims to be integrated into an application called Track-My-Prompt, which is an application that aims to find certain content in an image. This application has a prompt field, where you will be used. In this field we want to detect what the user is looking for. We have the ability to detect objects only from this list, which we will call the list of detectables: {available_classes}.
+    Via the user prompt that will follow, which can be in any language, you must be able to send me back as output a list of this form: ["requested object 1", "requested object 2" ...], the elements of this list must be in the same order as the elements of the list above, if an element is not present in the user prompt, do not include it in the output. for example, user inputs "dog" and "vacuum cleaner". the vacuum cleaner is not in the list therefore you should not include it. If an element is present several times, for example "dog", "dog", in the user prompt, do not repeat it. Please verify all elements in output list are in the detectable list.
+    I want only this list as output, no superfluous text, it is intended to be used by a computer that understands nothing other than precise instructions, this list is a precise instruction.
+    Here is the user prompt, don't forget to translate it in english before : """
+    prompt += phrase
+    filtered = get_list_filter(prompt)
+    return ast.literal_eval(filtered)

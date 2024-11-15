@@ -50,6 +50,10 @@ class LanguageManager(QObject):
     @Property("QVariant", notify=newLanguage)
     def getLanguages(self):
         return list(self.languages.keys())
+    
+    @Property("QVariant", notify=languageChanged)
+    def getCurrentLanguage(self):
+        return self.language
 
     @Slot(str)
     def setLanguage(self, language):
