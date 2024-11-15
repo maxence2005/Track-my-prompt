@@ -33,6 +33,10 @@ def main():
         print(f"Police(s) disponible(s) : {font_families}")
     else:
         print("Erreur : impossible de charger la police.")
+    
+    # Connecter la méthode stop_loading au signal aboutToQuit
+    app.aboutToQuit.connect(appContext.stop_loading)
+
     # Load the QML file
     engine.load(QUrl("qtquickdetect/views/App.qml"))
     appContext.loading_finished.connect(lambda: engine.rootObjects()[0].setProperty("isLoaded", True))
@@ -49,4 +53,3 @@ def main():
     appContext.appConfig.language = appContext.languageManager.language
     appContext.appConfig.save()
     sys.exit(statut)
-    

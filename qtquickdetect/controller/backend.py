@@ -28,8 +28,7 @@ class Backend(QObject):
         self.media_model = media_model
         
         self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Chargement" : False}
-        self.pipeline = PipelinePrompt()
-        self.pipeline.processingComplete.connect(self.on_processing_complete)
+        self.pipeline = PipelinePrompt(self)
 
         if row == 0:
             self._shared_variable["Start"] = True

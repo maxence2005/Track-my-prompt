@@ -1,4 +1,4 @@
-from PySide6.QtCore import QObject, Property, QThread, Signal, QCoreApplication
+from PySide6.QtCore import QObject, Property, QThread, Signal, QCoreApplication, Slot
 
 class Controller(QObject):
     controller_loading_finished = Signal()
@@ -98,12 +98,18 @@ class InitBackend(QObject):
         self.controller.moveToThread(self.thread)
         self.thread.started.connect(self.controller.start)
         self.thread.start()
+        
+    @Slot()
+    def stop_loading(self):
+        # Code pour arrêter le thread créé dans start_loading
+        if self.thread.isRunning():
+            self.thread.quit()
+            self.thread.wait()
     
     def on_loading_finished(self):
         self.isLoaded = True
         self.loading_finished.emit()
-        self.thread.quit()
-        self.thread.wait()
+        self.stop_loading()
     
     @Property(QObject, constant=True)
     def mediaModel(self):
