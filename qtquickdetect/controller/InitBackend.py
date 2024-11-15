@@ -153,4 +153,7 @@ class InitBackend(QObject):
 
     def raiseIfNotLoaded(self):
         if not self.isLoaded:
-            raise Exception("Backend not loaded yet")
+            raise BackendNotLoadException("Backend not loaded yet")
+        
+class BackendNotLoadException(Exception):
+    pass
