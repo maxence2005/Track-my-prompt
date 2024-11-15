@@ -12,14 +12,14 @@ import "Encyclopedie" as  Encyclopedie
 import Qt5Compat.GraphicalEffects
 
 Rectangle {
-    property var mediaModel: appContext.mediaModel
-    property var databaseManager: appContext.databaseManager
-    property var databaseManagerHistorique: appContext.databaseManagerHistorique
-    property var encyclopediaModel: appContext.encyclopediaModel
-    property var historiqueModel: appContext.historiqueModel
-    property var backend: appContext.backend
-    property var colorManager: appContext.colorManager
-    property var languageManager: appContext.languageManager
+    property var mediaModel: (appContext ? appContext.mediaModel : null)
+    property var databaseManager: (appContext ? appContext.databaseManager : null)
+    property var databaseManagerHistorique: (appContext ? appContext.databaseManagerHistorique : null)
+    property var encyclopediaModel: (appContext ? appContext.encyclopediaModel : null)
+    property var historiqueModel: (appContext ? appContext.historiqueModel : null)
+    property var backend: (appContext ? appContext.backend : null)
+    property var colorManager: (appContext ? appContext.colorManager : null)
+    property var languageManager: (appContext ? appContext.languageManager : null)
 
     anchors.fill: parent  // Remplit l'espace du parent
     

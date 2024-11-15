@@ -1,40 +1,38 @@
-
 import QtQuick 2.0
 import QtQuick.Controls 2.0
 
-Item {
-    id: splashScreen
-	width: 300
-	height: 300
+Rectangle {
+	id: root
+    width: 300
+    height: 300
+    color: "#33343B"
 
-	Rectangle {
-		id: splashRect
-		anchors.fill: parent
+    Text {
+        id: animatedText
+        anchors.centerIn: parent
+        font.pixelSize: 80
+        text: ""
         color: "white"
-		border.width: 1
-		border.color: "black"
-		
-		Text {
-			id: initializationErrorMessage
-			text: "This is the splash screen"
-			anchors.horizontalCenter: parent.horizontalCenter
-			anchors.top: parent.top
-            anchors.topMargin: 50
-			font.bold: true
-			font.pixelSize: 20
-			color: "black"
-		}
+        font.family: "Smothy Bubble"
+    }
 
-		BusyIndicator {
-			id: busyAnimation
-			anchors.horizontalCenter: parent.horizontalCenter
-			anchors.bottom: parent.bottom
-			anchors.bottomMargin: parent.height / 5
-			width: parent.width / 2
-			height: width
-			running: true
-		}
-	}
+    property var textAnim: "Track My Prompts"
+    property int index: 0
 
-    Component.onCompleted: visible = true
+    Timer {
+        interval: 1000 / textAnim.length
+        repeat: true
+        running: true
+        onTriggered: {
+			let textAnimArray = textAnim.split("")
+
+            if (index <= textAnim.length) {
+				let point = (index == textAnim.length ? "" : ".")
+                animatedText.text = textAnimArray.slice(0, index).join("") + point ;
+            } else {
+                stop()
+            }
+			root.index += 1
+        }
+    }
 }

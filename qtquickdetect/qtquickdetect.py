@@ -4,6 +4,7 @@ import pathlib
 import sys
 
 from PySide6.QtCore import QObject, Signal, QUrl
+from PySide6.QtGui import QFontDatabase
 from PySide6.QtWidgets import QApplication
 from PySide6.QtQml import QQmlApplicationEngine
 # from models.app_state import AppState
@@ -26,7 +27,12 @@ def main():
 
     # Expose the backend to the QML context
     engine.rootContext().setContextProperty("appContext", appContext)
-    
+    font_id = QFontDatabase.addApplicationFont("qtquickdetect/views/fonts/smothy.otf")
+    if font_id != -1:
+        font_families = QFontDatabase.applicationFontFamilies(font_id)
+        print(f"Police(s) disponible(s) : {font_families}")
+    else:
+        print("Erreur : impossible de charger la police.")
     # Load the QML file
     engine.load(QUrl("qtquickdetect/views/App.qml"))
     appContext.loading_finished.connect(lambda: engine.rootObjects()[0].setProperty("isLoaded", True))
