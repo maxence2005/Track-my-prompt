@@ -10,7 +10,7 @@ class EncyclopediaModel(QAbstractListModel):
     EmoticonRole = Qt.UserRole + 2
     TimeFoundRole = Qt.UserRole + 3
 
-    _instance = None  # Attribut de classe pour stocker l'instance unique
+    _instance = None
     _initialized = False
 
     def __new__(cls, *args, **kwargs):
@@ -19,7 +19,6 @@ class EncyclopediaModel(QAbstractListModel):
         return cls._instance
 
     def __init__(self, *args, **kwargs):
-        # L'initialisation réelle ne doit s'exécuter qu'une seule fois
         if not self._initialized:
             super(EncyclopediaModel, self).__init__(*args, **kwargs)
             self._items_base = []
@@ -113,12 +112,8 @@ class EncyclopediaModel(QAbstractListModel):
         return {item["englishName"] for item in self._all_items}
     
     def changeTimeFound(self, dict):
-        print("Change time found :")
-        print(dict)
         for name, timeFound in dict.items():
-            print(len(self._items_base))
             for i in range(len(self._items_base)):
-                print("coucou")
                 if self._items_base[i]["englishName"] == name:
                     self._all_items[i]["timeFound"] = timeFound
                     index = self.index(i)
@@ -131,10 +126,6 @@ class EncyclopediaModel(QAbstractListModel):
         connection = sqlite3.connect(db_path)
         cursor = connection.cursor()
         dict = {}
-        print("increment time found")
-        print(self._items)
-        print(self._items_base)
-        print(self._all_items)
         for obj in classes:
             rows = cursor.execute(f"SELECT timeFound FROM Encyclopedie WHERE englishName = ?", [obj]).fetchone()
             val = rows[0]

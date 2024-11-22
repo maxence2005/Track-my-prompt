@@ -78,7 +78,7 @@ def main():
     theme = app_config.style
 
     media_model = database_media
-    backend = Backend(media_model, database_media._media_model.rowCount())
+    backend = Backend(media_model, database_media._media_model.rowCount(), encyclo_model)
     color_manager = ColorManager("qtquickdetect/resources/themes.json", theme)
     
 

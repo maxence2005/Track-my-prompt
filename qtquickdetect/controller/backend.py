@@ -23,12 +23,13 @@ class Backend(QObject):
     sharedVariableChanged = Signal()
     idChargementSignal = Signal()
 
-    def __init__(self, media_model: DatabaseManagerMedia, row):
+    def __init__(self, media_model: DatabaseManagerMedia, row, encyclopedia_model):
         super().__init__()
         self.media_model = media_model
+        self.encyclo_model = encyclopedia_model
         
         self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Chargement" : False}
-        self.pipeline = PipelinePrompt()
+        self.pipeline = PipelinePrompt(encyclo_model=self.encyclo_model)
         self.pipeline.processingComplete.connect(self.on_processing_complete)
 
         if row == 0:
