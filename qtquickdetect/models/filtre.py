@@ -4,6 +4,7 @@ import re
 from utils.filepaths import get_base_data_dir
 import requests
 import ast
+from deep_translator import GoogleTranslator
 
 available_classes = {
         "person", "backpack", "umbrella", "handbag", "suitcase", "tie", "bicycle", "car",
@@ -20,12 +21,19 @@ available_classes = {
     }
 
 def promptFiltre(phrase: str, method: str, api_key:str = "") -> list:
-    if method == "dumb":
-        return traitement_dumb(phrase)
-    elif method == "mistral":
-        return traitement_mistral(phrase, api_key)
-    else:
-        raise ValueError(f"Invalid method : must be 'dumb' or 'mistral' but got {method}")
+    match method:
+        case "dumb_ts":
+            return traitement_dumb_ts(phrase)
+        case "dumb":
+            return traitement_dumb(phrase)
+        case "mistral":
+            return traitement_mistral(phrase, api_key)
+        case _:
+            raise ValueError(f"Invalid method : must be 'dumb' or 'mistral' but got {method}")
+
+def traitement_dumb_ts(phrase):
+    translated = GoogleTranslator().translate(phrase)
+    return traitement_dumb(translated)
 
 def traitement_dumb(phrase):
     nltk_file = get_base_data_dir() / 'nltk'
