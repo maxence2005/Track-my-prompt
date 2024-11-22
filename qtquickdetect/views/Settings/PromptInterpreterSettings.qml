@@ -26,9 +26,10 @@ Column {
         id: promptInterpreterComboBox
         model: ListModel {
             ListElement { elementId: "dumb"; name: qsTr("Dumb") }
+            ListElement { elementId: "dumb_ts"; name: qsTr("Dumb with Translate") }
             ListElement { elementId: "mistral"; name: "Mistral" }
         }
-        width: 100
+        width: 200
         textRole: "name"
         onActivated: {
             var selectedItem = promptInterpreterComboBox.model.get(promptInterpreterComboBox.currentIndex);

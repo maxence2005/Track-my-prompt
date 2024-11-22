@@ -82,7 +82,7 @@ class AppConfig:
             self.style = 'dark'
             changed = True
         
-        if self.prompt_interpreter not in ['dumb', 'mistral']:
+        if self.prompt_interpreter not in ['dumb', 'mistral', "dumb_ts"]:
             logging.warning(f'Invalid prompt interpreter in config: {self.prompt_interpreter}')
             self.prompt_interpreter = 'dumb'
             changed = True
