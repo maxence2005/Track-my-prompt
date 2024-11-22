@@ -2,9 +2,10 @@ import os
 from models.traitement_ia import traitementPrompt
 from models.filtre import promptFiltre
 from PySide6.QtCore import QObject, Signal, Slot, QThread
+from models.encylo import EncyclopediaModel
 
 class Worker(QObject):
-    def __init__(self, pipelinePrompt, filePath, promptText="", typ="image", parent=None, method="dumb", api_key=""):
+    def __init__(self, pipelinePrompt, filePath, promptText="", typ="image", parent=None, method="dumb", api_key="", encyclo_model: EncyclopediaModel = None):
         super().__init__(parent)
         self.filePath = filePath
         self.prompt = promptText
@@ -13,6 +14,7 @@ class Worker(QObject):
         self.method = method
         self.api_key = api_key
         self.pipeline = pipelinePrompt
+        self.encyclo_model = encyclo_model
 
     def run_task(self):
         if self._is_running:
@@ -21,25 +23,25 @@ class Worker(QObject):
             except Exception as e:
                 self.pipeline.on_error_occurred("prompt")
                 return
-            result = traitementPrompt(self.filePath, classes, self.typ)
+            result = traitementPrompt(self.filePath, classes, self.typ, self.encyclo_model)
             self.pipeline.on_processing_complete(result)
             
     def stop(self):
         self._is_running = False
 
 class PipelinePrompt(QObject):
-    def __init__(self, backend, infoSentSignal: Signal, parent=None):
+    def __init__(self, backend, parent=None, encyclo_model: EncyclopediaModel = None):
         super().__init__(parent)
         self.thread = None
         self.worker = None
         self.promptText = None
         self.backend = backend
-        self.infoSentSignal = infoSentSignal
+        self.encyclo_model = encyclo_model
 
     @Slot(str, str, str, str, str)
     def start_processing(self, filePath, typ="image", promptText="", method="dumb", api_key=""):
         self.thread = QThread()
-        self.worker = Worker(self, filePath, promptText, typ, method=method, api_key=api_key)
+        self.worker = Worker(self, filePath, promptText, typ, method=method, api_key=api_key, encyclo_model=self.encyclo_model)
         self.promptText = promptText
 
         self.worker.moveToThread(self.thread)

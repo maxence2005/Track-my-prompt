@@ -7,18 +7,20 @@ from pathlib import Path
 from ultralytics import YOLOWorld
 from utils import filepaths
 import cv2
+from models.encylo import EncyclopediaModel
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def traitementPrompt(filePath: str, classes: list = None, typ: str = "video") -> str:
+def traitementPrompt(filePath: str, classes: list = None, typ: str = "video", encyclopedia_model: EncyclopediaModel = None) -> str:
     models_path = filepaths.get_base_data_dir() / 'models'
     model = YOLOWorld(os.path.join(models_path, 'yolov8s-world.pt'))
 
     model = model.to(device)
-    
+
     if classes:
         model.set_classes(classes)
-    
+        if encyclopedia_model != None:
+            encyclopedia_model.incrementTimeFound(classes)
     collections_dir = filepaths.get_base_data_dir() / 'collections' / typ
     os.makedirs(collections_dir, exist_ok=True)
 

@@ -26,12 +26,13 @@ class Backend(QObject):
     idChargementSignal = Signal()
 
 
-    def __init__(self, media_model: DatabaseManagerMedia, row, im_pro: ImageProvider, prompt_ia, api_key_mistral):
+    def __init__(self, media_model: DatabaseManagerMedia, row, im_pro: ImageProvider, prompt_ia, api_key_mistral, encyclopedia_model):
         super().__init__()
         self.media_model = media_model
+        self.encyclo_model = encyclopedia_model
         self.image_provider = im_pro
         self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Chargement" : False, "prompt_ia" : prompt_ia, "api_key_mistral" : api_key_mistral, "Camera" : False}
-        self.pipeline = PipelinePrompt(self, self.infoSent)
+        self.pipeline = PipelinePrompt(self, encyclo_model=self.encyclo_model)
         self.pipelineCamera = CameraPipeline(self)
         self.pipelineCamera.frame_send.connect(self.frame_send)
 
