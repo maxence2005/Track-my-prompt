@@ -33,7 +33,6 @@ def promptFiltre(phrase: str, method: str, api_key:str = "") -> list:
 
 def traitement_dumb_ts(phrase):
     translated = GoogleTranslator().translate(phrase)
-    print(translated)
     return traitement_dumb(translated)
 
 def traitement_dumb(phrase):
