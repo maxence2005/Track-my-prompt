@@ -84,10 +84,7 @@ RowLayout {
             background: Rectangle {
                 color: "transparent"
             }
-            onAccepted: {
-                backend.receivePrompt(promptInputField.text);
-                promptInputField.text = "";
-            }
+            onAccepted: sendPrompt();
         }
 
         Image {
@@ -102,10 +99,7 @@ RowLayout {
             MouseArea {
                 id: sendMouseArea
                 anchors.fill: parent
-                onClicked: {
-                    backend.receivePrompt(promptInputField.text);
-                    promptInputField.text = "";
-                }
+                onClicked: sendPrompt();
             }
         }
 
@@ -114,6 +108,13 @@ RowLayout {
             anchors.fill: sendIconImage
             source: sendIconImage
             color: (colorManager ? colorManager.getColorNoNotify("light_bluish_gray") : "#000000")
+        }
+    }
+
+    function sendPrompt() {
+        if (backend.shared_variable["Chargement"] == false) {
+            backend.receivePrompt(promptInputField.text);
+            promptInputField.text = "";
         }
     }
 }

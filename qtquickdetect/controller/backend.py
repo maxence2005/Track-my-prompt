@@ -71,7 +71,7 @@ class Backend(QObject):
         if self._shared_variable["prompt_ia"] == "mistral" and self._shared_variable["api_key_mistral"] == "":
             self.infoSent.emit("Erreur : Veuillez renseigner une clé API pour Mistral.")
         else :
-            if promptText != "":
+            if promptText != "" and self._shared_variable["Chargement"] == False:
                 self._shared_variable["Chargement"] = True
                 self._idChargement = self.fichier["id"]
                 self.sharedVariableChanged.emit()

@@ -115,4 +115,3 @@ class CameraPipeline(QObject):
             self.worker.stop()
         if self.thread:
             self.thread.quit()
-            self.thread.wait()

@@ -12,7 +12,7 @@ Rectangle {
     Connections {
         target: colorManager
         function onThemeChanged() {
-            colorManager.animateColorChange([[backgroundParamRectangle, "color", "very_dark_gray"], [closeButton, "color", "gray"], [closeButtonText, "color", "default"]])
+            colorManager.animateColorChange([[backgroundParamRectangle, "color", "very_dark_gray"], [closeButtonText, "color", "default"]])
         }
     }
 
