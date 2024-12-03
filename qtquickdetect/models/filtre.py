@@ -21,6 +21,17 @@ available_classes = {
     }
 
 def promptFiltre(phrase: str, method: str, api_key:str = "") -> list:
+    """
+    Filter the prompt using the specified method.
+
+    Args:
+        phrase (str): The input prompt.
+        method (str): The method to use for filtering ('dumb', 'dumb_ts', or 'mistral').
+        api_key (str, optional): API key for the 'mistral' method. Defaults to "".
+
+    Returns:
+        list: List of filtered classes.
+    """
     match method:
         case "dumb_ts":
             return traitement_dumb_ts(phrase)
@@ -32,10 +43,28 @@ def promptFiltre(phrase: str, method: str, api_key:str = "") -> list:
             raise ValueError(f"Invalid method : must be 'dumb' or 'mistral' but got {method}")
 
 def traitement_dumb_ts(phrase):
+    """
+    Translate the phrase and filter it using the 'dumb' method.
+
+    Args:
+        phrase (str): The input phrase.
+
+    Returns:
+        list: List of filtered classes.
+    """
     translated = GoogleTranslator().translate(phrase)
     return traitement_dumb(translated)
 
 def traitement_dumb(phrase):
+    """
+    Filter the phrase using the 'dumb' method.
+
+    Args:
+        phrase (str): The input phrase.
+
+    Returns:
+        list: List of filtered classes.
+    """
     nltk_file = get_base_data_dir() / 'nltk'
     
     os.environ['NLTK_DATA'] = str(nltk_file)
@@ -52,6 +81,16 @@ def traitement_dumb(phrase):
 
 
 def traitement_mistral(phrase, API_KEY):
+    """
+    Filter the phrase using the 'mistral' method.
+
+    Args:
+        phrase (str): The input phrase.
+        API_KEY (str): API key for the Mistral API.
+
+    Returns:
+        list: List of filtered classes.
+    """
     MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions"
 
     def get_list_filter(prompt):

@@ -5,7 +5,13 @@ from PySide6.QtCore import QObject, Signal, Slot, QThread
 from models.encylo import EncyclopediaModel
 
 class Worker(QObject):
+    """
+    Worker class to handle the processing of prompts in a separate thread.
+    """
     def __init__(self, pipelinePrompt, filePath, promptText="", typ="image", parent=None, method="dumb", api_key="", encyclo_model: EncyclopediaModel = None):
+        """
+        Initialize the Worker with the given parameters.
+        """
         super().__init__(parent)
         self.filePath = filePath
         self.prompt = promptText
@@ -17,6 +23,9 @@ class Worker(QObject):
         self.encyclo_model = encyclo_model
 
     def run_task(self):
+        """
+        Run the task to process the prompt.
+        """
         if self._is_running:
             try:
                 classes = promptFiltre(self.prompt, self.method, self.api_key)
@@ -27,10 +36,19 @@ class Worker(QObject):
             self.pipeline.on_processing_complete(result)
             
     def stop(self):
+        """
+        Stop the worker.
+        """
         self._is_running = False
 
 class PipelinePrompt(QObject):
+    """
+    PipelinePrompt class to manage the processing of prompts.
+    """
     def __init__(self, backend, parent=None, encyclo_model: EncyclopediaModel = None):
+        """
+        Initialize the PipelinePrompt with the given parameters.
+        """
         super().__init__(parent)
         self.thread = None
         self.worker = None
@@ -40,6 +58,9 @@ class PipelinePrompt(QObject):
 
     @Slot(str, str, str, str, str)
     def start_processing(self, filePath, typ="image", promptText="", method="dumb", api_key=""):
+        """
+        Start processing the prompt in a separate thread.
+        """
         self.thread = QThread()
         self.worker = Worker(self, filePath, promptText, typ, method=method, api_key=api_key, encyclo_model=self.encyclo_model)
         self.promptText = promptText
@@ -56,17 +77,26 @@ class PipelinePrompt(QObject):
 
     @Slot(object)
     def on_processing_complete(self, result):
+        """
+        Handle the completion of the processing.
+        """
         self.backend.on_processing_complete(result, self.promptText)
         self.stop_processing()
 
     @Slot(str)
     def on_error_occurred(self, error):
+        """
+        Handle errors that occur during processing.
+        """
         self.backend.on_processing_complete(None, None)
         if error == "prompt":
             self.backend.infoSent.emit("Erreur lors du traitement du prompt, essayez de réessayer, vérifier votre connexion internet, réécrire le prompt, vérifier votre clé API ou changer de méthode.")
         self.stop_processing()
 
     def stop_processing(self):
+        """
+        Stop the processing.
+        """
         if self.worker:
             self.worker.stop()
         if self.thread:

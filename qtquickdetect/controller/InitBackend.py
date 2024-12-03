@@ -1,6 +1,9 @@
 from PySide6.QtCore import QObject, Property, QThread, Signal, QCoreApplication, Slot
 
 class Controller(QObject):
+    """
+    Controller class to initialize and manage the backend components.
+    """
     controller_loading_finished = Signal()
     
     def __init__(self, app, engine, frame_provider):
@@ -10,6 +13,9 @@ class Controller(QObject):
         self.frame_provider = frame_provider
 
     def start(self):
+        """
+        Start the initialization of the backend components.
+        """
         # Useful imports with threading
         import sys
 
@@ -85,6 +91,9 @@ class Controller(QObject):
 
     
 class InitBackend(QObject):
+    """
+    InitBackend class to manage the loading of the backend components.
+    """
     loading_finished = Signal()  # Signal pour indiquer que le chargement est terminé
     isLoaded = False
     
@@ -95,6 +104,9 @@ class InitBackend(QObject):
         self.frame_provider = frame_provider
         
     def start_loading(self):
+        """
+        Start loading the backend components in a separate thread.
+        """
         # Démarrer un thread séparé pour simuler le chargement
         self.thread = QThread()
         self.controller = Controller(self.app, self.engine, self.frame_provider)
@@ -105,59 +117,119 @@ class InitBackend(QObject):
         
     @Slot()
     def stop_loading(self):
+        """
+        Stop the loading thread.
+        """
         # Code pour arrêter le thread créé dans start_loading
         if self.thread.isRunning():
             self.thread.quit()
             self.thread.wait()
     
     def on_loading_finished(self):
+        """
+        Handle the completion of the loading process.
+        """
         self.isLoaded = True
         self.loading_finished.emit()
         self.stop_loading()
     
     @Property(QObject, constant=True)
     def mediaModel(self):
+        """
+        Get the media model.
+
+        Returns:
+            QObject: The media model.
+        """
         self.raiseIfNotLoaded()
         return self.controller._database_media._media_model
     
     @Property(QObject, constant=True)
     def encyclopediaModel(self):
+        """
+        Get the encyclopedia model.
+
+        Returns:
+            QObject: The encyclopedia model.
+        """
         self.raiseIfNotLoaded()
         return self.controller._database_manager.encyclopediaModel
     
     @Property(QObject, constant=True)
     def historiqueModel(self):
+        """
+        Get the historique model.
+
+        Returns:
+            QObject: The historique model.
+        """
         self.raiseIfNotLoaded()
         return self.controller._database_manager_historique.historiqueModel
     
     @Property(QObject, constant=True)
     def colorManager(self):
+        """
+        Get the color manager.
+
+        Returns:
+            QObject: The color manager.
+        """
         self.raiseIfNotLoaded()
         return self.controller._color_manager
     
     @Property(QObject, constant=True)
     def languageManager(self):
+        """
+        Get the language manager.
+
+        Returns:
+            QObject: The language manager.
+        """
         self.raiseIfNotLoaded()
         return self.controller._language_manager
     
     @Property(QObject, constant=True)
     def appConfig(self):
+        """
+        Get the app configuration.
+
+        Returns:
+            QObject: The app configuration.
+        """
         self.raiseIfNotLoaded()
         return self.controller._app_config
     
     @Property(QObject, constant=True)
     def databaseManager(self):
+        """
+        Get the database manager.
+
+        Returns:
+            QObject: The database manager.
+        """
         self.raiseIfNotLoaded()
         return self.controller._database_manager
     
     @Property(QObject, constant=True)
     def backend(self):
+        """
+        Get the backend instance.
+
+        Returns:
+            QObject: The backend instance.
+        """
         self.raiseIfNotLoaded()
         return self.controller._backend
 
     def raiseIfNotLoaded(self):
+        """
+        Raise an exception if the backend is not loaded yet.
+        """
         if not self.isLoaded:
             raise BackendNotLoadException("Backend not loaded yet")
         
 class BackendNotLoadException(Exception):
+    """
+    Exception raised when the backend is not loaded yet.
+    """
     pass

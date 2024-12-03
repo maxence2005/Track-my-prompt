@@ -8,6 +8,9 @@ import json
 import zipfile
 
 class LanguageManager(QObject):
+    """
+    LanguageManager class to manage the application's languages.
+    """
     newLanguage = Signal()
     languageChanged = Signal()
     translator = QTranslator()
@@ -17,6 +20,15 @@ class LanguageManager(QObject):
     }
     
     def check_structure(self, path):
+        """
+        Check if the given path has the required structure for a language pack.
+
+        Args:
+            path (Path): Path to check.
+
+        Returns:
+            bool: True if the structure is correct, False otherwise.
+        """
         good = True
         if path.exists() and path.is_dir():
             required_files = ["language.ts", "language.qm", "encyclopedia.json"]
@@ -31,6 +43,15 @@ class LanguageManager(QObject):
         return good
 
     def __init__(self, app, engine, encyclo: EncyclopediaModel, language="English"):
+        """
+        Initialize the LanguageManager with the given parameters.
+
+        Args:
+            app (QApplication): The application instance.
+            engine (QQmlApplicationEngine): The QML engine instance.
+            encyclo (EncyclopediaModel): The encyclopedia model.
+            language (str, optional): The initial language. Defaults to "English".
+        """
         super().__init__()
         self.app = app
         self.engine = engine
@@ -44,19 +65,46 @@ class LanguageManager(QObject):
                     self.languages[dir.stem] = str(dir)
 
     def load_json_encyclopedia(self, path):
+        """
+        Load the encyclopedia JSON file.
+
+        Args:
+            path (str): Path to the JSON file.
+
+        Returns:
+            dict: The loaded JSON data.
+        """
         with open(path, 'r', encoding='utf-8') as file:
             return json.load(file)
 
     @Property("QVariant", notify=newLanguage)
     def getLanguages(self):
+        """
+        Get the list of available languages.
+
+        Returns:
+            list: List of available languages.
+        """
         return list(self.languages.keys())
     
     @Property("QVariant", notify=languageChanged)
     def getCurrentLanguage(self):
+        """
+        Get the current language.
+
+        Returns:
+            str: The current language.
+        """
         return self.language
 
     @Slot(str)
     def setLanguage(self, language):
+        """
+        Set the current language.
+
+        Args:
+            language (str): The language to set.
+        """
         if language in self.languages.keys():
             self.language = language
             self.translator.load(self.languages[language] + "/language.qm")
@@ -73,6 +121,9 @@ class LanguageManager(QObject):
 
     @Slot()
     def install_new_language(self):
+        """
+        Install a new language from a .tmpts file.
+        """
         file_dialog = QFileDialog()
         file_dialog.setFileMode(QFileDialog.ExistingFiles)
         file_dialog.setNameFilter(
