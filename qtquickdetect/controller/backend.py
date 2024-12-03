@@ -98,7 +98,8 @@ class Backend(QObject):
             self.handle_file(file_path)
 
     def on_processing_complete(self, result, promptText):
-        self.media_model.updateMediaItem(id=self.fichier["id"], file_path_ia=result, prompt=promptText)
+        if result is not None:
+            self.media_model.updateMediaItem(id=self.fichier["id"], file_path_ia=result, prompt=promptText)
         self._shared_variable["Chargement"] = False
         self.sharedVariableChanged.emit()
 
