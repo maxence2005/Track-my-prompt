@@ -3,21 +3,21 @@
 ![app_screenshot](media/app_screenshot.png)
 </div>
 
-L'application Track My Prompts permet d'utiliser un modèle d'intelligence artificielle de reconnaisance d'images. Elle permet de détecter des objets du quotidien et interprète des prompts pour une recherche plus ciblée.
+The Track My Prompts application allows the use of an image recognition AI model. It can detect everyday objects and interpret prompts for more targeted searches.
 
-## Fonctionnalités 
+## Features
 
-- Détection d'objets dans des images et des vidéos
-- Détection en direct à travers la webcam
-- Interprétation de prompts pour une détection plus ciblée
+- Object detection in images and videos
+- Live detection through the webcam
+- Prompt interpretation for more targeted detection
 
 ## Installation
 
-Pour que Track My Prompts fonctionne correctement, il est nécessaire d'avoir un environnement virtuel python de version 3.10, 3.11 ou 3.12. Une fois l'environnement créé, il faut installer les dépendances, référencées dans le fichier 'requirements.txt'.
+To ensure Track My Prompts works correctly, you need a Python virtual environment of version 3.10, 3.11, or 3.12. Once the environment is created, install the dependencies listed in the 'requirements.txt' file.
 
-### Accélération GPU
+### GPU Acceleration
 
-Si votre ordinateur possède une carte graphique Nvidia RTX, vous pouvez installer 'torch 2.3.x' et 'torchvision 0.18.x'. Cela permettra d'accélérer la vitesse de traitement des images et vidéos.
+If your computer has an Nvidia RTX graphics card, you can install 'torch 2.3.x' and 'torchvision 0.18.x'. This will speed up the processing of images and videos.
 
-## Auteurs
-[Auteurs](AUTHORS.md)
+## Authors
+[Authors](AUTHORS.md)
