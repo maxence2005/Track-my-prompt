@@ -1,9 +1,9 @@
 from PySide6.QtCore import QUrl, QObject, Signal, Slot, Property, QPropertyAnimation, QTranslator, QLocale
 from PySide6.QtWidgets import QApplication, QFileDialog
-from ..utils import filepaths
+from utils import filepaths
 import shutil
 from pathlib import Path
-from ..models.encylo import EncyclopediaModel
+from models.encylo import EncyclopediaModel
 import json
 import zipfile
 
