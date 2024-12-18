@@ -5,6 +5,7 @@ from utils.filepaths import get_base_data_dir
 import requests
 import ast
 from deep_translator import GoogleTranslator
+from pathlib import Path
 
 available_classes = {
         "person", "backpack", "umbrella", "handbag", "suitcase", "tie", "bicycle", "car",
@@ -19,6 +20,12 @@ available_classes = {
         "tv", "mouse", "microwave", "oven", "sink", "toaster", "refrigerator",
         "teddy bear", "hair drier", "toothbrush", "scissors", "clock", "book", "vase"
     }
+
+nltk_file = Path(get_base_data_dir()) / 'nltk'
+os.environ['NLTK_DATA'] = str(nltk_file)
+lemmatizer = WordNetLemmatizer()
+word_pattern = re.compile(r'\b\w+\b')
+lemmatizer.lemmatize("dog") # Initialize the lemmatizer
 
 def promptFiltre(phrase: str, method: str, api_key:str = "") -> list:
     match method:
@@ -36,18 +43,9 @@ def traitement_dumb_ts(phrase):
     return traitement_dumb(translated)
 
 def traitement_dumb(phrase):
-    nltk_file = get_base_data_dir() / 'nltk'
-    
-    os.environ['NLTK_DATA'] = str(nltk_file)
-
-    lemmatizer = WordNetLemmatizer()
-
-    words = re.findall(r'\b\w+\b', phrase.lower())
-
+    words = word_pattern.findall(phrase.lower())
     lemmatized_words = [lemmatizer.lemmatize(word) for word in words]
-
     filtered_classes = [word for word in lemmatized_words if word in available_classes]
-    
     return filtered_classes
 
 
