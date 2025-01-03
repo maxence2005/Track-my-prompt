@@ -1,8 +1,11 @@
 
 import unittest
 from unittest.mock import patch, MagicMock
-
 import importer
+
+import key
+
+
 promptFiltre = importer.load('promptFiltre', 'models', 'filtre.py')
 
 class TestPromptFiltre(unittest.TestCase):
@@ -14,13 +17,10 @@ class TestPromptFiltre(unittest.TestCase):
         result = promptFiltre("chien chat", "dumb_ts")
         self.assertEqual(result, ["dog", "cat"])
 
-# TODO
-"""     @patch('qtquickdetect.models.filtre.requests.post')
-    def test_promptFiltre_mistral(self, mock_post):
-        mock_post.return_value.status_code = 200
-        mock_post.return_value.json.return_value = {"choices": [{"message": {"content": '["dog", "cat"]'}}]}
-        result = promptFiltre("dog cat", "mistral", api_key="test_key")
-        self.assertEqual(result, ["dog", "cat"]) """
+    def test_promptFiltre_mistral(self):
+        assert key.mistral_key != 'your_mistral_key', "You need to set your mistral key in tests/key.py"
+        result = promptFiltre("Trouve tous les chiens, ainsi que les chats. Par contre les humains je ne veux pas les trouver", "mistral", api_key=key.mistral_key)
+        self.assertEqual(result, ["dog", "cat"])
 
 if __name__ == '__main__':
     unittest.main()
