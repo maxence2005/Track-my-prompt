@@ -18,6 +18,14 @@ YoloWorld AI model is used for object detection. The model is trained on the COC
 | Image | .bmp, .dng, .jpeg, .jpg, .mpo, .png, .tif, .tiff, .webp, .pfm, .HEIC |
 | Video | .asf, .avi, .gif, .m4v, .mkv, .mov, .mp4, .mpeg, .mpg, .ts, .wmv, .webm |
 
+## Prompt Interpretation
+The application can interpret prompts to provide more targeted detection. The following prompts are available:
+| Prompt | Description |
+|---|---|
+| Dumb | Search for a specific object by keyword in english |
+| Dumb With Translation | Search for a specific object by keyword in any language |
+| Mistral | Use the Mistral API to interpret the prompt |
+
 ## Translations
 The application is available in the following languages:
 | Language | Download File |
@@ -27,13 +35,13 @@ The application is available in the following languages:
 
 Install the language pack in settings.
 
-### Create your own translation
-## Get lrelease and lupdate commands
+## Create your own translation
+### Get lrelease and lupdate commands
 To create a translation, you need to install the Qt tools. You can get them on Debian-based Linux with the following command:
 ```bash
 sudo apt-get install qttools5-dev-tools
 ```
-## Create a translation file
+### Create a translation file
 Download the project and go to the 'scripts' folder. To generate template files, run the following command:
 ```bash
 ./extract_translations.sh <lang> # lang is the language code (ex: fr)
