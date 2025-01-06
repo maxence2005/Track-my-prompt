@@ -12,6 +12,18 @@ from models.encylo import EncyclopediaModel
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def traitementPrompt(filePath: str, classes: list = None, typ: str = "video", encyclopedia_model: EncyclopediaModel = None) -> str:
+    """
+    Process the prompt and return the path to the processed file.
+
+    Args:
+        filePath (str): Path to the input file.
+        classes (list, optional): List of classes to detect. Defaults to None.
+        typ (str, optional): Type of the input file ('image' or 'video'). Defaults to "video".
+        encyclopedia_model (EncyclopediaModel, optional): Encyclopedia model for updating class counts. Defaults to None.
+
+    Returns:
+        str: Path to the processed file.
+    """
     models_path = filepaths.get_base_data_dir() / 'models'
     model = YOLOWorld(os.path.join(models_path, 'yolov8s-world.pt'))
 
@@ -25,7 +37,7 @@ def traitementPrompt(filePath: str, classes: list = None, typ: str = "video", en
     os.makedirs(collections_dir, exist_ok=True)
 
     if typ == "image":
-        with torch.no_grad():  
+        with torch.no_grad():
             results = model.predict(filePath, save=True, save_dir=str(collections_dir), exist_ok=True)
         
         saved_image_path = results[0].save_dir

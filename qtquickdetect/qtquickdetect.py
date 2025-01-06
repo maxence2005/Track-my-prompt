@@ -13,6 +13,11 @@ from .models.imageProvider import ImageProvider
 from .controller.InitBackend import InitBackend
 
 def main():
+    """
+    Main function to start the TrackMyPrompt application.
+    Configures logging, initializes the QApplication and QQmlApplicationEngine,
+    sets up the ImageProvider, and loads the QML file.
+    """
     # Get path to the python package
     package_path = pathlib.Path(__file__).absolute().parent.parent
     os.chdir(package_path)

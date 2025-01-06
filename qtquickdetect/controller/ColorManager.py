@@ -6,10 +6,20 @@ from PySide6.QtWidgets import QApplication
 
 
 class ColorManager(QObject):
+    """
+    ColorManager class to manage the application's color themes.
+    """
     themeChanged = Signal()
     animations = []
 
     def __init__(self, theme_file, theme):
+        """
+        Initialize the ColorManager with the given theme file and initial theme.
+
+        Args:
+            theme_file (str): Path to the theme file.
+            theme (str): Initial theme.
+        """
         super().__init__()
         with open(theme_file, 'r') as f:
             self.themes = json.load(f)
@@ -18,14 +28,32 @@ class ColorManager(QObject):
 
     @Property("QVariant", notify=themeChanged)
     def getColor(self):
+        """
+        Get the current colors.
+
+        Returns:
+            dict: The current colors.
+        """
         return self.colors
     
     @Slot(str, result="QVariant")
     def getColorNoNotify(self, key):
+        """
+        Get a specific color without emitting a signal.
+
+        Args:
+            key (str): The color key.
+
+        Returns:
+            str: The color value.
+        """
         return self.colors[key]
     
     @Slot()
     def switchTheme(self):
+        """
+        Switch between light and dark themes.
+        """
         if self.current_theme == "light":
             self.current_theme = "dark"
         else:
@@ -35,14 +63,32 @@ class ColorManager(QObject):
     
     @Property(bool, notify=themeChanged)
     def isLightMode(self):
+        """
+        Check if the current theme is light mode.
+
+        Returns:
+            bool: True if light mode, False otherwise.
+        """
         return self.current_theme == "light"
     
     @Property(bool, notify=themeChanged)
     def isDarkMode(self):
+        """
+        Check if the current theme is dark mode.
+
+        Returns:
+            bool: True if dark mode, False otherwise.
+        """
         return self.current_theme == "dark"
     
     @Slot(list)
     def animateColorChange(self, targets):
+        """
+        Animate the color change for the given targets.
+
+        Args:
+            targets (list): List of targets to animate.
+        """
         for target in targets:
             animation = QPropertyAnimation(target[0], target[1].encode('utf-8'))
             animation.setDuration(300)
