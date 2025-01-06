@@ -31,7 +31,7 @@ class Backend(QObject):
         self.media_model = media_model
         self.encyclo_model = encyclopedia_model
         self.image_provider = im_pro
-        self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Chargement" : False, "prompt_ia" : prompt_ia, "api_key_mistral" : api_key_mistral, "Camera" : False}
+        self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Chargement" : False, "prompt_ia" : prompt_ia, "api_key_mistral" : api_key_mistral, "Camera" : False, "state" : ""}
         self.pipeline = PipelinePrompt(self, encyclo_model=self.encyclo_model)
         self.pipelineCamera = CameraPipeline(self)
         self.pipelineCamera.frame_send.connect(self.frame_send)
@@ -73,6 +73,7 @@ class Backend(QObject):
         else :
             if promptText != "" and self._shared_variable["Chargement"] == False:
                 self._shared_variable["Chargement"] = True
+                self._shared_variable["state"] = "prompt"
                 self._idChargement = self.fichier["id"]
                 self.sharedVariableChanged.emit()
                 self.idChargementSignal.emit()

@@ -14,7 +14,8 @@ ColumnLayout {
         target: colorManager
         function onThemeChanged() {
             colorManager.animateColorChange([
-                [iaPromptText, "color", "default"]
+                [iaPromptText, "color", "default"],
+                [overlayText, "color", "default"]
             ]);
         }
     }
@@ -110,6 +111,22 @@ ColumnLayout {
                     break
             }
         }
+    }
+
+    Text {
+        id: overlayText
+        Layout.alignment: Qt.AlignCenter
+        horizontalAlignment: Text.AlignHCenter
+        text: backend ? (
+            backend.shared_variable["state"] === "prompt" ? qsTr("Prompt processing") :
+            backend.shared_variable["state"] === "ia" ? qsTr("IA processing") :
+            qsTr("Loading...")
+        ) : qsTr("Loading...")
+        font.pixelSize: imageContainer.width / 50
+        color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
+        wrapMode: Text.Wrap
+        width: imageContainer.width - 20
+        visible: (backend ? backend.shared_variable["Chargement"] : false) && (modelEntry.id == backend.idChargement)
     }
 
     Text {

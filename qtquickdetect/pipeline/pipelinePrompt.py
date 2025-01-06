@@ -5,7 +5,7 @@ from PySide6.QtCore import QObject, Signal, Slot, QThread
 from models.encylo import EncyclopediaModel
 
 class Worker(QObject):
-    def __init__(self, pipelinePrompt, filePath, promptText="", typ="image", parent=None, method="dumb", api_key="", encyclo_model: EncyclopediaModel = None):
+    def __init__(self, pipelinePrompt, filePath, promptText="", typ="image", parent=None, method="dumb", api_key="", encyclo_model: EncyclopediaModel = None, backend = None):
         super().__init__(parent)
         self.filePath = filePath
         self.prompt = promptText
@@ -15,6 +15,7 @@ class Worker(QObject):
         self.api_key = api_key
         self.pipeline = pipelinePrompt
         self.encyclo_model = encyclo_model
+        self.backend = backend
 
     def run_task(self):
         if self._is_running:
@@ -23,6 +24,11 @@ class Worker(QObject):
             except Exception as e:
                 self.pipeline.on_error_occurred("prompt")
                 return
+            if self.backend is not None:
+                self.backend._shared_variable["state"] = "ia"
+                self.backend.sharedVariableChanged.emit()
+            else:
+                print("Erreur: backend non défini")
             result = traitementPrompt(self.filePath, classes, self.typ, self.encyclo_model)
             self.pipeline.on_processing_complete(result)
             
@@ -41,7 +47,7 @@ class PipelinePrompt(QObject):
     @Slot(str, str, str, str, str)
     def start_processing(self, filePath, typ="image", promptText="", method="dumb", api_key=""):
         self.thread = QThread()
-        self.worker = Worker(self, filePath, promptText, typ, method=method, api_key=api_key, encyclo_model=self.encyclo_model)
+        self.worker = Worker(self, filePath, promptText, typ, method=method, api_key=api_key, encyclo_model=self.encyclo_model, backend=self.backend)
         self.promptText = promptText
 
         self.worker.moveToThread(self.thread)
