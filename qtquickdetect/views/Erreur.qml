@@ -113,7 +113,14 @@ Rectangle {
     Connections {
         target: backend
         function onInfoSent(message) {
-            erreurRectangle.errorMessage = message;
+            let msg = {
+                "no_data_saved" : qsTr("Error: No image/video saved."),
+                "missing_mistral_api_key" : qsTr("Error: Please provide an API key for Mistral."),
+                "wrong_file_type" : qsTr("Error: The file is not an image or a video."),
+                "prompt_err" : qsTr("Error processing the prompt, try again, check your internet connection, rewrite the prompt, check your API key, or change the method.")
+            }
+
+            erreurRectangle.errorMessage = msg[message] !== undefined ? msg[message] : message;
             backend.toggle_erreur();
         }
     }

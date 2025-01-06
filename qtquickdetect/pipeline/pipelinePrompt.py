@@ -63,7 +63,7 @@ class PipelinePrompt(QObject):
     def on_error_occurred(self, error):
         self.backend.on_processing_complete(None, None)
         if error == "prompt":
-            self.backend.infoSent.emit("Erreur lors du traitement du prompt, essayez de réessayer, vérifier votre connexion internet, réécrire le prompt, vérifier votre clé API ou changer de méthode.")
+            self.backend.infoSent.emit("prompt_err")
         self.stop_processing()
 
     def stop_processing(self):

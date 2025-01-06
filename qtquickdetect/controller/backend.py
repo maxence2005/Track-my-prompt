@@ -67,9 +67,9 @@ class Backend(QObject):
     @Slot(str)
     def receivePrompt(self, promptText):
         if self.fichier["lien"] == "" :
-            self.infoSent.emit("Erreur : Aucune Image/video enregistrer.")
+            self.infoSent.emit("no_data_saved")
         if self._shared_variable["prompt_ia"] == "mistral" and self._shared_variable["api_key_mistral"] == "":
-            self.infoSent.emit("Erreur : Veuillez renseigner une clé API pour Mistral.")
+            self.infoSent.emit("missing_mistral_api_key")
         else :
             if promptText != "" and self._shared_variable["Chargement"] == False:
                 self._shared_variable["Chargement"] = True
@@ -129,7 +129,7 @@ class Backend(QObject):
             destination_directory = get_base_data_dir() / "collections" / "video"
             media_type = "video"
         else:
-            self.infoSent.emit(f"Erreur : le fichier n'est pas une image ou une vidéo.")
+            self.infoSent.emit("wrong_file_type")
             return
         
         dst = destination_directory / filename
