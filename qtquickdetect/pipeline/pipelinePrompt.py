@@ -75,7 +75,6 @@ class PipelinePrompt(QObject):
 
         self.thread.started.connect(self.worker.run_task)
 
-        # Nettoyage
         self.thread.finished.connect(self.thread.deleteLater)
         self.thread.finished.connect(self.worker.deleteLater)
 

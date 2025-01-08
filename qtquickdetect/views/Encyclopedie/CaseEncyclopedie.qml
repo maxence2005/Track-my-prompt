@@ -23,7 +23,6 @@ Rectangle {
     border.width: 1
     radius: 10
 
-    // Propriétés dynamiques
     property string name: ""
     property string iconSource: ""
     property int count: 0
@@ -32,41 +31,35 @@ Rectangle {
         anchors.centerIn: parent
         spacing: 10
 
-        // Utilisez Text au lieu de Image pour afficher l'émoticône
         Text {
             id: icon
             text: iconSource
-            font.pixelSize: 50  // Taille de l'émoticône (à ajuster si nécessaire)
+            font.pixelSize: 50  
             color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
             anchors.horizontalCenter: parent.horizontalCenter
 
-            // Animation lors du survol
             MouseArea {
                 id: mouseAreaIcon
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
 
-                // Gestion des événements de survol
                 onEntered: {
-                    // Animer l'effet de zoom avant au survol
-                    iconScaleAnim.to = 1.3; // Zoomer légèrement (ajuster selon vos besoins)
+                    iconScaleAnim.to = 1.3;
                     iconScaleAnim.start();
                 }
 
                 onExited: {
-                    // Revenir à la taille initiale lorsque le survol cesse
-                    iconScaleAnim.to = 1.0; // Taille normale
+                    iconScaleAnim.to = 1.0;
                     iconScaleAnim.start();
                 }
             }
         }
 
-        // Animation de la mise à l'échelle de l'icône
         PropertyAnimation {
             id: iconScaleAnim
             target: icon
             property: "scale"
-            duration: 150 // Durée de l'animation (en ms)
+            duration: 150
         }
 
         Text {

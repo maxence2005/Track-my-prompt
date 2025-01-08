@@ -15,11 +15,9 @@ Column {
 
     ColumnLayout {
         id: lightModeColumn
-        // Icon quand on est en dark mode
         property string iconLight: "../imgs/light_mode_icon.png"
         property string textLight: qsTr("Light mode")
 
-        // Icon quand on est en light mode
         property string iconDark: "../imgs/dark_mode_icon.svg"
         property string textDark: qsTr("Dark mode")
 

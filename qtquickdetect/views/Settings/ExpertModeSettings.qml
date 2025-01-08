@@ -9,7 +9,7 @@ Column {
         function onThemeChanged() {
             colorManager.animateColorChange([
                 [expertModeLabel, "color", "default"],
-                [expertModeCheckBoxIndicator, "color", "default"], // TODO : Change color based on state
+                [expertModeCheckBoxIndicator, "color", "default"],
             ])
         }
     }

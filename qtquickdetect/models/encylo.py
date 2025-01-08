@@ -4,7 +4,6 @@ from PySide6.QtCore import QObject, Signal, Slot, Property, QAbstractListModel, 
 import copy
 from utils import filepaths
 
-# Définir le modèle QML pour les éléments de l'encyclopédie
 class EncyclopediaModel(QAbstractListModel):
     NameRole = Qt.UserRole + 1
     EmoticonRole = Qt.UserRole + 2
@@ -83,11 +82,11 @@ class EncyclopediaModel(QAbstractListModel):
     
     def changeName(self, newDict):
         """
-        Change le nom anglais de l'élément de l'encyclopédie par un autre nom donné dans newDict.
-        Structure de newDict: {"oldName": "newName", "oldName2": "newName2", ...}
+        Changes the engllish name to the new name given by the parameter newDict
+        newDict structure: {"oldName": "newName", "oldName2": "newName2", ...}
 
         Args:
-            newDict (dict): Dictionnaire contenant les anciens noms et les nouveaux noms.
+            newDict (dict): contains the new names
         """
         for oldName, newName in newDict.items():
             for i in range(len(self._items_base)):
@@ -100,7 +99,7 @@ class EncyclopediaModel(QAbstractListModel):
     
     def restoreName(self):
         """
-        Restaure le nom anglais de l'élément de l'encyclopédie à son nom original.
+        Restores the original english name in the encyclopedy
         """
         for i in range(len(self._items_base)):
             self._all_items[i]["englishName"] = self._items_base[i]["englishName"]
@@ -111,6 +110,9 @@ class EncyclopediaModel(QAbstractListModel):
     def get_all_names(self):
         return {item["englishName"] for item in self._all_items}
     
+    """
+    Updates the time found in the database
+    """
     def changeTimeFound(self, dict):
         for name, timeFound in dict.items():
             for i in range(len(self._items_base)):
@@ -122,6 +124,11 @@ class EncyclopediaModel(QAbstractListModel):
         self.update_data_bis(self._all_items)
 
     def incrementTimeFound(self, classes):
+        """
+        Increments of 1 the number of time the classes were found
+        Args:
+            classes : the classes to update
+        """
         db_path = os.path.join(filepaths.get_base_data_dir(), 'trackmyprompt.db')
         connection = sqlite3.connect(db_path)
         cursor = connection.cursor()
@@ -149,8 +156,10 @@ class DatabaseManager(QObject):
 
     @Slot()
     def load_data(self):
+        """
+        Loads the encyclopedy data from the database
+        """
         connection = None
-        # Charge les données de la base de données
         try:
             connection = sqlite3.connect(self.db_path)
             cursor = connection.cursor()
@@ -159,12 +168,8 @@ class DatabaseManager(QObject):
 
             data = [{"englishName": row[0], "emoticon": row[1], "timeFound": row[2]} for row in rows]
 
-            # Debug: afficher les données chargées
-
-            # Met à jour le modèle
             self.model.initialize_data(data)
             self.dataLoaded.emit()
-            # Debug: afficher le contenu du modèle
 
         except sqlite3.Error as e:
             print(f"Erreur lors de l'accès à la base de données: {e}")
@@ -175,10 +180,10 @@ class DatabaseManager(QObject):
     
     @Slot(str)
     def set_search_text(self, text):
-        """Met à jour la recherche dans le modèle."""
+        """Updates the filter in the model"""
         self.model.filter_data(text)
 
     @Property(QObject, constant=True)
     def encyclopediaModel(self):
-        """Expose le modèle à QML"""
+        """Exposes the model to the QML view"""
         return self.model

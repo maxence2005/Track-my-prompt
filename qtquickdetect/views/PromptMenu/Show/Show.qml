@@ -28,7 +28,6 @@ Rectangle {
             anchors.fill: parent
             anchors.margins: 20
 
-            // Ajout des propriétés pour un défilement plus fluide
             flickDeceleration: 1000
             maximumFlickVelocity: 2500
 

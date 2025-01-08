@@ -77,8 +77,8 @@ def traitementPrompt(filePath: str, classes: list = None, typ: str = "video", en
                         cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
                         
                         if r.boxes.conf is not None and i < len(r.boxes.conf):
-                            confidence = r.boxes.conf[i].item() * 100  # Confiance en pourcentage
-                            class_index = int(r.boxes.cls[i].item())  # Indice de la classe
+                            confidence = r.boxes.conf[i].item() * 100 
+                            class_index = int(r.boxes.cls[i].item())
                             class_name = model.names[class_index] if class_index in model.names else "Unknown"
                             label = f"{class_name} {confidence:.1f}%"
 
@@ -88,7 +88,7 @@ def traitementPrompt(filePath: str, classes: list = None, typ: str = "video", en
                         r.masks.draw(frame)
 
 
-                out.write(frame)  # Écrire la frame avec les cadres
+                out.write(frame)
 
         cap.release()
         out.release()

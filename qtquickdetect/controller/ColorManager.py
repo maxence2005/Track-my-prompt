@@ -94,5 +94,5 @@ class ColorManager(QObject):
             animation.setDuration(300)
             animation.setEndValue(self.colors.get(target[2], "#000000"))
             animation.finished.connect(lambda anim=animation: self.animations.remove(anim))
-            self.animations.append(animation)  # Conserver la référence
+            self.animations.append(animation) 
             animation.start()
