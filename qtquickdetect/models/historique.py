@@ -2,7 +2,6 @@ import sqlite3
 import os
 from PySide6.QtCore import QObject, Signal, Slot, Property, QAbstractListModel, QModelIndex, Qt
 
-# Définir le modèle QML pour les éléments de l'historique
 class HistoriqueModel(QAbstractListModel):
     PromptRole = Qt.UserRole + 1
 
@@ -43,8 +42,10 @@ class DatabaseManagerHistorique(QObject):
 
     @Slot()
     def load_historique_data(self):
+        """
+        Loads the history data from the database
+        """
         connection = None
-        # Charge les données de l'historique depuis la base de données
         try:
             connection = sqlite3.connect(self.db_path)
             cursor = connection.cursor()
@@ -53,7 +54,6 @@ class DatabaseManagerHistorique(QObject):
 
             data = [{"prompt": row[0]} for row in rows]
 
-            # Met à jour le modèle Historique
             self.historique_model.update_data(data)
             self.historiqueDataLoaded.emit()
 
@@ -66,5 +66,5 @@ class DatabaseManagerHistorique(QObject):
 
     @Property(QObject, constant=True)
     def historiqueModel(self):
-        """Expose le modèle Historique à QML"""
+        """Exposes the model to the QML view"""
         return self.historique_model

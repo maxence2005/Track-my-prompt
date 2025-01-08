@@ -20,7 +20,7 @@ Rectangle {
         id: backgroundParamRectangle
         width: parent.width
         height: parent.height
-        color: (colorManager ? colorManager.getColorNoNotify("very_dark_gray") : "#000000") // Background color
+        color: (colorManager ? colorManager.getColorNoNotify("very_dark_gray") : "#000000")
 
         CloseButton { }
         TitleText { }

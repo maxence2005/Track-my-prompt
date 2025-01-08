@@ -19,9 +19,8 @@ Rectangle {
         id: backgroundParamRectangle
         width: parent.width
         height: parent.height
-        color: (colorManager ? colorManager.getColorNoNotify("very_dark_gray") : "#000000") // Couleur d'arrière-plan
+        color: (colorManager ? colorManager.getColorNoNotify("very_dark_gray") : "#000000")
 
-        // Conteneur pour le bouton de fermeture (croix)
         Rectangle {
             id: closeButtonContainer
             width: 30
@@ -29,11 +28,11 @@ Rectangle {
             anchors.top: parent.top
             anchors.right: parent.right
             anchors.margins: 10
-            color: "transparent" // Pas de couleur pour que la croix elle-même reste visible
+            color: "transparent"
 
             Text {
                 id: closeButtonText
-                text: "✖" // Symbole de la croix
+                text: "✖"
                 color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
                 font.pixelSize: 24
                 anchors.centerIn: parent
@@ -48,41 +47,37 @@ Rectangle {
             }
         }
 
-        // Conteneur vertical pour l'image, le texte et le bouton
         Column {
             id: contentColumn
             anchors.centerIn: parent
             width: parent.width - 50
-            spacing: 25 // Espacement entre les éléments
+            spacing: 25
 
-            // Image du point d'interrogation
             Image {
                 id: errorImage
-                source: "imgs/erreur.png" // Assurez-vous que cette image existe dans vos ressources
+                source: "imgs/erreur.png"
                 width: 80
                 height: 80
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
-            // Texte du message d'erreur
             Text {
                 id: errorMessageText
-                text: erreurRectangle.errorMessage // Utilise une propriété pour définir dynamiquement le texte
+                text: erreurRectangle.errorMessage
                 color: "red"
                 font.pixelSize: 25
                 anchors.horizontalCenter: parent.horizontalCenter
-                width: parent.width // Ajuste la largeur pour tenir compte des marges
-                wrapMode: Text.WordWrap // Permet le retour à la ligne automatique
+                width: parent.width
+                wrapMode: Text.WordWrap 
                 horizontalAlignment: Text.AlignHCenter
-                visible: erreurRectangle.errorMessage.length > 0 // Visible seulement s'il y a un message d'erreur
+                visible: erreurRectangle.errorMessage.length > 0 
             }
 
-            // Bouton de fermeture en bas du message
             Rectangle {
                 id: closeButton
                 width: 120
                 height: 40
-                color: (colorManager ? colorManager.getColorNoNotify("gray") : "#000000") // Couleur du bouton
+                color: (colorManager ? colorManager.getColorNoNotify("gray") : "#000000")
                 radius: 10
                 anchors.horizontalCenter: parent.horizontalCenter
 

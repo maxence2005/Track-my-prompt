@@ -16,7 +16,6 @@ class Controller(QObject):
         """
         Start the initialization of the backend components.
         """
-        # Useful imports with threading
         import sys
 
         from .backend import Backend
@@ -32,7 +31,6 @@ class Controller(QObject):
         import shutil
         import nltk
         
-        # Create necessary directories
         filepaths.create_cache_dir()
         filepaths.create_config_dir()
         filepaths.create_data_dir()
@@ -47,7 +45,6 @@ class Controller(QObject):
 
         os.environ['TORCH_HOME'] = str(filepaths.get_base_data_dir() / 'weights')
 
-        # Change working directory to the package path
         db_path_tmp = os.path.abspath("qtquickdetect/resources/trackmyprompts.db")
         data_dir = filepaths.get_base_data_dir()
         db_path = os.path.join(data_dir, "trackmyprompt.db")
@@ -69,7 +66,7 @@ class Controller(QObject):
             print(f"Erreur lors de l'initialisation de DatabaseManager : {e}")
             sys.exit(-1)
         
-        # Create an instance of QQmlApplicationEngine
+        # Creating the instance of QQmlApplicationEngine
         self._language_manager = LanguageManager(app=self.app, engine=self.engine, encyclo=self._database_manager.encyclopediaModel)
         self._app_config = AppConfig(self._language_manager.languages)
         self._language_manager.setLanguage(self._app_config.language)
@@ -94,7 +91,7 @@ class InitBackend(QObject):
     """
     InitBackend class to manage the loading of the backend components.
     """
-    loading_finished = Signal()  # Signal pour indiquer que le chargement est terminé
+    loading_finished = Signal() 
     isLoaded = False
     
     def __init__(self, app, engine, frame_provider):
@@ -107,7 +104,6 @@ class InitBackend(QObject):
         """
         Start loading the backend components in a separate thread.
         """
-        # Démarrer un thread séparé pour simuler le chargement
         self.thread = QThread()
         self.controller = Controller(self.app, self.engine, self.frame_provider)
         self.controller.controller_loading_finished.connect(self.on_loading_finished)
@@ -120,7 +116,6 @@ class InitBackend(QObject):
         """
         Stop the loading thread.
         """
-        # Code pour arrêter le thread créé dans start_loading
         if self.thread.isRunning():
             self.thread.quit()
             self.thread.wait()

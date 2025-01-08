@@ -76,7 +76,7 @@ def is_url(url: str) -> bool:
 def download_file(url: str, dst: str, cb: Optional[Callable[[int, int], None]] = None) -> None:
     try:
         resp = requests.get(url, stream=True)
-        resp.raise_for_status()  # Vérifie si la requête a réussi
+        resp.raise_for_status()
         
         total = int(resp.headers.get('content-length', 0))
         current = 0

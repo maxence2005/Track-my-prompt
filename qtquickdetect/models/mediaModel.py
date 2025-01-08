@@ -260,7 +260,7 @@ class DatabaseManagerMedia(QObject):
             if row:
                 return {"id": row[0], "lien": row[1], "type": row[2], "prompt": row[3], "lienIA": row[4]}
             else:
-                return {}  # Return an empty dictionary if no media found
+                return {}  # Returns an empty dictionary if no media found
         except sqlite3.Error as e:
             print(f"Error retrieving the last media: {e}")
             return {}
@@ -280,7 +280,7 @@ class DatabaseManagerMedia(QObject):
             cursor = connection.cursor()
             cursor.execute("DELETE FROM MediaData")
             connection.commit()
-            # Update the model to reflect the deletion
+            # Updates the model to reflect the deletion
             self._media_model.update_data([])
         except sqlite3.Error as e:
             print(f"Error deleting media: {e}")

@@ -22,7 +22,7 @@ Rectangle {
     property var colorManager: (appContext ? appContext.colorManager : null)
     property var languageManager: (appContext ? appContext.languageManager : null)
 
-    anchors.fill: parent  // Remplit l'espace du parent
+    anchors.fill: parent 
     
     Component {
         id: promptMenuComponent
@@ -31,7 +31,7 @@ Rectangle {
 
     Component {
         id: encyclopedie
-        Encyclopedie.Encyclopedie {} // Remplacez par le vrai nom de l'autre composant
+        Encyclopedie.Encyclopedie {} 
     }
 
     Row {
@@ -57,7 +57,6 @@ Rectangle {
         }
     }
 
-    // Rectangle transparent pour désactiver les interactions
     Rectangle {
         id: interactionBlocker
         color: "transparent"

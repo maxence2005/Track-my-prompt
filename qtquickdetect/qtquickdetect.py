@@ -43,10 +43,9 @@ def main():
     else:
         print("Erreur : impossible de charger la police.")
     
-    # Connecter la méthode stop_loading au signal aboutToQuit
     app.aboutToQuit.connect(appContext.stop_loading)
 
-    # Load the QML file
+    # Load the QML app file
     engine.load(QUrl("qtquickdetect/views/App.qml"))
     appContext.loading_finished.connect(lambda: engine.rootObjects()[0].setProperty("isLoaded", True))
 
@@ -55,7 +54,6 @@ def main():
     if not engine.rootObjects():
         sys.exit(-1)
 
-    # Lancer la boucle d'événements de l'application
     statut = app.exec()
 
     appContext.appConfig.style = appContext.colorManager.current_theme

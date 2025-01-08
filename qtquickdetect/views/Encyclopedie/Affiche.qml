@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.15
 Rectangle {
     width: parent.width
     height: parent.height
-    color: "transparent"  // La couleur peut être ajustée ou laissée transparente
+    color: "transparent"  
 
     ScrollView {
         anchors.fill: parent
@@ -18,10 +18,10 @@ Rectangle {
             id: gridView
             width: parent.width
             height: parent.height
-            cellWidth: 200  // Largeur de chaque cellule
-            cellHeight: 200 // Hauteur de chaque cellule
+            cellWidth: 200 
+            cellHeight: 200
             bottomMargin: 100
-            clip: true      // Assurez-vous que le contenu qui déborde soit masqué
+            clip: true    
 
             model: encyclopediaModel
 

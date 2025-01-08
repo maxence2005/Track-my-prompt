@@ -44,21 +44,21 @@ Rectangle {
                 id : gradientStop0
                 position: 0.0
                 color: (colorManager ? colorManager.getColorNoNotify("dark_bluish_gray") : "#000000")
-            } // Couleur supérieure
+            } 
             GradientStop {
                 id : gradientStop1
                 position: 1.0
                 color: (colorManager ? colorManager.getColorNoNotify("anthracite_gray") : "#000000")
-            } // Couleur inférieure
+            }
         }
     }
     Rectangle {
         anchors.fill: parent
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: 5  // Décalage vertical
-        color: Qt.rgba(0, 0, 0, 0.2)  // Ombre semi-transparente
+        anchors.topMargin: 5 
+        color: Qt.rgba(0, 0, 0, 0.2)  
         radius: 20
-        z: -1  // Pour que l'ombre soit en dessous
+        z: -1 
     }
 
     Label {
@@ -95,15 +95,14 @@ Rectangle {
                 id: progressBackground
                 width: parent.width
                 height: parent.height
-                color: (colorManager ? colorManager.getColorNoNotify("medium_gray") : "#000000") // Couleur d'arrière-plan
+                color: (colorManager ? colorManager.getColorNoNotify("medium_gray") : "#000000")
             }
 
-            // Filled portion color
             Rectangle {
                 id: progressColor
                 width: parent.width * progressBar.value
                 height: parent.height
-                color: "blue" // Couleur de la barre de progression
+                color: "blue"
             }
         }
     }
@@ -116,8 +115,8 @@ Rectangle {
         height: 18
         text: Math.round(progressBar.value * 100) + " %"
         anchors.verticalCenter: progressBar.verticalCenter
-        anchors.left: progressBar.right  // Affiche la valeur en pourcentage
-        anchors.leftMargin: 16  // Positionnement sous la barre de progression
+        anchors.left: progressBar.right 
+        anchors.leftMargin: 16 
         font.pixelSize: 16
         color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
     }

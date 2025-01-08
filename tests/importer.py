@@ -3,19 +3,18 @@ import importlib.util
 import sys
 
 # -------------------------------
-# CONFIGURATION DU CHEMIN DU PROJET
+# PROJECT PATH CONFIGURATION
 # -------------------------------
 
-# Chemin racine du projet
+# Root path of the project
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 project_root = os.path.join(project_root, 'qtquickdetect')
 
-# Ajouter le chemin racine à sys.path pour la découverte des modules
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 # -------------------------------
-# CHARGEMENT DU MODULE DYNAMIQUE
+# MODULE LOADING
 # -------------------------------
 
 def _load_module(module_name, module_path):
@@ -37,18 +36,18 @@ def _load_module(module_name, module_path):
         raise FileNotFoundError(f"Module {module_name} introuvable.")
     
 def load(classe, type, file):
-    """Charger un module dynamiquement
+    """Loads a module
 
     Args:
-        classe (Class): Classe à charger
-        type (str): Type de classe (models, controller, etc.)
-        file (str): Chemin du fichier à charger (à partir du dossier du type)
+        classe (Class): The class you load
+        type (str): Class type (models, controller, etc.)
+        file (str): File path
 
     Raises:
-        AttributeError: Renvoie une erreur si la classe n'est pas trouvée dans le module
+        AttributeError: Sends an error if the class isn't found
 
     Returns:
-        Class: La classe chargée
+        Class: The loaded class
     """
     file_without_py = os.path.splitext(file)[0]
     module_full_path = os.path.join(project_root, type, file)

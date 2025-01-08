@@ -77,7 +77,7 @@ RowLayout {
             id: promptInputField
             placeholderText: qsTr("Enter your prompt...")
             font.pixelSize: 18
-            width: parent.width - 50 // Réduire la largeur pour faire de la place à l'image
+            width: parent.width - 50
             height: parent.height
             color: (colorManager ? colorManager.getColorNoNotify("light_gray") : "#000000")
             placeholderTextColor: (colorManager ? colorManager.getColorNoNotify("blue_gray") : "#000000")

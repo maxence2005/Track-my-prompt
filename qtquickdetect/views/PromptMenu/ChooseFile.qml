@@ -24,23 +24,20 @@ Rectangle {
     color: hovered ? backgroundColorHover : backgroundColor
     radius: 10
 
-    // Property to track if a file is being dragged and dropped
     property bool isFileOver: false
 
-    // Handle drag and drop events
     DropArea {
         id: dropArea
         anchors.fill: parent
         onEntered: function(drag) {
-            // Check if the drag contains URLs (files)
             if (drag.hasUrls) {
-                drag.accept(Qt.CopyAction);  // Accept the copy action
-                chooseFileMainRectangle.hovered = true;  // Highlight the rectangle
+                drag.accept(Qt.CopyAction);  
+                chooseFileMainRectangle.hovered = true; 
             }
         }
 
         onExited: {
-            chooseFileMainRectangle.hovered = false;  // Cancel the rectangle highlight
+            chooseFileMainRectangle.hovered = false; 
         }
 
         onDropped: function(drag) {
@@ -64,7 +61,7 @@ Rectangle {
             spacing: 10
             Image {
                 id: uploadIcon
-                source: "../imgs/upload.svg" // icon for drag and drop
+                source: "../imgs/upload.svg"
                 width: 40
                 height: 40
             }
@@ -105,7 +102,7 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        backend.openFileExplorer(); // Select file in the file explorer
+                        backend.openFileExplorer();
                     }
                 }
             }

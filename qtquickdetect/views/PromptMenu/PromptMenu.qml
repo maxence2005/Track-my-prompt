@@ -38,7 +38,6 @@ Rectangle {
             Layout.fillWidth: true
         }
 
-        // Composant Header, aligné en haut
         Header {
             id: headerComponent
             Layout.alignment: Qt.AlignTop
@@ -55,7 +54,7 @@ Rectangle {
 
         ChooseFile {
             id: chooseFileComponent
-            Layout.alignment: Qt.AlignHCenter // Alignement horizontal centré
+            Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: 600
             Layout.minimumHeight: 50
             Layout.maximumHeight: 100
@@ -69,7 +68,6 @@ Rectangle {
             Layout.maximumHeight: 100
         }
 
-        // Marge simulée en bas
         Rectangle {
             color: "transparent"
             height: 30

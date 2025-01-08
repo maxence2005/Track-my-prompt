@@ -33,7 +33,6 @@ ColumnLayout {
             modelData: modelEntry
         }
 
-        // Afficher la vidéo si le type est "video"
         EntryVideo {
             id: entryVideo
             modelData: modelEntry
