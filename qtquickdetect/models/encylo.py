@@ -27,9 +27,25 @@ class EncyclopediaModel(QAbstractListModel):
     
     @staticmethod
     def get_instance() -> 'EncyclopediaModel':
+        """
+        Get the singleton instance of the EncyclopediaModel.
+
+        Returns:
+            EncyclopediaModel: The singleton instance.
+        """
         return EncyclopediaModel()
     
-    def data(self, index, role):
+    def data(self, index: QModelIndex, role: int):
+        """
+        Get the data for the given index and role.
+
+        Args:
+            index (QModelIndex): The index of the item.
+            role (int): The role for which data is requested.
+
+        Returns:
+            Any: The data for the given index and role.
+        """
         if not index.isValid() or not (0 <= index.row() < len(self._items)):
             return None
 
@@ -41,10 +57,25 @@ class EncyclopediaModel(QAbstractListModel):
         elif role == self.TimeFoundRole:
             return item["timeFound"]
 
-    def rowCount(self, parent=QModelIndex()):
+    def rowCount(self, parent=QModelIndex()) -> int:
+        """
+        Get the number of rows in the model.
+
+        Args:
+            parent (QModelIndex): The parent index.
+
+        Returns:
+            int: The number of rows in the model.
+        """
         return len(self._items)
 
-    def roleNames(self):
+    def roleNames(self) -> dict:
+        """
+        Get the role names for the model.
+
+        Returns:
+            dict: A dictionary mapping role numbers to role names.
+        """
         return {
             self.NameRole: b"englishName",
             self.EmoticonRole: b"emoticon",
@@ -52,7 +83,13 @@ class EncyclopediaModel(QAbstractListModel):
         }
 
 
-    def filter_data(self, search_text):
+    def filter_data(self, search_text: str):
+        """
+        Filter the data based on the search text.
+
+        Args:
+            search_text (str): The text to filter the data by.
+        """
         if not search_text:
             self.update_data_bis(self._all_items)
         else:
@@ -62,31 +99,48 @@ class EncyclopediaModel(QAbstractListModel):
             ]
             self.update_data_bis(filtered_items)
 
-    def initialize_data(self, data):
+    def initialize_data(self, data: list):
+        """
+        Initialize the model with the given data.
+
+        Args:
+            data (list): The data to initialize the model with.
+        """
         self.beginResetModel()
         self._items_base = copy.deepcopy(data)
         self._items = data
         self._all_items = data
         self.endResetModel()
 
-    def update_data(self, data):
+    def update_data(self, data: list):
+        """
+        Update the model with the given data.
+
+        Args:
+            data (list): The data to update the model with.
+        """
         self.beginResetModel()
         self._items = data
         self._all_items = data
         self.endResetModel()
 
-    def update_data_bis(self, data):
+    def update_data_bis(self, data: list):
+        """
+        Update the model with the given data without changing the base items.
+
+        Args:
+            data (list): The data to update the model with.
+        """
         self.beginResetModel()
         self._items = data
         self.endResetModel()
     
-    def changeName(self, newDict):
+    def changeName(self, newDict: dict):
         """
-        Changes the engllish name to the new name given by the parameter newDict
-        newDict structure: {"oldName": "newName", "oldName2": "newName2", ...}
+        Changes the english name to the new name given by the parameter newDict.
 
         Args:
-            newDict (dict): contains the new names
+            newDict (dict): A dictionary containing the new names.
         """
         for oldName, newName in newDict.items():
             for i in range(len(self._items_base)):
@@ -99,7 +153,7 @@ class EncyclopediaModel(QAbstractListModel):
     
     def restoreName(self):
         """
-        Restores the original english name in the encyclopedy
+        Restores the original english name in the encyclopedia.
         """
         for i in range(len(self._items_base)):
             self._all_items[i]["englishName"] = self._items_base[i]["englishName"]
@@ -107,13 +161,22 @@ class EncyclopediaModel(QAbstractListModel):
             self.dataChanged.emit(index, index, [self.NameRole])
         self.update_data_bis(self._all_items)
 
-    def get_all_names(self):
+    def get_all_names(self) -> set:
+        """
+        Get all the english names in the encyclopedia.
+
+        Returns:
+            set: A set of all the english names.
+        """
         return {item["englishName"] for item in self._all_items}
     
-    """
-    Updates the time found in the database
-    """
-    def changeTimeFound(self, dict):
+    def changeTimeFound(self, dict: dict):
+        """
+        Updates the time found in the database.
+
+        Args:
+            dict (dict): A dictionary containing the new times found.
+        """
         for name, timeFound in dict.items():
             for i in range(len(self._items_base)):
                 if self._items_base[i]["englishName"] == name:
@@ -123,11 +186,12 @@ class EncyclopediaModel(QAbstractListModel):
                     break
         self.update_data_bis(self._all_items)
 
-    def incrementTimeFound(self, classes):
+    def incrementTimeFound(self, classes: list):
         """
-        Increments of 1 the number of time the classes were found
+        Increments the number of times the classes were found by 1.
+
         Args:
-            classes : the classes to update
+            classes (list): The classes to update.
         """
         db_path = os.path.join(filepaths.get_base_data_dir(), 'trackmyprompt.db')
         connection = sqlite3.connect(db_path)
@@ -148,7 +212,14 @@ class DatabaseManager(QObject):
     
     dataLoaded = Signal()
 
-    def __init__(self, db_path, parent=None):
+    def __init__(self, db_path: str, parent: QObject = None):
+        """
+        Initialize the DatabaseManager with the given database path.
+
+        Args:
+            db_path (str): The path to the database file.
+            parent (QObject, optional): The parent object. Defaults to None.
+        """
         super().__init__(parent)
         self.db_path = db_path
         self.model = EncyclopediaModel.get_instance()
@@ -157,7 +228,7 @@ class DatabaseManager(QObject):
     @Slot()
     def load_data(self):
         """
-        Loads the encyclopedy data from the database
+        Loads the encyclopedia data from the database.
         """
         connection = None
         try:
@@ -179,11 +250,21 @@ class DatabaseManager(QObject):
                 connection.close()
     
     @Slot(str)
-    def set_search_text(self, text):
-        """Updates the filter in the model"""
+    def set_search_text(self, text: str):
+        """
+        Updates the filter in the model.
+
+        Args:
+            text (str): The text to filter the data by.
+        """
         self.model.filter_data(text)
 
     @Property(QObject, constant=True)
-    def encyclopediaModel(self):
-        """Exposes the model to the QML view"""
+    def encyclopediaModel(self) -> QObject:
+        """
+        Exposes the model to the QML view.
+
+        Returns:
+            QObject: The encyclopedia model.
+        """
         return self.model

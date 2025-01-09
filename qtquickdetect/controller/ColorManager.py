@@ -12,7 +12,7 @@ class ColorManager(QObject):
     themeChanged = Signal()
     animations = []
 
-    def __init__(self, theme_file, theme):
+    def __init__(self, theme_file: str, theme: str):
         """
         Initialize the ColorManager with the given theme file and initial theme.
 
@@ -27,7 +27,7 @@ class ColorManager(QObject):
         self.colors = self.themes[self.current_theme]
 
     @Property("QVariant", notify=themeChanged)
-    def getColor(self):
+    def getColor(self) -> dict:
         """
         Get the current colors.
 
@@ -37,7 +37,7 @@ class ColorManager(QObject):
         return self.colors
     
     @Slot(str, result="QVariant")
-    def getColorNoNotify(self, key):
+    def getColorNoNotify(self, key: str) -> str:
         """
         Get a specific color without emitting a signal.
 
@@ -62,7 +62,7 @@ class ColorManager(QObject):
         self.themeChanged.emit()
     
     @Property(bool, notify=themeChanged)
-    def isLightMode(self):
+    def isLightMode(self) -> bool:
         """
         Check if the current theme is light mode.
 
@@ -72,7 +72,7 @@ class ColorManager(QObject):
         return self.current_theme == "light"
     
     @Property(bool, notify=themeChanged)
-    def isDarkMode(self):
+    def isDarkMode(self) -> bool:
         """
         Check if the current theme is dark mode.
 
@@ -82,7 +82,7 @@ class ColorManager(QObject):
         return self.current_theme == "dark"
     
     @Slot(list)
-    def animateColorChange(self, targets):
+    def animateColorChange(self, targets: list):
         """
         Animate the color change for the given targets.
 

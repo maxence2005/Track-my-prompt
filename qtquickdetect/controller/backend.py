@@ -26,7 +26,18 @@ class Backend(QObject):
     idChargementSignal = Signal()
 
 
-    def __init__(self, media_model: DatabaseManagerMedia, row, im_pro: ImageProvider, prompt_ia, api_key_mistral, encyclopedia_model):
+    def __init__(self, media_model: DatabaseManagerMedia, row: int, im_pro: ImageProvider, prompt_ia: str, api_key_mistral: str, encyclopedia_model: QObject):
+        """
+        Initialize the Backend with the given parameters.
+
+        Args:
+            media_model (DatabaseManagerMedia): The media model instance.
+            row (int): The row count.
+            im_pro (ImageProvider): The image provider instance.
+            prompt_ia (str): The prompt interpreter method.
+            api_key_mistral (str): The API key for Mistral.
+            encyclopedia_model (QObject): The encyclopedia model instance.
+        """
         super().__init__()
         self.media_model = media_model
         self.encyclo_model = encyclopedia_model
@@ -51,21 +62,45 @@ class Backend(QObject):
         create_data_dir()
 
     @Property('QVariant', notify=sharedVariableChanged)
-    def shared_variable(self):
+    def shared_variable(self) -> dict:
+        """
+        Get the shared variable.
+
+        Returns:
+            dict: The shared variable.
+        """
         return self._shared_variable
 
     @shared_variable.setter
-    def shared_variable(self, value):
+    def shared_variable(self, value: dict):
+        """
+        Set the shared variable.
+
+        Args:
+            value (dict): The new value for the shared variable.
+        """
         if self._shared_variable != value:
             self._shared_variable = value
             self.sharedVariableChanged.emit()
 
     @Property('QVariant', notify=idChargementSignal)
-    def idChargement(self):
+    def idChargement(self) -> int:
+        """
+        Get the ID of the current loading process.
+
+        Returns:
+            int: The ID of the current loading process.
+        """
         return self._idChargement
     
     @Slot(str)
-    def receivePrompt(self, promptText):
+    def receivePrompt(self, promptText: str):
+        """
+        Receive a prompt text and start processing.
+
+        Args:
+            promptText (str): The prompt text.
+        """
         if self.fichier["lien"] == "" :
             self.infoSent.emit("no_data_saved")
         if self._shared_variable["prompt_ia"] == "mistral" and self._shared_variable["api_key_mistral"] == "":
@@ -80,13 +115,26 @@ class Backend(QObject):
                 self.pipeline.start_processing(self.fichier["lien"], self.fichier["type"], promptText, self._shared_variable["prompt_ia"], self._shared_variable["api_key_mistral"])
     
     @Slot(str, str)
-    def change_prompt_recognition(self, prompt_ia, api_key_mistral = ""):
+    def change_prompt_recognition(self, prompt_ia: str, api_key_mistral: str = ""):
+        """
+        Change the prompt recognition method and API key.
+
+        Args:
+            prompt_ia (str): The prompt interpreter method.
+            api_key_mistral (str, optional): The API key for Mistral. Defaults to "".
+        """
         self._shared_variable["prompt_ia"] = prompt_ia
         self._shared_variable["api_key_mistral"] = api_key_mistral
         self.sharedVariableChanged.emit()
     
     @Slot(str)
-    def receiveFile(self, fileUrl):
+    def receiveFile(self, fileUrl: str):
+        """
+        Receive a file URL and handle the file.
+
+        Args:
+            fileUrl (str): The file URL.
+        """
         file_path = self.get_file_path(fileUrl)
         if self.start == True :
             self.start = False
@@ -98,13 +146,29 @@ class Backend(QObject):
         else:
             self.handle_file(file_path)
 
-    def on_processing_complete(self, result, promptText):
+    def on_processing_complete(self, result: str, promptText: str):
+        """
+        Handle the completion of the processing.
+
+        Args:
+            result (str): The result of the processing.
+            promptText (str): The prompt text.
+        """
         if result is not None:
             self.media_model.updateMediaItem(id=self.fichier["id"], file_path_ia=result, prompt=promptText)
         self._shared_variable["Chargement"] = False
         self.sharedVariableChanged.emit()
 
-    def get_file_path(self, fileUrl):
+    def get_file_path(self, fileUrl: str) -> str:
+        """
+        Get the file path from the file URL.
+
+        Args:
+            fileUrl (str): The file URL.
+
+        Returns:
+            str: The file path.
+        """
         if fileUrl.startswith("file:///"):
             if sys.platform == 'win32':
                 return fileUrl[8:]
@@ -114,7 +178,14 @@ class Backend(QObject):
                 return fileUrl[7:]
         return fileUrl
     
-    def handle_media(self, file_path, is_url=False):
+    def handle_media(self, file_path: str, is_url: bool = False):
+        """
+        Handle the media file.
+
+        Args:
+            file_path (str): The file path.
+            is_url (bool, optional): Whether the file is a URL. Defaults to False.
+        """
         if is_url:
             parsed_url = urlparse(file_path)
             filename = os.path.basename(parsed_url.path)
@@ -148,21 +219,45 @@ class Backend(QObject):
         except Exception as e:
             self.infoSent.emit(f"Erreur : {e}")
     
-    def handle_url(self, file_path):
+    def handle_url(self, file_path: str):
+        """
+        Handle the URL.
+
+        Args:
+            file_path (str): The file path.
+        """
         self.handle_media(file_path, is_url=True)
     
-    def handle_file(self, file_path):
+    def handle_file(self, file_path: str):
+        """
+        Handle the file.
+
+        Args:
+            file_path (str): The file path.
+        """
         self.handle_media(file_path, is_url=False)
 
     @Slot()
     def start_Camera(self):
+        """
+        Start the camera recording.
+        """
         self.pipelineCamera.start_camera_recording()
 
     @Slot()
     def stop_Camera(self):
+        """
+        Stop the camera recording.
+        """
         self.pipelineCamera.stop_camera_recording()
     
-    def on_recording_complete(self, lien):
+    def on_recording_complete(self, lien: str):
+        """
+        Handle the completion of the recording.
+
+        Args:
+            lien (str): The file path of the recorded video.
+        """
         self.fichier["lien"] = str(lien)
         self.fichier["type"] = 'video'
         if self.start == True :
@@ -175,6 +270,9 @@ class Backend(QObject):
 
     @Slot()
     def selectFile(self):
+        """
+        Open the file explorer to select a file.
+        """
         try:
             destination_directory = get_base_data_dir() / "collections"
             os.makedirs(destination_directory, exist_ok=True)
@@ -185,6 +283,9 @@ class Backend(QObject):
 
     @Slot()
     def openFileExplorer(self):
+        """
+        Open the file explorer to select images or videos.
+        """
         file_dialog = QFileDialog()
         file_dialog.setFileMode(QFileDialog.ExistingFiles)
         file_dialog.setNameFilter("Images et vidéos (*.jpg *.jpeg *.png *.gif *.bmp *.mp4 *.avi *.mov *.mkv)")
@@ -197,26 +298,41 @@ class Backend(QObject):
                     self.receiveFile(file)
     @Slot()
     def toggle_menu(self):
+        """
+        Toggle the visibility of the menu.
+        """
         self._shared_variable["Menu"] = not self._shared_variable["Menu"]
         self.sharedVariableChanged.emit()
         
     @Slot()
     def toggle_erreur(self):
+        """
+        Toggle the visibility of the error message.
+        """
         self._shared_variable["Erreur"] = not self._shared_variable["Erreur"]
         self.sharedVariableChanged.emit()
 
     @Slot()
     def toggle_camera(self):
+        """
+        Toggle the visibility of the camera.
+        """
         self._shared_variable["Camera"] = not self._shared_variable["Camera"]
         self.sharedVariableChanged.emit()
 
     @Slot()
     def toggle_param(self):
+        """
+        Toggle the visibility of the settings menu.
+        """
         self._shared_variable["settingsMenuShowed"] = not self._shared_variable["settingsMenuShowed"]
         self.sharedVariableChanged.emit()
 
     @Slot()
     def nouvelleDetection(self):
+        """
+        Start a new detection process.
+        """
         self.media_model.clear_all_media()
         if self.start == False :
             self.start = True
@@ -225,7 +341,13 @@ class Backend(QObject):
         self.fichier = {"lien" : "", "type" : ""}
         
     @Property(str, notify=sharedVariableChanged)
-    def getSizeOfHistory(self):
+    def getSizeOfHistory(self) -> str:
+        """
+        Get the size of the history.
+
+        Returns:
+            str: The size of the history.
+        """
         image_dir = get_base_data_dir() / "collections" / "image"
         video_dir = get_base_data_dir() / "collections" / "video"
         image_value = sum(f.stat().st_size for f in image_dir.glob('**/*') if f.is_file())
@@ -239,6 +361,9 @@ class Backend(QObject):
     
     @Slot()
     def deleteHistory(self):
+        """
+        Delete the history.
+        """
         self.nouvelleDetection()
         image_dir = get_base_data_dir() / "collections" / "image"
         video_dir = get_base_data_dir() / "collections" / "video"
@@ -252,5 +377,11 @@ class Backend(QObject):
         delete_files(video_dir)
         self.sharedVariableChanged.emit()
     
-    def frame_send(self, frame):
+    def frame_send(self, frame: QImage):
+        """
+        Send the frame to the image provider.
+
+        Args:
+            frame (QImage): The frame to send.
+        """
         self.image_provider.set_image(frame)

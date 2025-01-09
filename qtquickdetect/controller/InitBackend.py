@@ -1,4 +1,6 @@
 from PySide6.QtCore import QObject, Property, QThread, Signal, QCoreApplication, Slot
+from PySide6.QtWidgets import QApplication
+from PySide6.QtQml import QQmlApplicationEngine
 
 class Controller(QObject):
     """
@@ -6,7 +8,15 @@ class Controller(QObject):
     """
     controller_loading_finished = Signal()
     
-    def __init__(self, app, engine, frame_provider):
+    def __init__(self, app: QApplication, engine: QQmlApplicationEngine, frame_provider: QObject):
+        """
+        Initialize the Controller with the given parameters.
+
+        Args:
+            app (QApplication): The application instance.
+            engine (QQmlApplicationEngine): The QML engine instance.
+            frame_provider (QObject): The frame provider instance.
+        """
         super().__init__()
         self.app = app
         self.engine = engine
@@ -94,7 +104,15 @@ class InitBackend(QObject):
     loading_finished = Signal() 
     isLoaded = False
     
-    def __init__(self, app, engine, frame_provider):
+    def __init__(self, app: QApplication, engine: QQmlApplicationEngine, frame_provider: QObject):
+        """
+        Initialize the InitBackend with the given parameters.
+
+        Args:
+            app (QApplication): The application instance.
+            engine (QQmlApplicationEngine): The QML engine instance.
+            frame_provider (QObject): The frame provider instance.
+        """
         super().__init__()
         self.app = app
         self.engine = engine
@@ -129,7 +147,7 @@ class InitBackend(QObject):
         self.stop_loading()
     
     @Property(QObject, constant=True)
-    def mediaModel(self):
+    def mediaModel(self) -> QObject:
         """
         Get the media model.
 
@@ -140,7 +158,7 @@ class InitBackend(QObject):
         return self.controller._database_media._media_model
     
     @Property(QObject, constant=True)
-    def encyclopediaModel(self):
+    def encyclopediaModel(self) -> QObject:
         """
         Get the encyclopedia model.
 
@@ -151,7 +169,7 @@ class InitBackend(QObject):
         return self.controller._database_manager.encyclopediaModel
     
     @Property(QObject, constant=True)
-    def historiqueModel(self):
+    def historiqueModel(self) -> QObject:
         """
         Get the historique model.
 
@@ -162,7 +180,7 @@ class InitBackend(QObject):
         return self.controller._database_manager_historique.historiqueModel
     
     @Property(QObject, constant=True)
-    def colorManager(self):
+    def colorManager(self) -> QObject:
         """
         Get the color manager.
 
@@ -173,7 +191,7 @@ class InitBackend(QObject):
         return self.controller._color_manager
     
     @Property(QObject, constant=True)
-    def languageManager(self):
+    def languageManager(self) -> QObject:
         """
         Get the language manager.
 
@@ -184,7 +202,7 @@ class InitBackend(QObject):
         return self.controller._language_manager
     
     @Property(QObject, constant=True)
-    def appConfig(self):
+    def appConfig(self) -> QObject:
         """
         Get the app configuration.
 
@@ -195,7 +213,7 @@ class InitBackend(QObject):
         return self.controller._app_config
     
     @Property(QObject, constant=True)
-    def databaseManager(self):
+    def databaseManager(self) -> QObject:
         """
         Get the database manager.
 
@@ -206,7 +224,7 @@ class InitBackend(QObject):
         return self.controller._database_manager
     
     @Property(QObject, constant=True)
-    def backend(self):
+    def backend(self) -> QObject:
         """
         Get the backend instance.
 

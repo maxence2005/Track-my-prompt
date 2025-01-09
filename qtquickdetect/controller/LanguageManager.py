@@ -19,7 +19,7 @@ class LanguageManager(QObject):
         "English": ""
     }
     
-    def check_structure(self, path):
+    def check_structure(self, path: Path) -> bool:
         """
         Check if the given path has the required structure for a language pack.
 
@@ -42,7 +42,7 @@ class LanguageManager(QObject):
         
         return good
 
-    def __init__(self, app, engine, encyclo: EncyclopediaModel, language="English"):
+    def __init__(self, app: QApplication, engine: QQmlApplicationEngine, encyclo: EncyclopediaModel, language: str = "English"):
         """
         Initialize the LanguageManager with the given parameters.
 
@@ -64,7 +64,7 @@ class LanguageManager(QObject):
                 if dir.is_dir() and self.check_structure(dir):
                     self.languages[dir.stem] = str(dir)
 
-    def load_json_encyclopedia(self, path):
+    def load_json_encyclopedia(self, path: str) -> dict:
         """
         Load the encyclopedia JSON file.
 
@@ -78,7 +78,7 @@ class LanguageManager(QObject):
             return json.load(file)
 
     @Property("QVariant", notify=newLanguage)
-    def getLanguages(self):
+    def getLanguages(self) -> list:
         """
         Get the list of available languages.
 
@@ -88,7 +88,7 @@ class LanguageManager(QObject):
         return list(self.languages.keys())
     
     @Property("QVariant", notify=languageChanged)
-    def getCurrentLanguage(self):
+    def getCurrentLanguage(self) -> str:
         """
         Get the current language.
 
@@ -98,7 +98,7 @@ class LanguageManager(QObject):
         return self.language
 
     @Slot(str)
-    def setLanguage(self, language):
+    def setLanguage(self, language: str):
         """
         Set the current language.
 

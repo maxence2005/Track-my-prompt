@@ -8,15 +8,22 @@ from utils.filepaths import get_base_data_dir
 class CameraWorker(QObject):
     frameCaptured = Signal(QImage)
 
-    def __init__(self, pipeline, parent=None):
+    def __init__(self, pipeline: 'CameraPipeline', parent: QObject = None):
+        """
+        Initialize the CameraWorker with the given parameters.
+
+        Args:
+            pipeline (CameraPipeline): The camera pipeline instance.
+            parent (QObject, optional): The parent object. Defaults to None.
+        """
         super().__init__(parent)
-        self._is_running = True    
-        self.file_path = None     
+        self._is_running = True
+        self.file_path = None
         self.pipeline = pipeline
         
     def run_task(self):
         """
-        Runs the video record
+        Runs the video recording task.
         """
         capture = cv2.VideoCapture(0)
         if not capture.isOpened():
@@ -54,6 +61,9 @@ class CameraWorker(QObject):
         self.pipeline.on_processing_complete(str(self.file_path))
 
     def stop(self):
+        """
+        Stop the worker.
+        """
         self._is_running = False
 
 
@@ -61,7 +71,14 @@ class CameraPipeline(QObject):
     on_error = Signal(str)
     frame_send = Signal(QImage)
 
-    def __init__(self, backend, parent=None):
+    def __init__(self, backend: QObject, parent: QObject = None):
+        """
+        Initialize the CameraPipeline with the given parameters.
+
+        Args:
+            backend (QObject): The backend object.
+            parent (QObject, optional): The parent object. Defaults to None.
+        """
         super().__init__(parent)
         self.thread = None
         self.worker = None
@@ -70,7 +87,7 @@ class CameraPipeline(QObject):
     @Slot()
     def start_camera_recording(self):
         """
-        Starts the record
+        Start the camera recording in a separate thread.
         """
         self.thread = QThread()
         self.worker = CameraWorker(self)
@@ -86,27 +103,45 @@ class CameraPipeline(QObject):
     @Slot()
     def stop_camera_recording(self):
         """
-        Stops the record
+        Stop the camera recording.
         """
         self.stop_processing()
 
     @Slot(str)
-    def on_processing_complete(self, file_path):
+    def on_processing_complete(self, file_path: str):
+        """
+        Handle the completion of the recording.
+
+        Args:
+            file_path (str): The path to the recorded file.
+        """
         self.backend.on_recording_complete(file_path)
         self.stop_processing()
     
     @Slot(QImage)
-    def captured_image(self, frame):
+    def captured_image(self, frame: QImage):
+        """
+        Emit the captured image signal.
+
+        Args:
+            frame (QImage): The captured image.
+        """
         self.frame_send.emit(frame)
 
     @Slot(str)
-    def on_error_occurred(self, error_message):
+    def on_error_occurred(self, error_message: str):
+        """
+        Handle errors that occur during recording.
+
+        Args:
+            error_message (str): The error message.
+        """
         self.on_error.emit(error_message)
         self.stop_processing()
 
     def stop_processing(self):
         """
-        Stops the process
+        Stop the processing.
         """
         if self.worker:
             self.worker.stop()

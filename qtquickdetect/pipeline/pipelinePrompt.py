@@ -8,9 +8,20 @@ class Worker(QObject):
     """
     Worker class to handle the processing of prompts in a separate thread.
     """
-    def __init__(self, pipelinePrompt, filePath, promptText="", typ="image", parent=None, method="dumb", api_key="", encyclo_model: EncyclopediaModel = None, backend = None):
+    def __init__(self, pipelinePrompt: 'PipelinePrompt', filePath: str, promptText: str = "", typ: str = "image", parent: QObject = None, method: str = "dumb", api_key: str = "", encyclo_model: EncyclopediaModel = None, backend: QObject = None):
         """
         Initialize the Worker with the given parameters.
+
+        Args:
+            pipelinePrompt (PipelinePrompt): The pipeline prompt instance.
+            filePath (str): The file path to process.
+            promptText (str, optional): The prompt text. Defaults to "".
+            typ (str, optional): The type of the file. Defaults to "image".
+            parent (QObject, optional): The parent object. Defaults to None.
+            method (str, optional): The method to use for filtering. Defaults to "dumb".
+            api_key (str, optional): The API key for the method. Defaults to "".
+            encyclo_model (EncyclopediaModel, optional): The encyclopedia model. Defaults to None.
+            backend (QObject, optional): The backend object. Defaults to None.
         """
         super().__init__(parent)
         self.filePath = filePath
@@ -51,9 +62,14 @@ class PipelinePrompt(QObject):
     """
     PipelinePrompt class to manage the processing of prompts.
     """
-    def __init__(self, backend, parent=None, encyclo_model: EncyclopediaModel = None):
+    def __init__(self, backend: QObject, parent: QObject = None, encyclo_model: EncyclopediaModel = None):
         """
         Initialize the PipelinePrompt with the given parameters.
+
+        Args:
+            backend (QObject): The backend object.
+            parent (QObject, optional): The parent object. Defaults to None.
+            encyclo_model (EncyclopediaModel, optional): The encyclopedia model. Defaults to None.
         """
         super().__init__(parent)
         self.thread = None
@@ -63,9 +79,16 @@ class PipelinePrompt(QObject):
         self.encyclo_model = encyclo_model
 
     @Slot(str, str, str, str, str)
-    def start_processing(self, filePath, typ="image", promptText="", method="dumb", api_key=""):
+    def start_processing(self, filePath: str, typ: str = "image", promptText: str = "", method: str = "dumb", api_key: str = ""):
         """
         Start processing the prompt in a separate thread.
+
+        Args:
+            filePath (str): The file path to process.
+            typ (str, optional): The type of the file. Defaults to "image".
+            promptText (str, optional): The prompt text. Defaults to "".
+            method (str, optional): The method to use for filtering. Defaults to "dumb".
+            api_key (str, optional): The API key for the method. Defaults to "".
         """
         self.thread = QThread()
         self.worker = Worker(self, filePath, promptText, typ, method=method, api_key=api_key, encyclo_model=self.encyclo_model, backend=self.backend)
@@ -81,17 +104,23 @@ class PipelinePrompt(QObject):
         self.thread.start()
 
     @Slot(object)
-    def on_processing_complete(self, result):
+    def on_processing_complete(self, result: object):
         """
         Handle the completion of the processing.
+
+        Args:
+            result (object): The result of the processing.
         """
         self.backend.on_processing_complete(result, self.promptText)
         self.stop_processing()
 
     @Slot(str)
-    def on_error_occurred(self, error):
+    def on_error_occurred(self, error: str):
         """
         Handle errors that occur during processing.
+
+        Args:
+            error (str): The error message.
         """
         self.backend.on_processing_complete(None, None)
         if error == "prompt":

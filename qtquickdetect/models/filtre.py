@@ -27,7 +27,7 @@ lemmatizer = WordNetLemmatizer()
 word_pattern = re.compile(r'\b\w+\b')
 lemmatizer.lemmatize("dog") # Initialize the lemmatizer
 
-def promptFiltre(phrase: str, method: str, api_key:str = "") -> list:
+def promptFiltre(phrase: str, method: str, api_key: str = "") -> list:
     """
     Filter the prompt using the specified method.
 
@@ -49,7 +49,7 @@ def promptFiltre(phrase: str, method: str, api_key:str = "") -> list:
         case _:
             raise ValueError(f"Invalid method : must be 'dumb' or 'mistral' but got {method}")
 
-def traitement_dumb_ts(phrase):
+def traitement_dumb_ts(phrase: str) -> list:
     """
     Translate the phrase and filter it using the 'dumb' method.
 
@@ -62,7 +62,7 @@ def traitement_dumb_ts(phrase):
     translated = GoogleTranslator().translate(phrase)
     return traitement_dumb(translated)
 
-def traitement_dumb(phrase):
+def traitement_dumb(phrase: str) -> list:
     """
     Filter the phrase using the 'dumb' method.
 
@@ -78,7 +78,7 @@ def traitement_dumb(phrase):
     return filtered_classes
 
 
-def traitement_mistral(phrase, API_KEY):
+def traitement_mistral(phrase: str, API_KEY: str) -> list:
     """
     Filter the phrase using the 'mistral' method.
 
@@ -124,7 +124,6 @@ def traitement_mistral(phrase, API_KEY):
             print(response.text)
             return None
 
-    # Example
     prompt = f"""You are an AI that aims to be integrated into an application called Track-My-Prompt, which is an application that aims to find certain content in an image. This application has a prompt field, where you will be used. In this field we want to detect what the user is looking for. We have the ability to detect objects only from this list, which we will call the list of detectables: {available_classes}.
     Via the user prompt that will follow, which can be in any language, you must be able to send me back as output a list of this form: ["requested object 1", "requested object 2" ...], the elements of this list must be in the same order as the elements of the list above, if an element is not present in the user prompt, do not include it in the output. for example, user inputs "dog" and "vacuum cleaner". the vacuum cleaner is not in the list therefore you should not include it. If an element is present several times, for example "dog", "dog", in the user prompt, do not repeat it. Please verify all elements in output list are in the detectable list.
     I want only this list as output, no superfluous text, it is intended to be used by a computer that understands nothing other than precise instructions, this list is a precise instruction.

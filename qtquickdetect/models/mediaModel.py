@@ -23,13 +23,16 @@ class MediaModel(QAbstractListModel):
         super(MediaModel, self).__init__(*args, **kwargs)
         self._items = []
 
-    def data(self, index, role):
+    def data(self, index: QModelIndex, role: int):
         """
         Retrieve data for the given index and role.
 
-        :param index: QModelIndex
-        :param role: int
-        :return: Data corresponding to the role
+        Args:
+            index (QModelIndex): The index of the item.
+            role (int): The role of the data.
+
+        Returns:
+            Any: The data corresponding to the role.
         """
         if not index.isValid() or not (0 <= index.row() < len(self._items)):
             return None
@@ -48,20 +51,24 @@ class MediaModel(QAbstractListModel):
             return item["lienIA"]
         return None
 
-    def rowCount(self, parent=QModelIndex()):
+    def rowCount(self, parent: QModelIndex = QModelIndex()) -> int:
         """
         Return the number of rows in the model.
 
-        :param parent: QModelIndex
-        :return: int
+        Args:
+            parent (QModelIndex, optional): The parent index. Defaults to QModelIndex().
+
+        Returns:
+            int: The number of rows.
         """
         return len(self._items)
 
-    def roleNames(self):
+    def roleNames(self) -> dict:
         """
         Map roles to property names for use in QML.
 
-        :return: dict
+        Returns:
+            dict: The role names.
         """
         return {
             self.IdRole: b"id",
@@ -71,44 +78,44 @@ class MediaModel(QAbstractListModel):
             self.LienIARole: b"lienIA",
         }
 
-    def update_data(self, data):
+    def update_data(self, data: list):
         """
         Replace the current model data with new data.
 
-        :param data: list of dict
-        :return: None
+        Args:
+            data (list): The new data.
         """
         self.beginResetModel()
         self._items = data
         self.endResetModel()
 
     @Slot(str, str, str, str)
-    def addMediaItem(self, id, file_path, media_type, prompt="", lienIA=""):
+    def addMediaItem(self, id: str, file_path: str, media_type: str, prompt: str = "", lienIA: str = ""):
         """
         Add a new media item to the model.
 
-        :param id: int
-        :param file_path: str
-        :param media_type: str
-        :param prompt: str
-        :param lienIA: str
-        :return: None
+        Args:
+            id (str): The ID of the media item.
+            file_path (str): The file path of the media item.
+            media_type (str): The type of the media item.
+            prompt (str, optional): The prompt associated with the media item. Defaults to "".
+            lienIA (str, optional): The IA link associated with the media item. Defaults to "".
         """
         self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
         self._items.append({"id": id, "lien": file_path,
                            "type": media_type, "prompt": prompt, "lienIA": lienIA})
         self.endInsertRows()
 
-    def updateMediaItem(self, id, file_path=None, file_path_ia=None, media_type=None, prompt=None):
+    def updateMediaItem(self, id: str, file_path: str = None, file_path_ia: str = None, media_type: str = None, prompt: str = None):
         """
         Update an existing media item in the model.
 
-        :param id: int
-        :param file_path: str
-        :param file_path_ia: str
-        :param media_type: str
-        :param prompt: str
-        :return: None
+        Args:
+            id (str): The ID of the media item.
+            file_path (str, optional): The new file path. Defaults to None.
+            file_path_ia (str, optional): The new IA link. Defaults to None.
+            media_type (str, optional): The new media type. Defaults to None.
+            prompt (str, optional): The new prompt. Defaults to None.
         """
         for row in self._items:
             if row["id"] == id:
@@ -131,12 +138,13 @@ class DatabaseManagerMedia(QObject):
     """
     dataLoaded = Signal()
 
-    def __init__(self, db_path, parent=None):
+    def __init__(self, db_path: str, parent: QObject = None):
         """
         Initialize the DatabaseManagerMedia.
 
-        :param db_path: str
-        :param parent: QObject
+        Args:
+            db_path (str): The path to the database.
+            parent (QObject, optional): The parent object. Defaults to None.
         """
         super().__init__(parent)
         self.db_path = db_path
@@ -147,8 +155,6 @@ class DatabaseManagerMedia(QObject):
     def load_data(self):
         """
         Load data from the database and update the media model.
-
-        :return: None
         """
         try:
             connection = sqlite3.connect(self.db_path)
@@ -170,14 +176,17 @@ class DatabaseManagerMedia(QObject):
             if connection:
                 connection.close()
 
-    @Slot(str, str, str, str)
-    def addMediaItem(self, file_path, media_type):
+    @Slot(str, str)
+    def addMediaItem(self, file_path: str, media_type: str) -> int:
         """
         Add a new media item to the model and insert it into the database.
 
-        :param file_path: str
-        :param media_type: str
-        :return: int
+        Args:
+            file_path (str): The file path of the media item.
+            media_type (str): The type of the media item.
+
+        Returns:
+            int: The ID of the new media item.
         """
         id_row = self.insert_into_database(
             file_path=file_path, media_type=media_type)
@@ -185,31 +194,35 @@ class DatabaseManagerMedia(QObject):
         return id_row
 
     @Slot(int, str, str, str, str)
-    def updateMediaItem(self, id, file_path=None, file_path_ia=None, media_type=None, prompt=None):
+    def updateMediaItem(self, id: int, file_path: str = None, file_path_ia: str = None, media_type: str = None, prompt: str = None):
         """
         Update an existing media item in the model and database.
 
-        :param id: int
-        :param file_path: str
-        :param file_path_ia: str
-        :param media_type: str
-        :param prompt: str
-        :return: None
+        Args:
+            id (int): The ID of the media item.
+            file_path (str, optional): The new file path. Defaults to None.
+            file_path_ia (str, optional): The new IA link. Defaults to None.
+            media_type (str, optional): The new media type. Defaults to None.
+            prompt (str, optional): The new prompt. Defaults to None.
         """
         self._media_model.updateMediaItem(
             id, file_path, file_path_ia, media_type, prompt)
         self.insert_into_database(
             file_path=file_path, lienIA=file_path_ia, media_type=media_type, prompt=prompt, id_row=id)
 
-    def insert_into_database(self, file_path=None, media_type=None, prompt=None, lienIA=None, id_row=None):
+    def insert_into_database(self, file_path: str = None, media_type: str = None, prompt: str = None, lienIA: str = None, id_row: int = None) -> int:
         """
         Insert or update a new media item into the database.
 
-        :param file_path: str
-        :param media_type: str
-        :param prompt: str
-        :param lienIA: str
-        :return: None
+        Args:
+            file_path (str, optional): The file path of the media item. Defaults to None.
+            media_type (str, optional): The type of the media item. Defaults to None.
+            prompt (str, optional): The prompt associated with the media item. Defaults to None.
+            lienIA (str, optional): The IA link associated with the media item. Defaults to None.
+            id_row (int, optional): The ID of the media item. Defaults to None.
+
+        Returns:
+            int: The ID of the media item.
         """
         try:
             connection = sqlite3.connect(self.db_path)
@@ -245,11 +258,12 @@ class DatabaseManagerMedia(QObject):
         return id_row
 
     @Slot(result=dict)
-    def get_last_media(self):
+    def get_last_media(self) -> dict:
         """
         Retrieve the last recorded media item from the database.
 
-        :return: dict
+        Returns:
+            dict: The last recorded media item.
         """
         try:
             connection = sqlite3.connect(self.db_path)
@@ -272,8 +286,6 @@ class DatabaseManagerMedia(QObject):
     def clear_all_media(self):
         """
         Delete all records from the MediaData table and update the model.
-
-        :return: None
         """
         try:
             connection = sqlite3.connect(self.db_path)
@@ -289,10 +301,11 @@ class DatabaseManagerMedia(QObject):
                 connection.close()
 
     @Property(QObject, constant=True)
-    def mediaModel(self):
+    def mediaModel(self) -> MediaModel:
         """
         Expose mediaModel to QML.
 
-        :return: MediaModel
+        Returns:
+            MediaModel: The media model.
         """
         return self._media_model
