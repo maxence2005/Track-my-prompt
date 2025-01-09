@@ -35,7 +35,7 @@ class TestBackend(unittest.TestCase):
         self.backend.receivePrompt("")
         self.assertEqual(spy.count(), 1) # Vérifie qu'un signal a été émis
         emitted_args = spy.at(0)  # Récupère la première émission
-        self.assertEqual(emitted_args, ["Erreur : Aucune Image/video enregistrer."])
+        self.assertEqual(emitted_args, ["no_data_saved"])
 
     def test_receive_prompt_with_valid_data(self):
         # Cas : prompt valide

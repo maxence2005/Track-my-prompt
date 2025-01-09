@@ -6,7 +6,7 @@ from pathlib import Path
 from models.encylo import EncyclopediaModel
 import json
 import zipfile
-
+from PySide6.QtQml import QQmlApplicationEngine
 class LanguageManager(QObject):
     """
     LanguageManager class to manage the application's languages.

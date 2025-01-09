@@ -6,7 +6,7 @@ from pathlib import Path
 from PySide6.QtCore import QObject, Slot, Signal, QUrl, Property
 from PySide6.QtWidgets import QApplication, QFileDialog
 from PySide6.QtQml import QQmlApplicationEngine
-
+from PySide6.QtGui import QImage
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
