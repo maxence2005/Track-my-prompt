@@ -207,6 +207,20 @@ class EncyclopediaModel(QAbstractListModel):
         connection.close()
 
         self.changeTimeFound(dict)
+    
+    def getPourcentFound(self)->float:
+        """
+        Get the percentage of items found in the encyclopedia.
+
+        Returns:
+            float: The percentage of items found.
+        """
+        cpt = 0
+        for item in self._all_items:
+            if item["timeFound"] > 0:
+                cpt += 1
+        return cpt/len(self._all_items)
+        
 
 class DatabaseManager(QObject):
     
@@ -268,3 +282,13 @@ class DatabaseManager(QObject):
             QObject: The encyclopedia model.
         """
         return self.model
+    
+    @Slot(result="double")
+    def pourcentFound(self)->float:
+        """
+        Get the percentage of items found in the encyclopedia.
+
+        Returns:
+            float: The percentage of items found.
+        """
+        return self.model.getPourcentFound()
