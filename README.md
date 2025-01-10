@@ -72,7 +72,13 @@ pip install -r requirements.txt
 (Optional) Depending on your computer's hardware, you can choose with or without GPU acceleration. If you have an Nvidia RTX graphics card, you can install torch with CUDA support. This will speed up the processing of images and videos. If you have AMD and Linux, you can install ROCm support for PyTorch. If you don't have a GPU compatible with CUDA or ROCm, you can install the CPU version of torch and save space.
 You can find more information on the [PyTorch website](https://pytorch.org/get-started/locally/).
 
-### Use Mistral API (FREE)
+## Start Application
+After installation, to launch the application, use the command
+```
+venv/bin/python -m qtquickdetect
+```
+
+## Use Mistral API (FREE)
 To understand prompts, you can use the Mistral API. To do this, you need to create an account on the [Mistral](https://www.mistral.ai/) website. Once the account is created, you can obtain an API key to use the text recognition service.\
 If you don't have a Mistral key, follow this guide to generate one for free: [Generate Mistral API Key](https://www.pickaxeproject.com/post/how-to-get-a-mistral-api-key-2025)\
 To use the Mistral API in the app, go to settings, in "Change the prompt interpreter" select "Mistral" and enter the API key.
