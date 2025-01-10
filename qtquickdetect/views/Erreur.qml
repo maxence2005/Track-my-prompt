@@ -112,9 +112,9 @@ Rectangle {
                 "no_data_saved" : qsTr("Error: No image/video saved."),
                 "missing_mistral_api_key" : qsTr("Error: Please provide an API key for Mistral."),
                 "wrong_file_type" : qsTr("Error: The file is not an image or a video."),
-                "prompt_err" : qsTr("Error processing the prompt, try again, check your internet connection, rewrite the prompt, check your API key, or change the method.")
+                "prompt_err" : qsTr("Error processing the prompt, try again, check your internet connection, rewrite the prompt, check your API key, or change the method."),
+                "history_cannot_change_on_loading": qsTr("Error: You cannot perform a new detection or load a history item during image or video processing")
             }
-
             erreurRectangle.errorMessage = msg[message] !== undefined ? msg[message] : message;
             backend.toggle_erreur();
         }

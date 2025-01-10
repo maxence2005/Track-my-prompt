@@ -26,10 +26,9 @@ Rectangle {
             cellWidth: parent.width
             cellHeight: 50
             clip: true
-  
 
             // Vérifier si histaoriqueModel existe, sinon utiliser fallbackModel
-            model: historiqueModel 
+            model: historiqueModel
 
             // Delegate avec CaseHistorique
             delegate: CaseHistorique {

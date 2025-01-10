@@ -2,6 +2,16 @@ import QtQuick
 import QtQuick.Controls
 
 Rectangle {
+    Connections {
+        target: colorManager
+        function onThemeChanged() {
+            colorManager.animateColorChange([
+                [navBar, "color", "very_dark_gray"]
+            ]);
+        }
+    }
+
+    id: navBar
     width: parent.width
     height: parent.height
     color: (colorManager ? colorManager.getColorNoNotify("very_dark_gray") : "#000000")

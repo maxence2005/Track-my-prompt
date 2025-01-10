@@ -522,6 +522,7 @@ class Backend(QObject):
             frame (QImage): The frame to send.
         """
         self.image_provider.set_image(frame)
+
     @Slot(str, str, str, str)  # Ex : prompt, lien, type, lienIA
     def add_to_historique(self, prompt, lien, media_type, lienIA):
         """Ajoute un élément à l'historique pour la page actuelle."""
@@ -619,7 +620,9 @@ class Backend(QObject):
                 print(f"voici le id_row apres modifs : {id_row}")
                 self.media_model.updateMediaItem(id=id_row,file_path=lienIA, file_path_ia=file_path, prompt=prompt)
 
-                
+            tmp = self.media_model.get_last_media()
+            self.fichier = {"id": tmp["id"], "lien" : tmp["lien"], "type" : tmp["type"]}
+            self._idChargement = tmp["id"]
             self._shared_variable["Chargement"] = False
             self.sharedVariableChanged.emit()
         except sqlite3.Error as e:

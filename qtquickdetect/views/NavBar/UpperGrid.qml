@@ -30,7 +30,11 @@ Column {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        backend.nouvelleDetection();
+                        if (backend.shared_variable["Chargement"] == false) {
+                            backend.nouvelleDetection();
+                        } else {
+                            backend.infoSent("history_cannot_change_on_loading");
+                        }
                     }
                 }
             }

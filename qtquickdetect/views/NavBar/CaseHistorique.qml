@@ -1,7 +1,23 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import Qt5Compat.GraphicalEffects 1.0
 
 Rectangle {
+    Connections {
+        target: colorManager
+        function onThemeChanged() {
+            colorManager.animateColorChange([
+                [container, "color", "anthracite_gray"],
+                [promptHistorique, "color", "silver_gray"],
+                [promptInput, "color", "silver_gray"],
+                [backgroundRectangle, "borderColor", "dark_bluish_gray"],
+                [colorOverlayModifyIcon, "color", "default"],
+                [colorOverlayTrashIcon, "color", "default"],
+                [colorOverlayImageIcon, "color", "default"]
+            ]);
+        }
+    }
+
     id: container
     width: parent.width * 0.8
     height: 40
@@ -37,7 +53,7 @@ Rectangle {
                 backend.retrievePage(container.caseID); // Appelle la méthode du backend
             }
             else {
-                backend.infoSent("historyCannotChangeOnLoading");
+                backend.infoSent("history_cannot_change_on_loading");
             }
         }
     }
@@ -48,13 +64,25 @@ Rectangle {
         spacing: 10
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.left: parent.left
-
+        
         // Image à gauche
-        Image {
-            id: imageIcon
-            width: 20
-            height: 20
-            source: "../imgs/Message.png"
+        Rectangle {
+            width: imageIcon.width
+            height: imageIcon.height
+            color: "transparent"
+            Image {
+                id: imageIcon
+                width: 20
+                height: 20
+                source: "../imgs/Message.png"
+            }
+
+            ColorOverlay {
+                id: colorOverlayImageIcon
+                anchors.fill: imageIcon
+                source: imageIcon
+                color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
+            }
         }
 
         // Item qui contient le texte et le champ de saisie pour la superposition
@@ -122,10 +150,23 @@ Rectangle {
                             }
                         }
                     }
-                    Image {
+                    Rectangle {
                         width: parent.width
                         height: parent.height
-                        source: "../imgs/modify.svg"
+                        color: "transparent"
+                        Image {
+                            id: modifyIcon
+                            width: parent.width
+                            height: parent.height
+                            source: "../imgs/modify.svg"
+                        }
+
+                        ColorOverlay {
+                            id: colorOverlayModifyIcon
+                            anchors.fill: modifyIcon
+                            source: modifyIcon
+                            color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
+                        }
                     }
                 }
 
@@ -140,10 +181,24 @@ Rectangle {
                             backend.deleteHistorique(caseID);
                         }
                     }
-                    Image {
+
+                    Rectangle {
                         width: parent.width
                         height: parent.height
-                        source: "../imgs/poubelle.svg"
+                        color: "transparent"
+                        Image {
+                            id: trashIcon
+                            width: parent.width
+                            height: parent.height
+                            source: "../imgs/poubelle.svg"
+                        }
+
+                        ColorOverlay {
+                            id: colorOverlayTrashIcon
+                            anchors.fill: trashIcon
+                            source: trashIcon
+                            color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
+                        }
                     }
                 }
             }
