@@ -1,11 +1,8 @@
-
 import unittest
 import importer
 import os
 import glob
 traitementPrompt = importer.load('traitementPrompt', 'models', 'traitement_ia.py')
-
-
 
 class TestTraitementPrompt(unittest.TestCase):
     def test_video(self):

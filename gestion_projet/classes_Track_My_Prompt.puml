@@ -1,0 +1,234 @@
+@startuml classes_Track_My_Prompt
+set namespaceSeparator none
+class "AppConfig" as qtquickdetect.models.app_config.AppConfig {
+  api_key : str
+  expertMode : bool
+  language : str
+  languages : dict
+  path : Path
+  prompt_interpreter : str
+  style : str
+  open_config() -> None
+  reset_config() -> None
+  save() -> None
+}
+class "Backend" as qtquickdetect.controller.backend.Backend {
+  encyclo_model
+  fichier : dict
+  idChargementSignal
+  image_provider
+  infoSent
+  media_model
+  pipeline
+  pipelineCamera
+  promptEnter
+  sharedVariableChanged
+  start : bool
+  change_prompt_recognition(prompt_ia: str, api_key_mistral: str)
+  deleteHistory()
+  frame_send(frame: QImage)
+  getSizeOfHistory() -> str
+  get_file_path(fileUrl: str) -> str
+  handle_file(file_path: str)
+  handle_media(file_path: str, is_url: bool)
+  handle_url(file_path: str)
+  idChargement() -> int
+  nouvelleDetection()
+  on_processing_complete(result: str, promptText: str)
+  on_recording_complete(lien: str)
+  openFileExplorer()
+  receiveFile(fileUrl: str)
+  receivePrompt(promptText: str)
+  selectFile()
+  shared_variable() -> dict
+  start_Camera()
+  stop_Camera()
+  toggle_camera()
+  toggle_erreur()
+  toggle_menu()
+  toggle_param()
+}
+class "<color:red>BackendNotLoadException</color>" as qtquickdetect.controller.InitBackend.BackendNotLoadException {
+}
+class "CameraPipeline" as qtquickdetect.pipeline.pipelineCamera.CameraPipeline {
+  backend
+  frame_send
+  on_error
+  thread : NoneType
+  worker : NoneType
+  captured_image(frame: QImage)
+  on_error_occurred(error_message: str)
+  on_processing_complete(file_path: str)
+  start_camera_recording()
+  stop_camera_recording()
+  stop_processing()
+}
+class "CameraWorker" as qtquickdetect.pipeline.pipelineCamera.CameraWorker {
+  file_path : NoneType
+  frameCaptured
+  pipeline : str
+  run_task()
+  stop()
+}
+class "ColorManager" as qtquickdetect.controller.ColorManager.ColorManager {
+  animations : list
+  colors
+  current_theme : str
+  themeChanged
+  themes
+  animateColorChange(targets: list)
+  getColor() -> dict
+  getColorNoNotify(key: str) -> str
+  isDarkMode() -> bool
+  isLightMode() -> bool
+  switchTheme()
+}
+class "Controller" as qtquickdetect.controller.InitBackend.Controller {
+  app
+  controller_loading_finished
+  engine
+  frame_provider
+  start()
+}
+class "DatabaseManager" as qtquickdetect.models.encylo.DatabaseManager {
+  dataLoaded
+  db_path : str
+  model
+  encyclopediaModel() -> QObject
+  load_data()
+  set_search_text(text: str)
+}
+class "DatabaseManagerHistorique" as qtquickdetect.models.historique.DatabaseManagerHistorique {
+  db_path : str
+  historiqueDataLoaded
+  historique_model
+  historiqueModel() -> HistoriqueModel
+  load_historique_data() -> None
+}
+class "DatabaseManagerMedia" as qtquickdetect.models.mediaModel.DatabaseManagerMedia {
+  dataLoaded
+  db_path : str
+  addMediaItem(file_path: str, media_type: str) -> int
+  clear_all_media()
+  get_last_media() -> dict
+  insert_into_database(file_path: str, media_type: str, prompt: str, lienIA: str, id_row: int) -> int
+  load_data()
+  mediaModel() -> MediaModel
+  updateMediaItem(id: int, file_path: str, file_path_ia: str, media_type: str, prompt: str)
+}
+class "EncyclopediaModel" as qtquickdetect.models.encylo.EncyclopediaModel {
+  EmoticonRole
+  NameRole
+  TimeFoundRole
+  changeName(newDict: dict)
+  changeTimeFound(dict: dict)
+  data(index: QModelIndex, role: int)
+  filter_data(search_text: str)
+  get_all_names() -> set
+  get_instance() -> 'EncyclopediaModel'
+  incrementTimeFound(classes: list)
+  initialize_data(data: list)
+  restoreName()
+  roleNames() -> dict
+  rowCount(parent) -> int
+  update_data(data: list)
+  update_data_bis(data: list)
+}
+class "HistoriqueModel" as qtquickdetect.models.historique.HistoriqueModel {
+  PromptRole
+  data(index: QModelIndex, role: int) -> str
+  roleNames() -> dict
+  rowCount(parent: QModelIndex) -> int
+  update_data(data: list) -> None
+}
+class "ImageProvider" as qtquickdetect.models.imageProvider.ImageProvider {
+  requestImage(id: str, size: QSize, requestedSize: QSize) -> QImage
+  set_image(image: QImage)
+}
+class "InitBackend" as qtquickdetect.controller.InitBackend.InitBackend {
+  app
+  controller
+  engine
+  frame_provider
+  isLoaded : bool
+  loading_finished
+  thread
+  appConfig() -> QObject
+  backend() -> QObject
+  colorManager() -> QObject
+  databaseManager() -> QObject
+  encyclopediaModel() -> QObject
+  historiqueModel() -> QObject
+  languageManager() -> QObject
+  mediaModel() -> QObject
+  on_loading_finished()
+  raiseIfNotLoaded()
+  start_loading()
+  stop_loading()
+}
+class "LanguageManager" as qtquickdetect.controller.LanguageManager.LanguageManager {
+  app
+  encyclopedia
+  engine
+  language : str
+  languageChanged
+  languages : dict
+  newLanguage
+  translator
+  check_structure(path: Path) -> bool
+  getCurrentLanguage() -> str
+  getLanguages() -> list
+  install_new_language()
+  load_json_encyclopedia(path: str) -> dict
+  setLanguage(language: str)
+}
+class "MediaModel" as qtquickdetect.models.mediaModel.MediaModel {
+  IdRole
+  LienIARole
+  LinkRole
+  PromptRole
+  TypeRole
+  addMediaItem(id: str, file_path: str, media_type: str, prompt: str, lienIA: str)
+  data(index: QModelIndex, role: int)
+  roleNames() -> dict
+  rowCount(parent: QModelIndex) -> int
+  updateMediaItem(id: str, file_path: str, file_path_ia: str, media_type: str, prompt: str)
+  update_data(data: list)
+}
+class "PipelinePrompt" as qtquickdetect.pipeline.pipelinePrompt.PipelinePrompt {
+  backend
+  encyclo_model : Optional[EncyclopediaModel]
+  promptText : NoneType, str
+  thread : NoneType
+  worker : NoneType
+  on_error_occurred(error: str)
+  on_processing_complete(result: object)
+  start_processing(filePath: str, typ: str, promptText: str, method: str, api_key: str)
+  stop_processing()
+}
+class "Worker" as qtquickdetect.pipeline.pipelinePrompt.Worker {
+  api_key : str
+  backend : Optional[QObject]
+  encyclo_model : Optional[EncyclopediaModel]
+  filePath : str
+  method : str
+  pipeline : str
+  prompt : str
+  typ : str
+  run_task()
+  stop()
+}
+qtquickdetect.controller.ColorManager.ColorManager --* qtquickdetect.controller.InitBackend.Controller : _color_manager
+qtquickdetect.controller.InitBackend.Controller --* qtquickdetect.controller.InitBackend.InitBackend : controller
+qtquickdetect.controller.LanguageManager.LanguageManager --* qtquickdetect.controller.InitBackend.Controller : _language_manager
+qtquickdetect.controller.backend.Backend --* qtquickdetect.controller.InitBackend.Controller : _backend
+qtquickdetect.models.app_config.AppConfig --* qtquickdetect.controller.InitBackend.Controller : _app_config
+qtquickdetect.models.encylo.DatabaseManager --* qtquickdetect.controller.InitBackend.Controller : _database_manager
+qtquickdetect.models.encylo.EncyclopediaModel --* qtquickdetect.models.encylo.DatabaseManager : model
+qtquickdetect.models.historique.DatabaseManagerHistorique --* qtquickdetect.controller.InitBackend.Controller : _database_manager_historique
+qtquickdetect.models.historique.HistoriqueModel --* qtquickdetect.models.historique.DatabaseManagerHistorique : historique_model
+qtquickdetect.models.mediaModel.DatabaseManagerMedia --* qtquickdetect.controller.InitBackend.Controller : _database_media
+qtquickdetect.models.mediaModel.MediaModel --* qtquickdetect.models.mediaModel.DatabaseManagerMedia : _media_model
+qtquickdetect.pipeline.pipelineCamera.CameraWorker --* qtquickdetect.pipeline.pipelineCamera.CameraPipeline : worker
+qtquickdetect.pipeline.pipelinePrompt.Worker --* qtquickdetect.pipeline.pipelinePrompt.PipelinePrompt : worker
+@enduml
