@@ -5,9 +5,8 @@ import QtQuick.Layouts
 Column {
     id: lowerColumn
     width: parent.width
-    height: 160
+    height: parent.height
     anchors.bottom: parent.bottom
-    anchors.margins: 20
 
     SeparatorLine {
         id: lowerSeparatorLine

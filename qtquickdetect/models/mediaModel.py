@@ -117,19 +117,32 @@ class MediaModel(QAbstractListModel):
             media_type (str, optional): The new media type. Defaults to None.
             prompt (str, optional): The new prompt. Defaults to None.
         """
-        for row in self._items:
+        print(f"Début de mise à jour de l'élément média avec ID : {id}")
+        found = False
+
+        for i, row in enumerate(self._items):
+            print(f"[DEBUG] Vérification de l'élément : {row}")
             if row["id"] == id:
+                found = True
+                print(f"[DEBUG] État initial de l'élément : {row}")
                 if file_path:
+                    print(f"[DEBUG] Mise à jour de 'lien' avec : {file_path}")
                     row["lien"] = file_path
                 if file_path_ia:
+                    print(f"[DEBUG] Mise à jour de 'lienIA' avec : {file_path_ia}")
                     row["lienIA"] = file_path_ia
                 if media_type:
+                    print(f"[DEBUG] Mise à jour de 'type' avec : {media_type}")
                     row["type"] = media_type
                 if prompt:
+                    print(f"[DEBUG] Mise à jour de 'prompt' avec : {prompt}")
                     row["prompt"] = prompt
-                self.dataChanged.emit(self.index(
-                    row["index"]), self.index(row["index"]))
+                print(f"[DEBUG] État mis à jour de l'élément : {row}")
+                self.dataChanged.emit(self.index(i), self.index(i))
                 break
+        
+        if not found:
+            print(f"[ERREUR] Aucun élément trouvé avec l'ID : {id}")
 
 
 class DatabaseManagerMedia(QObject):
@@ -205,6 +218,7 @@ class DatabaseManagerMedia(QObject):
             media_type (str, optional): The new media type. Defaults to None.
             prompt (str, optional): The new prompt. Defaults to None.
         """
+        print(f"voici l'id dans le premier updateMedia : {id}")
         self._media_model.updateMediaItem(
             id, file_path, file_path_ia, media_type, prompt)
         self.insert_into_database(

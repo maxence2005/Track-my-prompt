@@ -38,7 +38,6 @@ ColumnLayout {
             modelData: modelEntry
         }
 
-
         Item {
             anchors.fill: parent
             id: overlay
@@ -56,7 +55,9 @@ ColumnLayout {
                 }
                 Button {
                     text: qsTr("Pause")
-                    visible: (modelEntry.type == "video")
+                    visible: {
+                        modelEntry && modelEntry.type === "video" // Vérification supplémentaire de `modelEntry`
+                    }
                     onClicked: {
                         if (entryVideo.videoPlayer.playbackState === MediaPlayer.PlayingState) {
                             entryVideo.videoPlayer.pause()
@@ -92,7 +93,7 @@ ColumnLayout {
                 height: parent.height
             }
         }
-        
+
         onHaveLienIAChanged: {
             if (haveLienIA) {
                 imageContainer.changeContent()
@@ -100,14 +101,16 @@ ColumnLayout {
         }
 
         function changeContent() {
-            switch (modelEntry.type) {
-                case "image":
-                    entryImage.isIAimage = !entryImage.isIAimage
-                    break
-                case "video":
-                    entryVideo.isIAimage = !entryVideo.isIAimage
-                    entryVideo.videoPlayer.play()
-                    break
+            if (modelEntry && modelEntry.type) {
+                switch (modelEntry.type) {
+                    case "image":
+                        entryImage.isIAimage = !entryImage.isIAimage
+                        break
+                    case "video":
+                        entryVideo.isIAimage = !entryVideo.isIAimage
+                        entryVideo.videoPlayer.play()
+                        break
+                }
             }
         }
     }

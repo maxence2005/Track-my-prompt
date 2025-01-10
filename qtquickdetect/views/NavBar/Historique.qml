@@ -5,25 +5,39 @@ Rectangle {
     width: parent.width
     height: parent.height
     color: "transparent"
+    anchors.fill: parent
+
+    // Modèle par défaut en cas d'absence de historiqueModel
+    ListModel {
+        id: fallbackModel
+        ListElement { prompt: "Aucun historique disponible" }
+    }
 
     ScrollView {
-        anchors.fill: parent
-        anchors.centerIn: parent
+        width: parent.width
+        height: parent.height  // Laisser ScrollView occuper toute la hauteur disponible
 
+        // GridView
         GridView {
             id: gridView
             width: parent.width
             height: parent.height
-            topMargin: 30
-            cellWidth: 180
+            topMargin: 10
+            cellWidth: parent.width
             cellHeight: 50
             clip: true
-            model: historiqueModel
+  
 
+            // Vérifier si histaoriqueModel existe, sinon utiliser fallbackModel
+            model: historiqueModel 
+
+            // Delegate avec CaseHistorique
             delegate: CaseHistorique {
                 promptText: model.prompt
+                caseID: model.pageID
             }
 
+            // ScrollBar vertical
             ScrollBar.vertical: ScrollBar {
                 policy: ScrollBar.AsNeeded
                 width: 15

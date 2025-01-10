@@ -41,7 +41,7 @@ Rectangle {
 
         NavBar.NavBar {
             id: navBar
-            width: parent.width * 0.2
+            width: 240
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             enabled: (backend ? !backend.shared_variable["settingsMenuShowed"] : true) && (backend ? !backend.shared_variable["Erreur"] : true) && (backend ? !backend.shared_variable["Camera"] : true)
@@ -49,7 +49,8 @@ Rectangle {
 
         Loader {
             id: contentLoader
-            width: parent.width * 0.8
+            width: parent.width - 240
+
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             enabled: (backend ? !backend.shared_variable["settingsMenuShowed"] : true) && (backend ? !backend.shared_variable["Erreur"] : true) && (backend ? !backend.shared_variable["Camera"] : true)

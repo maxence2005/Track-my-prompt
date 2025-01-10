@@ -3,13 +3,15 @@ import QtQuick.Controls 2.15
 
 Rectangle {
     id: container
-    width: 180
+    width: parent.width * 0.8
     height: 40
     color: (colorManager ? colorManager.getColorNoNotify("anthracite_gray") : "#000000")
     border.width: 1
     radius: 8
     anchors.horizontalCenter: parent.horizontalCenter
     property string promptText: ""
+    property int caseID: model.pageID
+    property bool isEditing: false
 
     Rectangle {
         id: backgroundRectangle
@@ -23,52 +25,72 @@ Rectangle {
         radius: 8
     }
 
-    Connections {
-        target: colorManager
-        function onThemeChanged() {
-            colorManager.animateColorChange([
-                [backgroundRectangle, "borderColor", "dark_bluish_gray"],
-                [nameLabel, "color", "silver_gray"]
-            ]);
-        }
-    }
-
     MouseArea {
         id: hoverArea
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-            console.log("Rectangle cliqué")
+            if (backend.shared_variable["Chargement"] == false) {
+                backend.startOnFalse()
+                
+                backend.retrievePage(container.caseID); // Appelle la méthode du backend
+            }
+            else {
+                backend.infoSent("historyCannotChangeOnLoading");
+            }
         }
     }
 
     Row {
         anchors.fill: parent
         padding: 10
+        spacing: 10
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.left: parent.left
 
+        // Image à gauche
+        Image {
+            id: imageIcon
+            width: 20
+            height: 20
+            source: "../imgs/Message.png"
+        }
+
+        // Item qui contient le texte et le champ de saisie pour la superposition
         Item {
-            width: container.width * 0.6
+            width: container.width * 0.45
             height: parent.height
 
-            Row {
+            // Texte normal
+            Text {
+                id: promptHistorique
+                text: promptText !== "" ? promptText : "pas de prompt"
+                font.pixelSize: 18
+                color: (colorManager?.getColorNoNotify("silver_gray") ?? "#000000")
                 anchors.fill: parent
-                spacing: 10
+                visible: !isEditing
+                elide: Text.ElideRight
+                wrapMode: Text.NoWrap
+            }
 
-                Image {
-                    id: imageIcon
-                    width: 20
-                    height: 20
-                    source: "../imgs/Message.png"
-                }
-
-                Text {
-                    id: promptHistorique
-                    text: promptText !== "" ? promptText : "pas de prompt"
-                    font.pixelSize: 18
-                    color: "snow"
+            // Champ de saisie pour la modification
+            TextInput {
+                id: promptInput
+                text: promptText
+                font.pixelSize: 18
+                color: (colorManager?.getColorNoNotify("silver_gray") ?? "#000000")
+                anchors.fill: parent
+                visible: isEditing
+                focus: isEditing
+                maximumLength: 100
+                onAccepted: {
+                    backend.modifyPromptText(caseID, text);
+                    promptText = text;
+                    isEditing = false;
                 }
             }
+
         }
 
         Item {
@@ -79,6 +101,7 @@ Rectangle {
                 anchors.fill: parent
                 spacing: 10
                 anchors.horizontalCenter: parent.horizontalCenter
+                anchors.right: parent.right
 
                 Rectangle {
                     width: 18
@@ -88,7 +111,15 @@ Rectangle {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            console.log("Bouton 1 cliqué")
+                            if (isEditing) {
+                                // Appel de la méthode pour modifier le texte
+                                backend.modifyPromptText(caseID, promptInput.text);
+                                promptText = promptInput.text;
+                                isEditing = false;
+                            } else {
+                                isEditing = true;
+                                promptInput.forceActiveFocus();
+                            }
                         }
                     }
                     Image {
@@ -106,7 +137,7 @@ Rectangle {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            console.log("Bouton 2 cliqué")
+                            backend.deleteHistorique(caseID);
                         }
                     }
                     Image {
@@ -118,4 +149,4 @@ Rectangle {
             }
         }
     }
-}
+} 

@@ -40,6 +40,7 @@ class Worker(QObject):
         """
         if self._is_running:
             try:
+                print(f"[DEBUG] Appel à promptFiltre avec prompt={self.prompt}, method={self.method}, api_key={self.api_key}")
                 classes = promptFiltre(self.prompt, self.method, self.api_key)
             except Exception as e:
                 self.pipeline.on_error_occurred("prompt")
@@ -75,11 +76,12 @@ class PipelinePrompt(QObject):
         self.thread = None
         self.worker = None
         self.promptText = None
+        self.current_id = -1
         self.backend = backend
         self.encyclo_model = encyclo_model
 
-    @Slot(str, str, str, str, str)
-    def start_processing(self, filePath: str, typ: str = "image", promptText: str = "", method: str = "dumb", api_key: str = ""):
+    @Slot(str, str, str, str, str,str)
+    def start_processing(self, filePath: str, typ: str = "image", promptText: str = "", method: str = "dumb", api_key: str = "",id = -1):
         """
         Start processing the prompt in a separate thread.
 
@@ -90,9 +92,12 @@ class PipelinePrompt(QObject):
             method (str, optional): The method to use for filtering. Defaults to "dumb".
             api_key (str, optional): The API key for the method. Defaults to "".
         """
+        print(f"[DEBUG] Démarrage du traitement avec filePath={filePath}, typ={typ}, promptText={promptText}, method={method}, api_key={api_key}")
         self.thread = QThread()
         self.worker = Worker(self, filePath, promptText, typ, method=method, api_key=api_key, encyclo_model=self.encyclo_model, backend=self.backend)
         self.promptText = promptText
+        self.current_id = id
+        print(f"voici l'id dans start_processing : {self.current_id}")
 
         self.worker.moveToThread(self.thread)
 
@@ -111,7 +116,7 @@ class PipelinePrompt(QObject):
         Args:
             result (object): The result of the processing.
         """
-        self.backend.on_processing_complete(result, self.promptText)
+        self.backend.on_processing_complete(result, self.promptText, self.current_id)
         self.stop_processing()
 
     @Slot(str)

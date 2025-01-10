@@ -5,9 +5,11 @@ import QtQuick.Layouts
 Column {
     id: upperGrid
     width: parent.width
-    height: 470
+    height: parent.height
     anchors.fill: parent
     spacing: 10
+    anchors.top: parent.top
+    topPadding: 10
 
     Column {
         id: mainColumn

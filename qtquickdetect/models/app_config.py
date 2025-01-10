@@ -41,29 +41,46 @@ class AppConfig:
 
     def _read_config(self) -> None:
         """
-        Attempts to read the config file and sets instance variables.
-        Resets any invalid values to default if necessary.
+        Reads the configuration file and sets instance variables.
+        If the file is invalid or missing, recreates it with default values.
         """
         save = False
 
-        with open(self.path, 'r') as f:
-            config = json.load(f)
+        try:
+            with open(self.path, 'r') as f:
+                config = json.load(f)
 
             for key in self.__dict__:
                 if key in config:
                     try:
                         tmp = config[key]
-                        logging.debug(f'Read config key {key}: {tmp}')
+                        logging.debug(f"Read config key {key}: {tmp}")
                         self.__dict__[key] = tmp
                     except Exception as e:
                         save = True
-                        logging.warning(f'Could not read config key {key}: {e}')
+                        logging.warning(f"Invalid config key {key}: {e}")
+        except (json.JSONDecodeError, FileNotFoundError) as e:
+            logging.error(f"Failed to read config file {self.path}: {e}")
+            logging.info("Recreating default configuration file.")
+            self._write_default_config()
+            save = True
 
         if self._revert_invalid():
             save = True
 
         if save:
             self.save()
+
+    def _write_default_config(self):
+        """
+        Writes the default configuration to the config file.
+        """
+        default_config_path = filepaths.get_app_dir() / 'resources' / 'default_app_config.json'
+        if not default_config_path.exists():
+            raise FileNotFoundError(f"Default configuration file not found: {default_config_path}")
+
+        shutil.copy(default_config_path, self.path)
+        logging.info(f"Default configuration file written to {self.path}")
 
     def _revert_invalid(self) -> bool:
         """
@@ -91,14 +108,22 @@ class AppConfig:
 
     def save(self) -> None:
         """
-        Writes the current config values to the config file.
+        Writes the current configuration to the file atomically.
         """
         self._revert_invalid()
 
-        with open(self.path, 'w') as f:
-            data = self.__dict__.copy()
-            del data['path']  # Remove path from data as it should not be saved in the config
-            json.dump(data, f, indent=4)
+        temp_path = self.path.with_suffix('.tmp')
+        data = self.__dict__.copy()
+        del data['path']  # Exclude the path attribute
+
+        try:
+            with open(temp_path, 'w') as f:
+                json.dump(data, f, indent=4)
+            shutil.move(temp_path, self.path)
+        except Exception as e:
+            logging.error(f"Failed to save configuration: {e}")
+            if temp_path.exists():
+                temp_path.unlink()  # Clean up temporary file
 
     def open_config(self) -> None:
         """

@@ -1,41 +1,35 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 
 Rectangle {
-    Connections {
-        target: colorManager
-        function onThemeChanged() {
-            colorManager.animateColorChange([
-                [navBarRectangle, "color", "very_dark_gray"]
-            ])
-        }
-    }
-
-    id: navBarRectangle
     width: parent.width
     height: parent.height
     color: (colorManager ? colorManager.getColorNoNotify("very_dark_gray") : "#000000")
 
-    Item {
-        id: navBarColumn
+    // UpperGrid
+    UpperGrid {
+        id: upperGrid
         width: parent.width
-        height: parent.height
+        height: 115
+        anchors.bottom: historique.top
+    }
 
-        UpperGrid {
-            id: upperGrid
-        }
+    // Historique
+    Historique {
+        id: historique
+        width: parent.width
+        height: 200
+        anchors.top: upperGrid.bottom
+        anchors.bottom: lowerGrid.top
+        anchors.topMargin: 150
+        anchors.bottomMargin: 185
+    }
 
-        /*
-        Historique {
-            id: historique
-            width: parent.width
-            height: parent.height * 0.5  // 50% de la hauteur totale
-        }
-        */
-        
-        LowerGrid {
-            id: lowerGrid
-        }
+    // LowerGrid
+    LowerGrid {
+        id: lowerGrid
+        width: parent.width
+        height: 185 
+        anchors.bottom: parent.bottom
     }
 }
