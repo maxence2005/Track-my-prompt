@@ -23,7 +23,7 @@ Rectangle {
         spacing: 0
 
         Header {
-            progression: 0.5
+            progression: databaseManager ? databaseManager.pourcentFound() : 0.0
             id: headerComponent
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
         }
