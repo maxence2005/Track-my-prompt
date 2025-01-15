@@ -172,38 +172,36 @@ class Backend(QObject):
         
         if result is not None:
             self.media_model.updateMediaItem(id=self.fichier["id"], file_path_ia=result, prompt=promptText)
-
-        self.media_model.updateMediaItem(id=self.fichier["id"], file_path_ia=result, prompt=promptText)
-        
-        # Mise à jour de la table Historique pour le fichier traité
-        connection = None
-        try:
-            connection = sqlite3.connect(self.db_path)
-            cursor = connection.cursor()
-            # Met à jour le champ lienIA avec le résultat retourné
-            cursor.execute("""
-                UPDATE Historique
-                SET lien = ?
-                WHERE id = ?
-            """, (result, idElem))
             
-            connection.commit()
-            print(f"[DEBUG] Mise à jour de la base de données pour l'ID {self.fichier['id']} avec lienIA : {result}")
-            
-            # Afficher tout l'historique pour débogage
-            cursor.execute("SELECT * FROM Historique")
-            all_rows = cursor.fetchall()
-            print("[DEBUG] Contenu complet de la table Historique :")
-            for row in all_rows:
-                print(row)
+            # Mise à jour de la table Historique pour le fichier traité
+            connection = None
+            try:
+                connection = sqlite3.connect(self.db_path)
+                cursor = connection.cursor()
+                # Met à jour le champ lienIA avec le résultat retourné
+                cursor.execute("""
+                    UPDATE Historique
+                    SET lien = ?
+                    WHERE id = ?
+                """, (result, idElem))
+                
+                connection.commit()
+                print(f"[DEBUG] Mise à jour de la base de données pour l'ID {self.fichier['id']} avec lienIA : {result}")
+                
+                # Afficher tout l'historique pour débogage
+                cursor.execute("SELECT * FROM Historique")
+                all_rows = cursor.fetchall()
+                print("[DEBUG] Contenu complet de la table Historique :")
+                for row in all_rows:
+                    print(row)
 
-        except sqlite3.Error as e:
-            print(f"[ERROR] Erreur lors de la mise à jour de la base de données : {e}")
-            self.infoSent.emit(f"Erreur de mise à jour dans la base de données : {e}")
-        finally:
-            if connection:
-                connection.close()
-                print("Connexion à la base de données fermée après mise à jour.")
+            except sqlite3.Error as e:
+                print(f"[ERROR] Erreur lors de la mise à jour de la base de données : {e}")
+                self.infoSent.emit(f"Erreur de mise à jour dans la base de données : {e}")
+            finally:
+                if connection:
+                    connection.close()
+                    print("Connexion à la base de données fermée après mise à jour.")
 
         # Mise à jour des variables partagées et émission du signal
         self._shared_variable["Chargement"] = False

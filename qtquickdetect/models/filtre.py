@@ -130,4 +130,5 @@ def traitement_mistral(phrase: str, API_KEY: str) -> list:
     Here is the user prompt, don't forget to translate it in english before : """
     prompt += phrase
     filtered = get_list_filter(prompt)
-    return ast.literal_eval(filtered)
+    filtered = ast.literal_eval(filtered)
+    return traitement_dumb(" ".join(filtered))

@@ -127,7 +127,7 @@ class PipelinePrompt(QObject):
         Args:
             error (str): The error message.
         """
-        self.backend.on_processing_complete(None, None)
+        self.backend.on_processing_complete(None, self.promptText, self.current_id)
         if error == "prompt":
             self.backend.infoSent.emit("prompt_err")
         self.stop_processing()
