@@ -151,10 +151,6 @@ class Backend(QObject):
             fileUrl (str): The file URL.
         """
         file_path = self.get_file_path(fileUrl)
-        if self.start == True :
-            self.start = False
-            self._shared_variable["Start"] = False
-            self.sharedVariableChanged.emit()
             
         if is_url(file_path):
             self.handle_url(file_path)
@@ -264,6 +260,12 @@ class Backend(QObject):
             self.fichier["type"] = media_type
             id_row = self.media_model.addMediaItem(str(dst), media_type)
             self.fichier["id"] = id_row
+            
+            if self.start == True :
+                self.start = False
+                self._shared_variable["Start"] = False
+                self.sharedVariableChanged.emit()
+            
         except Exception as e:
             self.infoSent.emit(f"Erreur : {e}")
     
@@ -427,6 +429,8 @@ class Backend(QObject):
         """Réinitialise les données de MediaData en fonction du pageID de la page précédente."""
         self.clearMediaData(pageID)
         
+    
+    
     @Slot(int)
     def deleteHistorique(self, pageIDToDelete):
         connection = None
@@ -510,6 +514,14 @@ class Backend(QObject):
                     shutil.rmtree(file)
         delete_files(image_dir)
         delete_files(video_dir)
+        
+        pageID = set()
+        for row in self.historique_model.historique_model._items:
+            pageID.add(row["pageID"])
+        
+        for id in pageID:
+            self.deleteHistorique(id)
+        
         self.sharedVariableChanged.emit()
     
     def frame_send(self, frame: QImage):

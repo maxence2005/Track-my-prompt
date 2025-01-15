@@ -88,7 +88,6 @@ class AppConfig:
         :return: True if any values were changed, False otherwise.
         """
         changed = False
-        
         if self.language not in self.languages.keys():
             logging.warning(f'Invalid language in config: {self.language}')
             self.language = 'English'

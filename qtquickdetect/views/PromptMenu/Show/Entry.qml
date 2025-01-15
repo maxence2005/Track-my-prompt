@@ -131,6 +131,7 @@ ColumnLayout {
         visible: (backend ? backend.shared_variable["Chargement"] : false) && (modelEntry.id == backend.idChargement)
     }
 
+    // Problème ici à moitié résolu via elide, TODO : trouver une solution pour afficher le prompt entier
     Text {
         id: iaPromptText
         text: modelEntry.prompt ? modelEntry.prompt : ""
@@ -139,5 +140,8 @@ ColumnLayout {
         wrapMode: Text.Wrap
         Layout.alignment: Qt.AlignHCenter
         width: parent.width - 20
+        height: parent.height
+        elide: Text.ElideMiddle
+        maximumLineCount: 1
     }
 }
