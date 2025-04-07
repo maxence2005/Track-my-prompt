@@ -97,7 +97,7 @@ def traitement_mistral(phrase: str, API_KEY: str) -> list:
             "Content-Type": "application/json"
         }
         payload = {
-            "model": "mistral-large-2407",
+            "model": "mistral-large-latest",
             "messages": [
                 {
                     "role": "user",
