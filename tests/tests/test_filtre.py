@@ -1,5 +1,4 @@
 import unittest
-from unittest.mock import patch, MagicMock
 import importer
 
 import key
@@ -12,7 +11,7 @@ class TestPromptFiltre(unittest.TestCase):
         self.assertEqual(result, ["dog", "cat"])
 
     def test_promptFiltre_dumb_ts(self):
-        result = promptFiltre("chien chat", "dumb_ts")
+        result = promptFiltre("chien et chat", "dumb_ts")
         self.assertEqual(result, ["dog", "cat"])
 
     def test_promptFiltre_mistral(self):

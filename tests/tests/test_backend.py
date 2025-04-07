@@ -20,7 +20,9 @@ class TestBackend(unittest.TestCase):
             im_pro=self.image_provider,
             prompt_ia="mistral",
             api_key_mistral="fake_api_key",
-            encyclopedia_model=MagicMock()
+            encyclopedia_model=MagicMock(),
+            db_path=MagicMock(),
+            historique_model=MagicMock()
         )
     
     def test_initial_shared_variable(self):
@@ -44,7 +46,7 @@ class TestBackend(unittest.TestCase):
             self.backend.receivePrompt("Describe this image")
             self.assertTrue(self.backend._shared_variable["Chargement"])
             mock_pipeline.assert_called_once_with(
-                "/path/to/file.jpg", "image", "Describe this image", "mistral", "fake_api_key"
+                "/path/to/file.jpg", "image", "Describe this image", "mistral", "fake_api_key", None
             )
 
     def test_receive_file_with_invalid_url(self):
