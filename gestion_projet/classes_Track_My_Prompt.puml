@@ -1,6 +1,6 @@
 @startuml classes_Track_My_Prompt
 set namespaceSeparator none
-class "AppConfig" as qtquickdetect.models.app_config.AppConfig {
+class "AppConfig" as track_my_prompt.models.app_config.AppConfig {
   api_key : str
   expertMode : bool
   language : str
@@ -12,7 +12,7 @@ class "AppConfig" as qtquickdetect.models.app_config.AppConfig {
   reset_config() -> None
   save() -> None
 }
-class "Backend" as qtquickdetect.controller.backend.Backend {
+class "Backend" as track_my_prompt.controller.backend.Backend {
   encyclo_model
   fichier : dict
   idChargementSignal
@@ -48,9 +48,9 @@ class "Backend" as qtquickdetect.controller.backend.Backend {
   toggle_menu()
   toggle_param()
 }
-class "<color:red>BackendNotLoadException</color>" as qtquickdetect.controller.InitBackend.BackendNotLoadException {
+class "<color:red>BackendNotLoadException</color>" as track_my_prompt.controller.InitBackend.BackendNotLoadException {
 }
-class "CameraPipeline" as qtquickdetect.pipeline.pipelineCamera.CameraPipeline {
+class "CameraPipeline" as track_my_prompt.pipeline.pipelineCamera.CameraPipeline {
   backend
   frame_send
   on_error
@@ -63,14 +63,14 @@ class "CameraPipeline" as qtquickdetect.pipeline.pipelineCamera.CameraPipeline {
   stop_camera_recording()
   stop_processing()
 }
-class "CameraWorker" as qtquickdetect.pipeline.pipelineCamera.CameraWorker {
+class "CameraWorker" as track_my_prompt.pipeline.pipelineCamera.CameraWorker {
   file_path : NoneType
   frameCaptured
   pipeline : str
   run_task()
   stop()
 }
-class "ColorManager" as qtquickdetect.controller.ColorManager.ColorManager {
+class "ColorManager" as track_my_prompt.controller.ColorManager.ColorManager {
   animations : list
   colors
   current_theme : str
@@ -83,14 +83,14 @@ class "ColorManager" as qtquickdetect.controller.ColorManager.ColorManager {
   isLightMode() -> bool
   switchTheme()
 }
-class "Controller" as qtquickdetect.controller.InitBackend.Controller {
+class "Controller" as track_my_prompt.controller.InitBackend.Controller {
   app
   controller_loading_finished
   engine
   frame_provider
   start()
 }
-class "DatabaseManager" as qtquickdetect.models.encylo.DatabaseManager {
+class "DatabaseManager" as track_my_prompt.models.encylo.DatabaseManager {
   dataLoaded
   db_path : str
   model
@@ -98,14 +98,14 @@ class "DatabaseManager" as qtquickdetect.models.encylo.DatabaseManager {
   load_data()
   set_search_text(text: str)
 }
-class "DatabaseManagerHistorique" as qtquickdetect.models.historique.DatabaseManagerHistorique {
+class "DatabaseManagerHistorique" as track_my_prompt.models.historique.DatabaseManagerHistorique {
   db_path : str
   historiqueDataLoaded
   historique_model
   historiqueModel() -> HistoriqueModel
   load_historique_data() -> None
 }
-class "DatabaseManagerMedia" as qtquickdetect.models.mediaModel.DatabaseManagerMedia {
+class "DatabaseManagerMedia" as track_my_prompt.models.mediaModel.DatabaseManagerMedia {
   dataLoaded
   db_path : str
   addMediaItem(file_path: str, media_type: str) -> int
@@ -116,7 +116,7 @@ class "DatabaseManagerMedia" as qtquickdetect.models.mediaModel.DatabaseManagerM
   mediaModel() -> MediaModel
   updateMediaItem(id: int, file_path: str, file_path_ia: str, media_type: str, prompt: str)
 }
-class "EncyclopediaModel" as qtquickdetect.models.encylo.EncyclopediaModel {
+class "EncyclopediaModel" as track_my_prompt.models.encylo.EncyclopediaModel {
   EmoticonRole
   NameRole
   TimeFoundRole
@@ -134,18 +134,18 @@ class "EncyclopediaModel" as qtquickdetect.models.encylo.EncyclopediaModel {
   update_data(data: list)
   update_data_bis(data: list)
 }
-class "HistoriqueModel" as qtquickdetect.models.historique.HistoriqueModel {
+class "HistoriqueModel" as track_my_prompt.models.historique.HistoriqueModel {
   PromptRole
   data(index: QModelIndex, role: int) -> str
   roleNames() -> dict
   rowCount(parent: QModelIndex) -> int
   update_data(data: list) -> None
 }
-class "ImageProvider" as qtquickdetect.models.imageProvider.ImageProvider {
+class "ImageProvider" as track_my_prompt.models.imageProvider.ImageProvider {
   requestImage(id: str, size: QSize, requestedSize: QSize) -> QImage
   set_image(image: QImage)
 }
-class "InitBackend" as qtquickdetect.controller.InitBackend.InitBackend {
+class "InitBackend" as track_my_prompt.controller.InitBackend.InitBackend {
   app
   controller
   engine
@@ -166,7 +166,7 @@ class "InitBackend" as qtquickdetect.controller.InitBackend.InitBackend {
   start_loading()
   stop_loading()
 }
-class "LanguageManager" as qtquickdetect.controller.LanguageManager.LanguageManager {
+class "LanguageManager" as track_my_prompt.controller.LanguageManager.LanguageManager {
   app
   encyclopedia
   engine
@@ -182,7 +182,7 @@ class "LanguageManager" as qtquickdetect.controller.LanguageManager.LanguageMana
   load_json_encyclopedia(path: str) -> dict
   setLanguage(language: str)
 }
-class "MediaModel" as qtquickdetect.models.mediaModel.MediaModel {
+class "MediaModel" as track_my_prompt.models.mediaModel.MediaModel {
   IdRole
   LienIARole
   LinkRole
@@ -195,7 +195,7 @@ class "MediaModel" as qtquickdetect.models.mediaModel.MediaModel {
   updateMediaItem(id: str, file_path: str, file_path_ia: str, media_type: str, prompt: str)
   update_data(data: list)
 }
-class "PipelinePrompt" as qtquickdetect.pipeline.pipelinePrompt.PipelinePrompt {
+class "PipelinePrompt" as track_my_prompt.pipeline.pipelinePrompt.PipelinePrompt {
   backend
   encyclo_model : Optional[EncyclopediaModel]
   promptText : NoneType, str
@@ -206,7 +206,7 @@ class "PipelinePrompt" as qtquickdetect.pipeline.pipelinePrompt.PipelinePrompt {
   start_processing(filePath: str, typ: str, promptText: str, method: str, api_key: str)
   stop_processing()
 }
-class "Worker" as qtquickdetect.pipeline.pipelinePrompt.Worker {
+class "Worker" as track_my_prompt.pipeline.pipelinePrompt.Worker {
   api_key : str
   backend : Optional[QObject]
   encyclo_model : Optional[EncyclopediaModel]
@@ -218,17 +218,17 @@ class "Worker" as qtquickdetect.pipeline.pipelinePrompt.Worker {
   run_task()
   stop()
 }
-qtquickdetect.controller.ColorManager.ColorManager --* qtquickdetect.controller.InitBackend.Controller : _color_manager
-qtquickdetect.controller.InitBackend.Controller --* qtquickdetect.controller.InitBackend.InitBackend : controller
-qtquickdetect.controller.LanguageManager.LanguageManager --* qtquickdetect.controller.InitBackend.Controller : _language_manager
-qtquickdetect.controller.backend.Backend --* qtquickdetect.controller.InitBackend.Controller : _backend
-qtquickdetect.models.app_config.AppConfig --* qtquickdetect.controller.InitBackend.Controller : _app_config
-qtquickdetect.models.encylo.DatabaseManager --* qtquickdetect.controller.InitBackend.Controller : _database_manager
-qtquickdetect.models.encylo.EncyclopediaModel --* qtquickdetect.models.encylo.DatabaseManager : model
-qtquickdetect.models.historique.DatabaseManagerHistorique --* qtquickdetect.controller.InitBackend.Controller : _database_manager_historique
-qtquickdetect.models.historique.HistoriqueModel --* qtquickdetect.models.historique.DatabaseManagerHistorique : historique_model
-qtquickdetect.models.mediaModel.DatabaseManagerMedia --* qtquickdetect.controller.InitBackend.Controller : _database_media
-qtquickdetect.models.mediaModel.MediaModel --* qtquickdetect.models.mediaModel.DatabaseManagerMedia : _media_model
-qtquickdetect.pipeline.pipelineCamera.CameraWorker --* qtquickdetect.pipeline.pipelineCamera.CameraPipeline : worker
-qtquickdetect.pipeline.pipelinePrompt.Worker --* qtquickdetect.pipeline.pipelinePrompt.PipelinePrompt : worker
+track_my_prompt.controller.ColorManager.ColorManager --* track_my_prompt.controller.InitBackend.Controller : _color_manager
+track_my_prompt.controller.InitBackend.Controller --* track_my_prompt.controller.InitBackend.InitBackend : controller
+track_my_prompt.controller.LanguageManager.LanguageManager --* track_my_prompt.controller.InitBackend.Controller : _language_manager
+track_my_prompt.controller.backend.Backend --* track_my_prompt.controller.InitBackend.Controller : _backend
+track_my_prompt.models.app_config.AppConfig --* track_my_prompt.controller.InitBackend.Controller : _app_config
+track_my_prompt.models.encylo.DatabaseManager --* track_my_prompt.controller.InitBackend.Controller : _database_manager
+track_my_prompt.models.encylo.EncyclopediaModel --* track_my_prompt.models.encylo.DatabaseManager : model
+track_my_prompt.models.historique.DatabaseManagerHistorique --* track_my_prompt.controller.InitBackend.Controller : _database_manager_historique
+track_my_prompt.models.historique.HistoriqueModel --* track_my_prompt.models.historique.DatabaseManagerHistorique : historique_model
+track_my_prompt.models.mediaModel.DatabaseManagerMedia --* track_my_prompt.controller.InitBackend.Controller : _database_media
+track_my_prompt.models.mediaModel.MediaModel --* track_my_prompt.models.mediaModel.DatabaseManagerMedia : _media_model
+track_my_prompt.pipeline.pipelineCamera.CameraWorker --* track_my_prompt.pipeline.pipelineCamera.CameraPipeline : worker
+track_my_prompt.pipeline.pipelinePrompt.Worker --* track_my_prompt.pipeline.pipelinePrompt.PipelinePrompt : worker
 @enduml

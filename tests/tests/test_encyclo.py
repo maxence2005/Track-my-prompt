@@ -13,7 +13,7 @@ class TestEncyclopediaModel(unittest.TestCase):
     def setUp(self):
         """Set up the necessary objects for the tests."""
         self.mock_model = EncyclopediaModel()
-        self.mock_db_path = '../qtquickdetect/resources/trackmyprompts.db'
+        self.mock_db_path = '../track_my_prompt/resources/trackmyprompts.db'
         self.database_manager = DatabaseManager(self.mock_db_path)
 
     def test_model_initial_state(self):

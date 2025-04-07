@@ -55,7 +55,7 @@ class Controller(QObject):
 
         os.environ['TORCH_HOME'] = str(filepaths.get_base_data_dir() / 'weights')
 
-        db_path_tmp = os.path.abspath("qtquickdetect/resources/trackmyprompts.db")
+        db_path_tmp = os.path.abspath("track_my_prompt/resources/trackmyprompts.db")
         data_dir = filepaths.get_base_data_dir()
         db_path = os.path.join(data_dir, "trackmyprompt.db")
 
@@ -85,7 +85,7 @@ class Controller(QObject):
         api_key = self._app_config.api_key
 
         self._backend = Backend(self._database_media, self._database_media._media_model.rowCount(), db_path, self._database_manager_historique, self.frame_provider, ia_method, api_key, self._database_manager.encyclopediaModel)
-        self._color_manager = ColorManager("qtquickdetect/resources/themes.json", theme)
+        self._color_manager = ColorManager("track_my_prompt/resources/themes.json", theme)
                 
         self._database_manager.moveToThread(QCoreApplication.instance().thread())
         self._database_manager_historique.moveToThread(QCoreApplication.instance().thread())
