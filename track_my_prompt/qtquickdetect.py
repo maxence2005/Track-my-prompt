@@ -18,6 +18,8 @@ def main():
     Configures logging, initializes the QApplication and QQmlApplicationEngine,
     sets up the ImageProvider, and loads the QML file.
     """
+    base = "track_my_prompt"
+    
     # Get path to the python package
     package_path = pathlib.Path(__file__).absolute().parent.parent
     os.chdir(package_path)
@@ -36,7 +38,7 @@ def main():
 
     # Expose the backend to the QML context
     engine.rootContext().setContextProperty("appContext", appContext)
-    font_id = QFontDatabase.addApplicationFont("qtquickdetect/views/fonts/smothy.otf")
+    font_id = QFontDatabase.addApplicationFont(base + "/views/fonts/smothy.otf")
     if font_id != -1:
         font_families = QFontDatabase.applicationFontFamilies(font_id)
         print(f"Police(s) disponible(s) : {font_families}")
@@ -46,7 +48,7 @@ def main():
     app.aboutToQuit.connect(appContext.stop_loading)
 
     # Load the QML app file
-    engine.load(QUrl("qtquickdetect/views/App.qml"))
+    engine.load(QUrl(base + "/views/App.qml"))
     appContext.loading_finished.connect(lambda: engine.rootObjects()[0].setProperty("isLoaded", True))
 
     appContext.start_loading()
