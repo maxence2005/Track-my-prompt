@@ -1,11 +1,12 @@
 import os
+import nltk
 from nltk.stem import WordNetLemmatizer
 import re
-from utils.filepaths import get_base_data_dir
 import requests
 import ast
 from deep_translator import GoogleTranslator
 from pathlib import Path
+from utils import filepaths
 
 available_classes = {
         "person", "backpack", "umbrella", "handbag", "suitcase", "tie", "bicycle", "car",
@@ -21,7 +22,15 @@ available_classes = {
         "teddy bear", "hair drier", "toothbrush", "scissors", "clock", "book", "vase"
     }
 
-nltk_file = Path(get_base_data_dir()) / 'nltk'
+nltk_file = filepaths.get_base_cache_dir() / 'nltk.txt'
+
+if not os.path.exists(nltk_file):
+    with open(nltk_file, 'w') as f:
+        f.write("NLTK resources initialization.\n")
+    nltk.download('wordnet')
+    nltk.download('omw-1.4')
+    
+nltk_file = Path(filepaths.get_base_data_dir()) / 'nltk'
 os.environ['NLTK_DATA'] = str(nltk_file)
 lemmatizer = WordNetLemmatizer()
 word_pattern = re.compile(r'\b\w+\b')

@@ -39,19 +39,10 @@ class Controller(QObject):
 
         import os
         import shutil
-        import nltk
         
         filepaths.create_cache_dir()
         filepaths.create_config_dir()
         filepaths.create_data_dir()
-
-        nltk_file = filepaths.get_base_cache_dir() / 'nltk.txt'
-
-        if not os.path.exists(nltk_file):
-            with open(nltk_file, 'w') as f:
-                f.write("NLTK resources initialization.\n")
-            nltk.download('wordnet')
-            nltk.download('omw-1.4')
 
         os.environ['TORCH_HOME'] = str(filepaths.get_base_data_dir() / 'weights')
 
