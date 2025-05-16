@@ -1,0 +1,10 @@
+{
+    "language": "English",
+    "style": "dark",
+    "expertMode": false,
+    "languages": {
+        "English": ""
+    },
+    "prompt_interpreter": "dumb",
+    "api_key": ""
+}
