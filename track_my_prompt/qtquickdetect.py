@@ -11,6 +11,7 @@ from PySide6.QtQml import QQmlApplicationEngine
 
 from .models.imageProvider import ImageProvider
 from .controller.InitBackend import InitBackend
+from .utils import filepaths
 
 def main():
     """
@@ -33,7 +34,9 @@ def main():
 
     frame_provider = ImageProvider()
     engine.addImageProvider("frameProvider", frame_provider)
-    
+    filepaths.create_cache_dir()
+    filepaths.create_config_dir()
+    filepaths.create_data_dir()
     appContext = InitBackend(app, engine, frame_provider)
 
     # Expose the backend to the QML context

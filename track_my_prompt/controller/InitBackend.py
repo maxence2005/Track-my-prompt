@@ -39,10 +39,6 @@ class Controller(QObject):
 
         import os
         import shutil
-        
-        filepaths.create_cache_dir()
-        filepaths.create_config_dir()
-        filepaths.create_data_dir()
 
         os.environ['TORCH_HOME'] = str(filepaths.get_base_data_dir() / 'weights')
 
