@@ -1,9 +1,15 @@
 import cv2
 import uuid
-import os
 from PySide6.QtCore import QObject, Signal, Slot, QThread
 from PySide6.QtGui import QImage
 from utils.filepaths import get_base_data_dir
+from ultralytics import YOLOWorld
+import torch
+import os
+from utils import filepaths
+import random
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class CameraWorker(QObject):
     frameCaptured = Signal(QImage)
@@ -20,6 +26,9 @@ class CameraWorker(QObject):
         self._is_running = True
         self.file_path = None
         self.pipeline = pipeline
+        models_path = filepaths.get_base_data_dir() / 'models'
+        self.model = YOLOWorld(os.path.join(models_path, 'yolov8s-world.pt')).to(device)
+
         
     def run_task(self):
         """
@@ -42,11 +51,34 @@ class CameraWorker(QObject):
         frame_height = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
         out = cv2.VideoWriter(str(self.file_path), fourcc, fps, (frame_width, frame_height))
 
+        color = (
+            random.randint(0, 255),
+            random.randint(0, 255),
+            random.randint(0, 255)
+        )
         while self._is_running:
             ret, frame = capture.read()
             if not ret:
                 break
+            
+            with torch.no_grad():
+                results = self.model.predict(frame, stream=True)
 
+                for r in results:
+                    for i, box in enumerate(r.boxes.xyxy):
+                        x1, y1, x2, y2 = map(int, box)
+
+                        cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+
+                        if r.boxes.conf is not None and i < len(r.boxes.conf):
+                            confidence = r.boxes.conf[i].item() * 100
+                            class_index = int(r.boxes.cls[i].item())
+                            class_name = self.model.names[class_index] if class_index in self.model.names else "Unknown"
+                            label = f"{class_name} {confidence:.1f}%"
+                            cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
+
+                    if r.masks is not None:
+                        r.masks.draw(frame)
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             h, w, ch = rgb_frame.shape
             bytes_per_line = ch * w
