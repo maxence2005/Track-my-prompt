@@ -18,6 +18,7 @@ from utils.url_handler import is_image, is_video, is_live_video, is_url, downloa
 from pipeline.pipelinePrompt import PipelinePrompt
 from pipeline.pipelineCamera import CameraPipeline
 from models.mediaModel import DatabaseManagerMedia
+from models.transcripteur_vocal import AudioRecorder
 
 class Backend(QObject):
 
@@ -25,6 +26,7 @@ class Backend(QObject):
     promptEnter = Signal(str)
     sharedVariableChanged = Signal()
     idChargementSignal = Signal()
+    transcriptionReady = Signal(str)
 
     def __init__(self, media_model: DatabaseManagerMedia, row: int, db_path: str, historique_model: QObject, im_pro: ImageProvider, prompt_ia: str, api_key_mistral: str, encyclopedia_model: QObject):
         """
@@ -49,6 +51,7 @@ class Backend(QObject):
         self.pipeline = PipelinePrompt(self, encyclo_model=self.encyclo_model)
         self.pipelineCamera = CameraPipeline(self)
         self.pipelineCamera.frame_send.connect(self.frame_send)
+        self.audio_recorder = AudioRecorder()
 
         if row == 0:
             self._shared_variable["Start"] = True
@@ -641,4 +644,14 @@ class Backend(QObject):
         finally:
             if connection:
                 connection.close()
-                print("Connexion à la base de données fermée.") 
+                print("Connexion à la base de données fermée.")
+
+    @Slot()
+    def startRecording(self):
+        self.audio_recorder.start()
+
+    @Slot()
+    def stopRecording(self):
+        self.audio_recorder.stop()
+        res = self.audio_recorder.transcript()
+        self.transcriptionReady.emit(res)
