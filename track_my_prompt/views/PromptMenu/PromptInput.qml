@@ -10,6 +10,8 @@ RowLayout {
             colorManager.animateColorChange([
                 [wizardIconRectangle, "backgroundColor", "dark_gray"],
                 [wizardColorOverlay, "color", "default"],
+                [microphoneIconRectangle, "backgroundColor", "dark_gray"],
+                [microphoneColorOverlay, "color", "default"],
                 [promptInputRectangle, "color", "dark_bluish_gray"],
                 [promptInputField, "color", "light_gray"],
                 [promptInputField, "placeholderTextColor", "blue_gray"],
@@ -21,7 +23,7 @@ RowLayout {
     id: promptRowLayout
     width: parent.width
     height: 50
-    spacing: 20
+    spacing: 10
 
     Rectangle {
         id: wizardIconRectangle
@@ -61,6 +63,59 @@ RowLayout {
             anchors.fill: wizardIconImage
             source: wizardIconImage
             color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
+        }
+    }
+
+    Rectangle {
+        id: microphoneIconRectangle
+        property bool hovered: false
+        property bool isRecording: false
+        property color backgroundColor: (colorManager ? colorManager.getColorNoNotify("dark_gray") : "#000000")
+        property color backgroundColorHover: (colorManager ? colorManager.getColor["blue_gray"] : "#000000")
+        width: 50
+        height: 50
+        radius: 50
+        color: hovered ? backgroundColorHover : backgroundColor
+
+        Image {
+            id: microphoneIconImage
+            source: "../imgs/microphone.png"
+            fillMode: Image.PreserveAspectFit
+            anchors.centerIn: parent
+            width: 30
+            height: 30
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            onEntered: microphoneIconRectangle.hovered = true
+            onExited: microphoneIconRectangle.hovered = false
+
+            onClicked: {
+                if (!microphoneIconRectangle.isRecording) {
+                    backend.startRecording();
+                    microphoneIconRectangle.isRecording = true;
+                } else {
+                    backend.stopRecording();
+                    microphoneIconRectangle.isRecording = false;
+                }
+            }
+        }
+
+        ColorOverlay {
+            id: microphoneColorOverlay
+            anchors.fill: microphoneIconImage
+            source: microphoneIconImage
+            color: microphoneIconRectangle.isRecording ? "red" :
+               (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
+        }
+
+        Connections {
+            target: backend
+            function onTranscriptionReady(result) {
+                promptInputField.text = result;
+            }
         }
     }
 
