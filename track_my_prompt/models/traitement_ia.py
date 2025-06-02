@@ -38,8 +38,8 @@ def traitementPrompt(filePath: str, classes: list = None, typ: str = "video", en
 
     if typ == "image":
         with torch.no_grad():
-            results = model.predict(filePath, save=True, save_dir=str(collections_dir), exist_ok=True)
-        
+            results = model.predict(filePath, save=True, project=str(collections_dir), name="tmp", exist_ok=True)
+
         saved_image_path = results[0].save_dir
         filePath_without_extension = os.path.splitext(filePath)[0]
         saved_files = list(Path(saved_image_path).glob(os.path.basename(filePath_without_extension) + '*'))[0]
