@@ -1,0 +1,13 @@
+PySide6==6.8.*
+opencv-python>=4.10.0
+requests>=2.31.0
+numpy>=1.26.2
+nltk>=3.7
+deep-translator==1.11.4
+
+ftfy
+packaging
+regex
+tqdm
+
+ultralytics==8.2.*
