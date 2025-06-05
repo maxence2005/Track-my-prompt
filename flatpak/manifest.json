@@ -80,6 +80,7 @@
                 "install -Dm644 LICENSE /app/bin/TrackMyPrompt-LICENSE",
                 "cp -r track_my_prompt/ /app/track_my_prompt",
                 "install -Dm755 installer.py /app/bin/TrackMyPrompt-installer.py",
+                "install -Dm755 installer_translate.py /app/bin/installer_translate.py",
                 "/app/bin/pip3 install --no-deps --prefix=/app -r no-deps.txt"
             ],
             "sources": [
@@ -93,6 +94,7 @@
                 { "type": "file", "path": "files/no-deps.txt" },
                 { "type": "file", "path": "files/entrypoint.sh" },
                 { "type": "file", "path": "files/installer.py" },
+                { "type": "file", "path": "files/installer_translate.py" },
                 { "type": "file", "path": "files/icon.png" },
                 { "type": "file", "path": "files/TrackMyPrompt.desktop" },
                 { "type": "file", "path": "../LICENSE" }
