@@ -22,7 +22,7 @@ available_classes = {
         "teddy bear", "hair drier", "toothbrush", "scissors", "clock", "book", "vase"
     }
 
-nltk_data_dir = Path(filepaths.get_base_config_dir()) / 'nltk_data'
+nltk_data_dir = Path(filepaths.get_base_data_dir()) / 'nltk_data'
 nltk_data_dir.mkdir(parents=True, exist_ok=True)
 
 os.environ['NLTK_DATA'] = str(nltk_data_dir)

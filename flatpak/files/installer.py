@@ -1,10 +1,12 @@
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
+import tkinter.font as tkfont
 import threading
 import subprocess
 import sys
 import os
 
+font_family = "courier"
 cache_dir = "/tmp/TrackMyPrompt-pip-cache"
 os.makedirs(cache_dir, exist_ok=True)
 
@@ -26,12 +28,12 @@ class InstallerApp:
             widget.destroy()
 
         if self.step == 0:
-            self.label = tk.Label(self.frame, text="Bienvenue dans l’installeur de TrackMyPrompt", font=("Helvetica", 14))
+            self.label = tk.Label(self.frame, text="Bienvenue dans l’installeur de TrackMyPrompt", font=(font_family, 14))
             self.label.pack(pady=40)
             self.next_button("Continuer")
 
         elif self.step == 1:
-            self.label = tk.Label(self.frame, text="Licence d’utilisation", font=("Helvetica", 14))
+            self.label = tk.Label(self.frame, text="Licence d’utilisation", font=(font_family, 14))
             self.label.pack(pady=10)
 
             license_box = scrolledtext.ScrolledText(self.frame, wrap=tk.WORD, height=15)
@@ -42,10 +44,10 @@ class InstallerApp:
             self.next_button("J’accepte")
 
         elif self.step == 2:
-            self.label = tk.Label(self.frame, text="Installation des dépendances", font=("Helvetica", 14))
+            self.label = tk.Label(self.frame, text="Installation des dépendances", font=(font_family, 14))
             self.label.pack(pady=10)
 
-            tk.Label(self.frame, text="Cela peut prendre quelques minutes...", font=("Helvetica", 10)).pack()
+            tk.Label(self.frame, text="Cela peut prendre quelques minutes...", font=(font_family, 10)).pack()
 
             self.output_box = scrolledtext.ScrolledText(self.frame, height=15)
             self.output_box.pack(fill="both", expand=True, padx=10, pady=10)
@@ -55,10 +57,10 @@ class InstallerApp:
             self.install_button.pack(pady=10)
 
         elif self.step == 3:
-            self.label = tk.Label(self.frame, text="Installation terminée 🎉", font=("Helvetica", 14))
+            self.label = tk.Label(self.frame, text="Installation terminée", font=(font_family, 14))
             self.label.pack(pady=40)
 
-            tk.Label(self.frame, text="Merci d’avoir installé TrackMyPrompt !", font=("Helvetica", 12)).pack(pady=10)
+            tk.Label(self.frame, text="Merci d’avoir installé TrackMyPrompt !", font=(font_family, 12)).pack(pady=10)
             tk.Button(self.frame, text="Quitter", command=self.quit_success).pack(pady=20)
 
     def next_button(self, text):
@@ -128,5 +130,10 @@ if __name__ == "__main__":
         license_text = f.read()
 
     root = tk.Tk()
+
+    default_font = tkfont.nametofont("TkDefaultFont")
+    default_font.configure(family=font_family, size=10)  # ou "Roboto", "Segoe UI", etc.
+    root.option_add("*Font", default_font)
+    
     app = InstallerApp(root, license_text)
     root.mainloop()
