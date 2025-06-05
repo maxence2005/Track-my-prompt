@@ -1,0 +1,104 @@
+{
+    "app-id": "iut.sae.TrackMyPrompt",
+    "runtime": "org.freedesktop.Platform",
+    "runtime-version": "24.08",
+    "sdk": "org.freedesktop.Sdk",
+    "command": "TrackMyPrompt",
+    "finish-args": [
+        "--share=network",
+        "--share=ipc",
+        "--filesystem=~/.local:rw",
+        "--filesystem=/tmp",
+        "--device=all",
+        "--env=PYTHONPATH=/app/lib/python3.11/site-packages",
+        "--socket=x11",
+        "--socket=wayland",
+        "--socket=pulseaudio",
+        "--filesystem=xdg-pictures:ro",
+        "--filesystem=xdg-download:ro",
+        "--filesystem=xdg-desktop:ro",
+        "--filesystem=xdg-documents:ro"
+    ],
+    "build-options": {
+        "build-args": ["--share=network"],
+        "strip": true,
+        "no-debuginfo": true
+    },
+    "modules": [
+        {
+            "name": "krb5",
+            "subdir": "src",
+            "buildsystem": "autotools",
+            "config-opts": [
+                "--disable-static",
+                "--disable-rpath",
+                "--prefix=/app"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://kerberos.org/dist/krb5/1.21/krb5-1.21.3.tar.gz",
+                    "sha256": "b7a4cd5ead67fb08b980b21abd150ff7217e85ea320c9ed0c6dadd304840ad35"
+                }
+            ],
+            "cleanup": ["/bin", "/share/et", "/share/examples", "/share/man"]
+        },
+        {
+            "name": "portaudio",
+            "buildsystem": "autotools",
+            "sources": [
+                {
+                "type": "archive",
+                "url": "https://www.portaudio.com/archives/pa_stable_v190600_20161030.tgz",
+                "sha256": "f5a21d7dcd6ee84397446fa1fa1a0675bb2e8a4a6dceb4305a8404698d8d1513"
+                }
+            ]
+        },
+        {
+            "name": "python3.11",
+            "buildsystem": "simple",
+            "build-commands": [
+                "wget https://www.python.org/ftp/python/3.11.9/Python-3.11.9.tgz",
+                "tar -xzf Python-3.11.9.tgz",
+                "cd Python-3.11.9 && export TCLTK_LIBS=\"-L/usr/local/opt/tcl-tk/lib -ltcl8.6 -ltk8.6\" && export TCLTK_CFLAGS=\"-I/usr/local/opt/tcl-tk/include\" && ./configure --prefix=/app --enable-optimizations && make -j$(nproc) LDFLAGS='-s' && make install",
+                "rm -f /app/lib/libpython3.11.a",
+                "rm -f /app/lib/python3.11/config-*/libpython3.11.a",
+                "rm -rf /app/lib/debug /app/include /app/share/doc /app/share/man /app/src"
+            ],
+            "sources": []
+        },
+        {
+            "name": "TrackMyPrompt",
+            "buildsystem": "simple",
+            "build-commands": [
+                "/app/bin/python3.11 -m ensurepip",
+                "install -Dm644 TrackMyPrompt.desktop /app/share/applications/iut.sae.TrackMyPrompt.desktop",
+                "install -Dm644 icon.png /app/share/icons/hicolor/256x256/apps/iut.sae.TrackMyPrompt.png",
+                "install -Dm755 entrypoint.sh /app/bin/TrackMyPrompt",
+                "install -Dm644 requirements.txt /app/bin/TrackMyPrompt-requirements.txt",
+                "install -Dm644 cpu-requirements.txt /app/bin/TrackMyPrompt-cpu-requirements.txt",
+                "install -Dm644 LICENSE /app/bin/TrackMyPrompt-LICENSE",
+                "cp -r track_my_prompt/ /app/track_my_prompt",
+                "install -Dm755 installer.py /app/bin/TrackMyPrompt-installer.py",
+                "install -Dm755 installer_translate.py /app/bin/installer_translate.py",
+                "/app/bin/pip3 install --no-deps --prefix=/app -r no-deps.txt"
+            ],
+            "sources": [
+                {
+                    "type": "dir",
+                    "path": "../track_my_prompt",
+                    "dest": "track_my_prompt"
+                },
+                { "type": "file", "path": "files/requirements.txt" },
+                { "type": "file", "path": "files/cpu-requirements.txt" },
+                { "type": "file", "path": "files/no-deps.txt" },
+                { "type": "file", "path": "files/entrypoint.sh" },
+                { "type": "file", "path": "files/installer.py" },
+                { "type": "file", "path": "files/installer_translate.py" },
+                { "type": "file", "path": "files/icon.png" },
+                { "type": "file", "path": "files/TrackMyPrompt.desktop" },
+                { "type": "file", "path": "../LICENSE" }
+            ]
+        }
+    ]
+}

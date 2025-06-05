@@ -22,16 +22,25 @@ available_classes = {
         "teddy bear", "hair drier", "toothbrush", "scissors", "clock", "book", "vase"
     }
 
-nltk_file = filepaths.get_base_cache_dir() / 'nltk.txt'
+nltk_data_dir = Path(filepaths.get_base_data_dir()) / 'nltk_data'
+nltk_data_dir.mkdir(parents=True, exist_ok=True)
 
-if not os.path.exists(nltk_file):
-    with open(nltk_file, 'w') as f:
-        f.write("NLTK resources initialization.\n")
-    nltk.download('wordnet')
-    nltk.download('omw-1.4')
-    
-nltk_file = Path(filepaths.get_base_data_dir()) / 'nltk'
-os.environ['NLTK_DATA'] = str(nltk_file)
+os.environ['NLTK_DATA'] = str(nltk_data_dir)
+nltk.data.path.clear()
+nltk.data.path.append(str(nltk_data_dir))
+
+corpora_dir = nltk_data_dir / 'corpora'
+wordnet_exists = (corpora_dir / 'wordnet.zip').exists() or (corpora_dir / 'wordnet').exists()
+omw_exists = (corpora_dir / 'omw-1.4.zip').exists() or (corpora_dir / 'omw-1.4').exists()
+
+if not wordnet_exists:
+    print("Téléchargement de wordnet...")
+    nltk.download('wordnet', download_dir=str(nltk_data_dir))
+
+if not omw_exists:
+    print("Téléchargement de omw-1.4...")
+    nltk.download('omw-1.4', download_dir=str(nltk_data_dir))
+
 lemmatizer = WordNetLemmatizer()
 word_pattern = re.compile(r'\b\w+\b')
 lemmatizer.lemmatize("dog") # Initialize the lemmatizer

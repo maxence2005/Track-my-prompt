@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=TrackMyPrompt
+Comment=Application de reconnaissance d'objet sur une image ou une vidéo via des prompts
+Exec=TrackMyPrompt
+Icon=iut.sae.TrackMyPrompt
+Terminal=false
+Type=Application
+Categories=Utility;Graphics;Education;
+StartupNotify=true
