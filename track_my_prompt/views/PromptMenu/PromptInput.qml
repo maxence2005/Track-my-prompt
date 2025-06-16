@@ -99,7 +99,7 @@ RowLayout {
             MouseArea {
                 id: sendMouseArea
                 anchors.fill: parent
-                onClicked: sendPrompt();
+                onClicked: showCelebration();
             }
         }
 
