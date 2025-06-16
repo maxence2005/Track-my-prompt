@@ -48,7 +48,6 @@ Rectangle {
                     HistorySettings { }
                 }
                 Column {
-                    ExpertModeSettings { }
 
                     Rectangle {
                         height: allSettingsColumn.separatorHeight
@@ -57,6 +56,14 @@ Rectangle {
                     }
 
                     PromptInterpreterSettings { }
+
+                    Rectangle {
+                        height: allSettingsColumn.separatorHeight
+                        width: 1
+                        color: "transparent"
+                    }
+
+                    FrameManagerSettings { }
                 }
             }
         }

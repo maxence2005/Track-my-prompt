@@ -11,7 +11,7 @@ from models.encylo import EncyclopediaModel
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def traitementPrompt(filePath: str, classes: list = None, typ: str = "video", encyclopedia_model: EncyclopediaModel = None) -> str:
+def traitementPrompt(filePath: str, classes: list = None, typ: str = "video", encyclopedia_model: EncyclopediaModel = None, color = (0, 255, 0)) -> str:
     """
     Process the prompt and return the path to the processed file.
 
@@ -37,18 +37,39 @@ def traitementPrompt(filePath: str, classes: list = None, typ: str = "video", en
     os.makedirs(collections_dir, exist_ok=True)
 
     if typ == "image":
+        image = cv2.imread(filePath)
+        if image is None:
+            print(f"Erreur : Impossible de lire l'image {filePath}")
+            return ""
+
         with torch.no_grad():
-            results = model.predict(filePath, save=True, save_dir=str(collections_dir), exist_ok=True)
-        
-        saved_image_path = results[0].save_dir
-        filePath_without_extension = os.path.splitext(filePath)[0]
-        saved_files = list(Path(saved_image_path).glob(os.path.basename(filePath_without_extension) + '*'))[0]
+            results = model.predict(image, stream=True)
 
-        final_image_path = collections_dir / f"ia_{str(uuid.uuid4())}"
-        shutil.move(saved_image_path, final_image_path)
+        for r in results:
+            for i, box in enumerate(r.boxes.xyxy):
+                x1, y1, x2, y2 = map(int, box)
 
-        f = final_image_path / os.path.basename(saved_files)
-        return str(f)
+                if color == "rainbow":
+                    color_to_use = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
+                else:
+                    color_to_use = color
+
+                cv2.rectangle(image, (x1, y1), (x2, y2), color_to_use, 4)
+
+                if r.boxes.conf is not None and i < len(r.boxes.conf):
+                    confidence = r.boxes.conf[i].item() * 100
+                    class_index = int(r.boxes.cls[i].item())
+                    class_name = model.names[class_index] if class_index in model.names else "Unknown"
+                    label = f"{class_name} {confidence:.1f}%"
+                    cv2.putText(image, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, color_to_use, 2)
+
+            if r.masks is not None:
+                r.masks.draw(image)
+
+        final_image_path = collections_dir / f"ia_{str(uuid.uuid4())}.png"
+        cv2.imwrite(str(final_image_path), image)
+
+        return str(final_image_path)
     
     else:
         cap = cv2.VideoCapture(filePath)
@@ -73,8 +94,11 @@ def traitementPrompt(filePath: str, classes: list = None, typ: str = "video", en
                 for r in results:
                     for i, box in enumerate(r.boxes.xyxy):
                         x1, y1, x2, y2 = map(int, box)
-                        
-                        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                        if color == "rainbow":
+                            color_to_use = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
+                        else:
+                            color_to_use = color
+                        cv2.rectangle(frame, (x1, y1), (x2, y2), color_to_use, 4)
                         
                         if r.boxes.conf is not None and i < len(r.boxes.conf):
                             confidence = r.boxes.conf[i].item() * 100 
@@ -82,7 +106,7 @@ def traitementPrompt(filePath: str, classes: list = None, typ: str = "video", en
                             class_name = model.names[class_index] if class_index in model.names else "Unknown"
                             label = f"{class_name} {confidence:.1f}%"
 
-                            cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+                            cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, color_to_use, 2)
 
                     if r.masks is not None:
                         r.masks.draw(frame)

@@ -83,8 +83,11 @@ class Controller(QObject):
         theme = self._app_config.style
         ia_method = self._app_config.prompt_interpreter
         api_key = self._app_config.api_key
+        frame_color = self._app_config.frameManager
 
-        self._backend = Backend(self._database_media, self._database_media._media_model.rowCount(), db_path, self._database_manager_historique, self.frame_provider, ia_method, api_key, self._database_manager.encyclopediaModel)
+
+
+        self._backend = Backend(self._database_media, self._database_media._media_model.rowCount(), db_path, self._database_manager_historique, self.frame_provider, ia_method, api_key, frame_color, self._database_manager.encyclopediaModel)
         self._color_manager = ColorManager("track_my_prompt/resources/themes.json", theme)
                 
         self._database_manager.moveToThread(QCoreApplication.instance().thread())
