@@ -22,7 +22,7 @@ class AppConfig:
         """
         self.language: str = 'English'
         self.style: str = 'dark'
-        self.expertMode: bool = False
+        self.frameManager: str = '#787878'
         self.languages: dict = languages
         self.prompt_interpreter: str = 'dumb'
         self.api_key: str = ''

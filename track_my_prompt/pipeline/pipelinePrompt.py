@@ -3,6 +3,7 @@ from models.traitement_ia import traitementPrompt
 from models.filtre import promptFiltre
 from PySide6.QtCore import QObject, Signal, Slot, QThread
 from models.encylo import EncyclopediaModel
+from utils.color_utils import hex_to_bgr
 
 class Worker(QObject):
     """
@@ -34,6 +35,9 @@ class Worker(QObject):
         self.encyclo_model = encyclo_model
         self.backend = backend
 
+        hex_color = self.pipeline.backend.shared_variable.get("frame_color", "#00FF00")
+        self.color = hex_to_bgr(hex_color)
+
     def run_task(self):
         """
         Run the task to process the prompt.
@@ -50,7 +54,7 @@ class Worker(QObject):
                 self.backend.sharedVariableChanged.emit()
             else:
                 print("Erreur: backend non défini")
-            result = traitementPrompt(self.filePath, classes, self.typ, self.encyclo_model)
+            result = traitementPrompt(self.filePath, classes, self.typ, self.encyclo_model, self.color)
             self.pipeline.on_processing_complete(result)
             
     def stop(self):

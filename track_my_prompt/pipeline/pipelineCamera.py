@@ -3,6 +3,7 @@ import uuid
 from PySide6.QtCore import QObject, Signal, Slot, QThread
 from PySide6.QtGui import QImage
 from utils.filepaths import get_base_data_dir
+from utils.color_utils import hex_to_bgr
 from ultralytics import YOLOWorld
 import torch
 import os
@@ -51,11 +52,8 @@ class CameraWorker(QObject):
         frame_height = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
         out = cv2.VideoWriter(str(self.file_path), fourcc, fps, (frame_width, frame_height))
 
-        color = (
-            random.randint(0, 255),
-            random.randint(0, 255),
-            random.randint(0, 255)
-        )
+        frame_color_hex = self.pipeline.backend.shared_variable.get("frame_color", "#FF0000")
+        color = hex_to_bgr(frame_color_hex)
         while self._is_running:
             ret, frame = capture.read()
             if not ret:
@@ -68,14 +66,19 @@ class CameraWorker(QObject):
                     for i, box in enumerate(r.boxes.xyxy):
                         x1, y1, x2, y2 = map(int, box)
 
-                        cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+                        if color == "rainbow":
+                            color_to_use = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
+                        else:
+                            color_to_use = color
+
+                        cv2.rectangle(frame, (x1, y1), (x2, y2), color_to_use, 4)
 
                         if r.boxes.conf is not None and i < len(r.boxes.conf):
                             confidence = r.boxes.conf[i].item() * 100
                             class_index = int(r.boxes.cls[i].item())
                             class_name = self.model.names[class_index] if class_index in self.model.names else "Unknown"
                             label = f"{class_name} {confidence:.1f}%"
-                            cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
+                            cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, color_to_use, 2)
 
                     if r.masks is not None:
                         r.masks.draw(frame)
