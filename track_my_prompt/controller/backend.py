@@ -26,9 +26,9 @@ class Backend(QObject):
     promptEnter = Signal(str)
     sharedVariableChanged = Signal()
     idChargementSignal = Signal()
-    transcriptionReady = Signal(str)
+    celebrationUnlocked = Signal()
 
-    def __init__(self, media_model: DatabaseManagerMedia, row: int, db_path: str, historique_model: QObject, im_pro: ImageProvider, prompt_ia: str, api_key_mistral: str, frame_color: str, encyclopedia_model: QObject):
+    def __init__(self, media_model: DatabaseManagerMedia, row: int, db_path: str, historique_model: QObject, im_pro: ImageProvider, prompt_ia: str, api_key_mistral: str, frame_color: str, unlock_100: bool, encyclopedia_model: QObject):
         """
         Initialize the Backend with the given parameters.
 
@@ -47,6 +47,7 @@ class Backend(QObject):
         self.db_path = db_path
         self.encyclo_model = encyclopedia_model
         self.image_provider = im_pro
+        self._has_unlocked_100 = unlock_100
         self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Chargement" : False, "prompt_ia" : prompt_ia, "api_key_mistral" : api_key_mistral, "Camera" : False, "state" : "", "frame_color": frame_color}
         self.pipeline = PipelinePrompt(self, encyclo_model=self.encyclo_model)
         self.pipelineCamera = CameraPipeline(self)
@@ -627,6 +628,17 @@ class Backend(QObject):
             if connection:
                 connection.close()
 
+    
+    @Slot(result=bool)
+    def hasUnlocked100(self):
+        return self._has_unlocked_100
+    
+    @Slot(float)
+    def checkAndUnlock100(self, pourcentage):
+        if pourcentage >= 100 and not self._has_unlocked_100:
+            self._has_unlocked_100 = True
+            self.celebrationUnlocked.emit()
+    
     @Slot(int)
     def retrievePage(self, pageID):
         """Méthode appelée pour récupérer les données d'une page et les envoyer dans Media."""

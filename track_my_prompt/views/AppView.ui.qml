@@ -104,5 +104,65 @@ Rectangle {
         width: parent.width * 0.8
         height: parent.height * 0.8
     }
-    
+
+    function showCelebration() {
+        celebrationOverlay.visible = true;
+        hideCelebrationTimer.start();
+    }
+
+    Rectangle {
+        id: celebrationOverlay
+        anchors.fill: parent
+        z: 999
+        visible: false
+        color: "transparent"
+
+        ShaderEffectSource {
+            id: celebrationBlurSource
+            anchors.fill: parent
+            sourceItem: appView
+            hideSource: false
+            live: false
+        }
+
+        FastBlur {
+            anchors.fill: parent
+            source: celebrationBlurSource
+            radius: 90
+        }
+
+        Fireworks {
+            anchors.fill: parent
+            running_p: celebrationOverlay.visible
+        }
+
+        Column {
+            anchors.centerIn: parent
+            spacing: 16 
+
+            Text {
+                id: mainText
+                text: "Bravo, vous avez 100% !"
+                font.pixelSize: 46
+                color: "white"
+                font.bold: true
+                horizontalAlignment: Text.AlignHCenter
+            }
+
+            Text {
+                text: "Une surprise vous attend dans les paramètres !"
+                font.pixelSize: 23
+                color: "white"
+                font.bold: true
+                anchors.horizontalCenter: mainText.horizontalCenter
+            }
+        }
+
+        Timer {
+            id: hideCelebrationTimer
+            interval: 8000
+            repeat: false
+            onTriggered: celebrationOverlay.visible = false
+        }
+    }
 }
