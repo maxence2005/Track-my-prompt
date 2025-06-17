@@ -49,7 +49,6 @@ Column {
 
                     MouseArea {
                         anchors.fill: parent
-                        enabled: !rainbowCheckbox.checked
                         cursorShape: Qt.PointingHandCursor
                         onClicked: backend.openColorDialog()
                     }
@@ -67,7 +66,7 @@ Column {
                             anchors.fill: parent
                             radius: 4
                             color: "#787878"
-                            visible: !(appContext && appContext.backend && appContext.backend.shared_variable.frame_color === "rainbow")
+                            visible: !(appContext && appContext.backend && appContext.backend.shared_variable.frame_color === "rainbow") && (appContext && appContext.backend && appContext.backend.hasUnlocked100())
 
                             MouseArea {
                                 anchors.fill: parent
@@ -83,7 +82,7 @@ Column {
                             anchors.fill: parent
                             radius: 4
                             clip: true
-                            visible: (appContext && appContext.backend && appContext.backend.shared_variable.frame_color === "rainbow")
+                            visible: (appContext && appContext.backend && appContext.backend.shared_variable.frame_color === "rainbow" && appContext.backend.hasUnlocked100())
 
                             gradient: Gradient {
                                 GradientStop { position: 0.0; color: "red" }
@@ -107,6 +106,7 @@ Column {
                         Text {
                             id: rainbowText
                             text: qsTr("Multicolor")
+                            visible: (appContext && appContext.backend && appContext.backend.shared_variable.frame_color && appContext.backend.hasUnlocked100())
                             font.pixelSize: 18
                             color: "#1f1c1c"
                             anchors.centerIn: parent

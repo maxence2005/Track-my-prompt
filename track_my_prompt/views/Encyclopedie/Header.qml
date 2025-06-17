@@ -81,7 +81,7 @@ Rectangle {
             text: qsTr("Encyclopedia")
             font.pixelSize: parent.width/15
             color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
-            horizontalAlignment: Text.AlignHCenter
+            anchors.horizontalCenter: parent.horizontalCenter
         }
 
         Button {
@@ -89,7 +89,7 @@ Rectangle {
             text: "🎁"
             visible: !backend.hasUnlocked100() && progressBar.value >= 1.0
             onClicked: {
-                backend.checkAndUnlock100(100)//Math.round(progressBar.value * 100))
+                backend.checkAndUnlock100(Math.round(progressBar.value * 100))
             }
             font.pixelSize: parent.width/15
             background: Rectangle {
@@ -103,8 +103,8 @@ Rectangle {
     ProgressBar {
         id: progressBar
         height: parent.height * 0.06
-        anchors.leftMargin: parent.width * 0.05
-        anchors.rightMargin: parent.width * 0.05
+        anchors.leftMargin: parent.width * 0.1
+        anchors.rightMargin: parent.width * 0.1
         value: headerRectangle.progression
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left

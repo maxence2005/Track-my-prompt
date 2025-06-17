@@ -27,7 +27,7 @@ class Backend(QObject):
     idChargementSignal = Signal()
     celebrationUnlocked = Signal()
 
-    def __init__(self, media_model: DatabaseManagerMedia, row: int, db_path: str, historique_model: QObject, im_pro: ImageProvider, prompt_ia: str, api_key_mistral: str, frame_color: str, encyclopedia_model: QObject):
+    def __init__(self, media_model: DatabaseManagerMedia, row: int, db_path: str, historique_model: QObject, im_pro: ImageProvider, prompt_ia: str, api_key_mistral: str, frame_color: str, unlock_100: bool, encyclopedia_model: QObject):
         """
         Initialize the Backend with the given parameters.
 
@@ -46,7 +46,7 @@ class Backend(QObject):
         self.db_path = db_path
         self.encyclo_model = encyclopedia_model
         self.image_provider = im_pro
-        self._has_unlocked_100 = False
+        self._has_unlocked_100 = unlock_100
         self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Chargement" : False, "prompt_ia" : prompt_ia, "api_key_mistral" : api_key_mistral, "Camera" : False, "state" : "", "frame_color": frame_color}
         self.pipeline = PipelinePrompt(self, encyclo_model=self.encyclo_model)
         self.pipelineCamera = CameraPipeline(self)
