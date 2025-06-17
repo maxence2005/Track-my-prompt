@@ -122,7 +122,7 @@ Rectangle {
             anchors.fill: parent
             sourceItem: appView
             hideSource: false
-            live: true
+            live: false
         }
 
         FastBlur {
@@ -142,7 +142,7 @@ Rectangle {
 
             Text {
                 id: mainText
-                text: "🎉 Bravo, vous avez 100% ! 🎉"
+                text: "Bravo, vous avez 100% !"
                 font.pixelSize: 46
                 color: "white"
                 font.bold: true
@@ -160,7 +160,7 @@ Rectangle {
 
         Timer {
             id: hideCelebrationTimer
-            interval: 10000
+            interval: 8000
             repeat: false
             onTriggered: celebrationOverlay.visible = false
         }

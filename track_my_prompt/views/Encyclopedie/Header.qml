@@ -28,6 +28,13 @@ Rectangle {
         }
     }
 
+    Connections {
+        target: backend
+        function onCelebrationUnlocked() {
+            showCelebration()
+        }
+    }
+
     id: headerRectangle
     property double progression: 0
     width: parent.width
@@ -61,30 +68,47 @@ Rectangle {
         z: -1 
     }
 
-    Label {
-        id: headerLabel
-        text: qsTr("Encyclopedia")
-        anchors.verticalCenter: progressBar.verticalCenter
-        anchors.bottomMargin: -75
-        font.pixelSize: parent.width / 30
-        color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
-        horizontalAlignment: Text.AlignHCenter
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: 0
-        Layout.alignment: Qt.AlignHCenter
+    Row {
+        id: headerRow
         anchors.top: headerRectangle.top
         anchors.topMargin: 10
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: parent.width * 0.8
+        spacing: 10
+
+        Label {
+            id: headerLabel
+            text: qsTr("Encyclopedia")
+            font.pixelSize: parent.width/15
+            color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Button {
+            id: giftButton
+            text: "🎁"
+            visible: !backend.hasUnlocked100() && progressBar.value >= 1.0
+            onClicked: {
+                backend.checkAndUnlock100(100)//Math.round(progressBar.value * 100))
+            }
+            font.pixelSize: parent.width/15
+            background: Rectangle {
+                radius: 10
+                color: "transparent"
+            }
+        }
     }
+
 
     ProgressBar {
         id: progressBar
-        height: 24
+        height: parent.height * 0.06
+        anchors.leftMargin: parent.width * 0.05
+        anchors.rightMargin: parent.width * 0.05
         value: headerRectangle.progression
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.leftMargin: 50
-        anchors.rightMargin: 150
         anchors.verticalCenterOffset: 0
 
         contentItem: Item {
@@ -110,14 +134,11 @@ Rectangle {
 
     Text {
         id: progressText
-        x: 462
-        width: 0
-        height: 18
         text: Math.round(progressBar.value * 100) + " %"
+        font.pixelSize: parent.width / 50
         anchors.verticalCenter: progressBar.verticalCenter
-        anchors.left: progressBar.right 
-        anchors.leftMargin: 16 
-        font.pixelSize: 16
+        anchors.left: progressBar.right
+        anchors.leftMargin: parent.width * 0.01
         color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
     }
 
