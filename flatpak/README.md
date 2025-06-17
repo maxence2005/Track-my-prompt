@@ -1,4 +1,4 @@
-# Instructions pour construire TrackMyPrompt en Flatpak
+# Instructions to build TrackMyPrompt in Flatpak
 sudo apt install flatpak tk-dev flatpak-builder
 flatpak remote-info flathub &> /dev/null || flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 flatpak install -y flathub org.freedesktop.Sdk//24.08
@@ -8,18 +8,18 @@ flatpak build-bundle flatpak-build/repo-local flatpak-build/TrackMyPrompt.flatpa
 
 
 
-# Instructions pour installer TrackMyPrompt en Flatpak
-## Ajouter Flathub si non présent
+# Instructions to install TrackMyPrompt in Flatpak
+## Add Flathub if not present
 flatpak remote-info flathub &> /dev/null || flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
-## Installer le runtime requis
+## Install the required runtime
 flatpak install -y flathub org.freedesktop.Platform//24.08
 
-## Installer l'application depuis un fichier local (ou un repo perso)
+## Install the application from a local file (or a personal repo)
 flatpak install -y ./TrackMyPrompt.flatpak
 
-## (optionnel) lancer l'application
+## (optional) launch the application
 flatpak run iut.sae.TrackMyPrompt
 
-## Désinstaller l'application
+## Uninstall the application
 flatpak uninstall --delete-data iut.sae.TrackMyPrompt

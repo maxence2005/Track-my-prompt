@@ -15,7 +15,8 @@ TRANSLATIONS = {
         "thanks": "Merci d'avoir installé TrackMyPrompt !",
         "quit": "Quitter",
         "error": "Erreur",
-        "command_failed": "La commande a échoué :\n{}"
+        "command_failed": "La commande a échoué :\n{}",
+        "choose_version": "Choisir la version :"
     },
     "en": {
         "title": "TrackMyPrompt Installation",
@@ -32,7 +33,8 @@ TRANSLATIONS = {
         "thanks": "Thank you for installing TrackMyPrompt!",
         "quit": "Quit",
         "error": "Error",
-        "command_failed": "Command failed:\n{}"
+        "command_failed": "Command failed:\n{}",
+        "choose_version": "Choose version:"
     },
     "es": {
         "title": "Instalación de TrackMyPrompt",
@@ -49,7 +51,8 @@ TRANSLATIONS = {
         "thanks": "¡Gracias por instalar TrackMyPrompt!",
         "quit": "Salir",
         "error": "Error",
-        "command_failed": "El comando falló:\n{}"
+        "command_failed": "El comando falló:\n{}",
+        "choose_version": "Elegir versión:"
     },
     "de": {
         "title": "TrackMyPrompt Installation",
@@ -66,7 +69,8 @@ TRANSLATIONS = {
         "thanks": "Vielen Dank für die Installation von TrackMyPrompt!",
         "quit": "Beenden",
         "error": "Fehler",
-        "command_failed": "Befehl fehlgeschlagen:\n{}"
+        "command_failed": "Befehl fehlgeschlagen:\n{}",
+        "choose_version": "Version wählen:"
     },
     "it": {
         "title": "Installazione di TrackMyPrompt",
@@ -83,7 +87,8 @@ TRANSLATIONS = {
         "thanks": "Grazie per aver installato TrackMyPrompt!",
         "quit": "Esci",
         "error": "Errore",
-        "command_failed": "Comando fallito:\n{}"
+        "command_failed": "Comando fallito:\n{}",
+        "choose_version": "Scegli la versione:"
     },
     "pt": {
         "title": "Instalação do TrackMyPrompt",
@@ -100,7 +105,8 @@ TRANSLATIONS = {
         "thanks": "Obrigado por instalar o TrackMyPrompt!",
         "quit": "Sair",
         "error": "Erro",
-        "command_failed": "Comando falhou:\n{}"
+        "command_failed": "Comando falhou:\n{}",
+        "choose_version": "Escolher versão:"
     },
     "ru": {
         "title": "Установка TrackMyPrompt",
@@ -117,7 +123,8 @@ TRANSLATIONS = {
         "thanks": "Спасибо за установку TrackMyPrompt!",
         "quit": "Выход",
         "error": "Ошибка",
-        "command_failed": "Команда не выполнена:\n{}"
+        "command_failed": "Команда не выполнена:\n{}",
+        "choose_version": "Выберите версию:"
     },
     "zh": {
         "title": "TrackMyPrompt 安装程序",
@@ -134,7 +141,8 @@ TRANSLATIONS = {
         "thanks": "感谢您安装 TrackMyPrompt！",
         "quit": "退出",
         "error": "错误",
-        "command_failed": "命令失败：\n{}"
+        "command_failed": "命令失败：\n{}",
+        "choose_version": "选择版本："
     },
     "ja": {
         "title": "TrackMyPrompt インストール",
@@ -151,7 +159,8 @@ TRANSLATIONS = {
         "thanks": "TrackMyPrompt をインストールしていただき、ありがとうございます！",
         "quit": "終了",
         "error": "エラー",
-        "command_failed": "コマンドが失敗しました：\n{}"
+        "command_failed": "コマンドが失敗しました：\n{}",
+        "choose_version": "バージョンを選択："
     }
 }
 
