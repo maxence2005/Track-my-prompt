@@ -5,9 +5,9 @@ import sqlite3
 from urllib.parse import urlparse
 from pathlib import Path
 from PySide6.QtCore import QObject, Slot, Signal, QUrl, Property
-from PySide6.QtWidgets import QApplication, QFileDialog
+from PySide6.QtWidgets import QApplication, QFileDialog, QColorDialog
 from PySide6.QtQml import QQmlApplicationEngine
-from PySide6.QtGui import QImage
+from PySide6.QtGui import QImage, QColor
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
@@ -28,7 +28,7 @@ class Backend(QObject):
     idChargementSignal = Signal()
     transcriptionReady = Signal(str)
 
-    def __init__(self, media_model: DatabaseManagerMedia, row: int, db_path: str, historique_model: QObject, im_pro: ImageProvider, prompt_ia: str, api_key_mistral: str, encyclopedia_model: QObject):
+    def __init__(self, media_model: DatabaseManagerMedia, row: int, db_path: str, historique_model: QObject, im_pro: ImageProvider, prompt_ia: str, api_key_mistral: str, frame_color: str, encyclopedia_model: QObject):
         """
         Initialize the Backend with the given parameters.
 
@@ -47,7 +47,7 @@ class Backend(QObject):
         self.db_path = db_path
         self.encyclo_model = encyclopedia_model
         self.image_provider = im_pro
-        self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Chargement" : False, "prompt_ia" : prompt_ia, "api_key_mistral" : api_key_mistral, "Camera" : False, "state" : ""}
+        self._shared_variable = {"settingsMenuShowed": False, "Erreur": False, "Menu": True, "Chargement" : False, "prompt_ia" : prompt_ia, "api_key_mistral" : api_key_mistral, "Camera" : False, "state" : "", "frame_color": frame_color}
         self.pipeline = PipelinePrompt(self, encyclo_model=self.encyclo_model)
         self.pipelineCamera = CameraPipeline(self)
         self.pipelineCamera.frame_send.connect(self.frame_send)
@@ -138,7 +138,33 @@ class Backend(QObject):
         self._shared_variable["prompt_ia"] = prompt_ia
         self._shared_variable["api_key_mistral"] = api_key_mistral
         self.sharedVariableChanged.emit()
+
+    @Slot(str)
+    def setFrameManagerColor(self, hex_color):
+        self._shared_variable["frame_color"] = hex_color
+        self.sharedVariableChanged.emit()
     
+    @Slot()
+    def toggle_rainbow(self):
+        self._shared_variable["frame_color"] = "rainbow"
+        self.sharedVariableChanged.emit()
+
+    @Slot()
+    def disable_rainbow(self):
+        self._shared_variable["frame_color"] = "#00FF00"
+        self.sharedVariableChanged.emit()
+
+    @Slot()
+    def openColorDialog(self):
+        color = QColorDialog.getColor(
+            initial=QColor(self._shared_variable["frame_color"]),
+            options=QColorDialog.ColorDialogOption.ShowAlphaChannel
+        )
+
+        if color.isValid():
+            hex_color = color.name() 
+            self._shared_variable["frame_color"] = hex_color
+            self.sharedVariableChanged.emit()
     @Slot()
     def startOnFalse(self):
         self.start = False
