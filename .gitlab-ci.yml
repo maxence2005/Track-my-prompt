@@ -4,7 +4,7 @@ stages:
 
 variables:
     FLATPAK_BUNDLE: "TrackMyPrompt.flatpak"
-    FLATPAK_MANIFEST: "flatpak/manifest.json"
+    FLATPAK_MANIFEST: "installer/flatpak/manifest.json"
     BUILD_DIR: "flatpak-build"
     REPO_DIR: "flatpak-repo"
 

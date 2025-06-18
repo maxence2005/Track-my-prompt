@@ -86,22 +86,22 @@
             "sources": [
                 {
                     "type": "dir",
-                    "path": "../track_my_prompt",
+                    "path": "../../track_my_prompt",
                     "dest": "track_my_prompt"
                 },
                 {
                     "type": "dir",
-                    "path": "files/gpu-requirements",
+                    "path": "../common/gpu-requirements",
                     "dest": "gpu-requirements"
                 },
-                { "type": "file", "path": "files/requirements.txt" },
-                { "type": "file", "path": "files/no-deps.txt" },
+                { "type": "file", "path": "../common/requirements.txt" },
+                { "type": "file", "path": "../common/no-deps.txt" },
                 { "type": "file", "path": "files/entrypoint.sh" },
                 { "type": "file", "path": "files/installer.py" },
                 { "type": "file", "path": "files/installer_translate.py" },
                 { "type": "file", "path": "files/icon.png" },
                 { "type": "file", "path": "files/TrackMyPrompt.desktop" },
-                { "type": "file", "path": "../LICENSE" }
+                { "type": "file", "path": "../../LICENSE" }
             ]
         }
     ]

@@ -3,7 +3,7 @@ sudo apt install flatpak tk-dev flatpak-builder
 flatpak remote-info flathub &> /dev/null || flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 flatpak install -y flathub org.freedesktop.Sdk//24.08
 flatpak install -y flathub org.freedesktop.Platform//24.08
-flatpak-builder --repo=flatpak-build/repo-local --force-clean flatpak-build/build-dir flatpak/manifest.json
+flatpak-builder --repo=flatpak-build/repo-local --force-clean flatpak-build/build-dir installer/flatpak/manifest.json
 flatpak build-bundle flatpak-build/repo-local flatpak-build/TrackMyPrompt.flatpak iut.sae.TrackMyPrompt
 
 
