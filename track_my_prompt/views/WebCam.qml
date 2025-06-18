@@ -85,7 +85,22 @@ Rectangle {
             }
         }
 
-
+        TextField {
+            id: promptInput
+            placeholderText: qsTr("Enter your prompt...")
+            width: 200
+            height: 25
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
+            anchors.right: startButton.left
+            anchors.rightMargin: 10
+            font.pixelSize: 14
+            color: "#ffffff"
+            background: Rectangle {
+                color: "#333"
+                radius: 5
+            }
+        }
 
         Rectangle {
             id: startButton
@@ -110,7 +125,7 @@ Rectangle {
                 onClicked: {
                     if (text_start_stop.text == "Start") {
                         text_start_stop.text = "Stop";
-                        backend.start_Camera();
+                        backend.start_Camera(promptInput.text);
                         refreshTimer.running = true;
                     } else {
                         text_start_stop.text = "Start";
