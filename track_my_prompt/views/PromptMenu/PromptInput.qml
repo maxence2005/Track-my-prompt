@@ -8,8 +8,6 @@ RowLayout {
         target: colorManager
         function onThemeChanged() {
             colorManager.animateColorChange([
-                [wizardIconRectangle, "backgroundColor", "dark_gray"],
-                [wizardColorOverlay, "color", "default"],
                 [microphoneIconRectangle, "backgroundColor", "dark_gray"],
                 [microphoneColorOverlay, "color", "default"],
                 [promptInputRectangle, "color", "dark_bluish_gray"],
@@ -67,8 +65,7 @@ RowLayout {
             id: microphoneColorOverlay
             anchors.fill: microphoneIconImage
             source: microphoneIconImage
-            color: microphoneIconRectangle.isRecording ? "red" :
-               (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
+            color: microphoneIconRectangle.isRecording ? "red" : (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
         }
 
         Connections {
@@ -92,21 +89,23 @@ RowLayout {
             id: promptInputField
             placeholderText: qsTr("Enter your prompt...")
             font.pixelSize: 18
-            width: parent.width - 50
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            anchors.right: sendIconImage.left
+            anchors.rightMargin: 10
             height: parent.height
             color: (colorManager ? colorManager.getColorNoNotify("light_gray") : "#000000")
             placeholderTextColor: (colorManager ? colorManager.getColorNoNotify("blue_gray") : "#000000")
-            background: Rectangle {
-                color: "transparent"
-            }
-            onAccepted: sendPrompt();
+            background: Rectangle { color: "transparent" }
+            onAccepted: sendPrompt()
         }
 
         Image {
             id: sendIconImage
             source: "../imgs/send.svg"
-            width: 20
-            height: 20
+            width: 24
+            height: 24
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.rightMargin: 10
@@ -114,7 +113,7 @@ RowLayout {
             MouseArea {
                 id: sendMouseArea
                 anchors.fill: parent
-                onClicked: sendPrompt();
+                onClicked: sendPrompt()
             }
         }
 
