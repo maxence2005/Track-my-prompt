@@ -48,7 +48,7 @@ Rectangle {
                     HistorySettings { }
                 }
                 Column {
-                    ExpertModeSettings { }
+                    TranscriptionSettings { }
 
                     Rectangle {
                         height: allSettingsColumn.separatorHeight

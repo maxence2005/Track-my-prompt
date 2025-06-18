@@ -26,6 +26,7 @@ class AppConfig:
         self.languages: dict = languages
         self.prompt_interpreter: str = 'dumb'
         self.api_key: str = ''
+        self.transcription_mode: str = 'api'
 
         filepaths.create_config_dir()
         self.path: Path = filepaths.get_base_config_dir() / 'app_config.json'
@@ -101,6 +102,11 @@ class AppConfig:
         if self.prompt_interpreter not in ['dumb', 'mistral', "dumb_ts"]:
             logging.warning(f'Invalid prompt interpreter in config: {self.prompt_interpreter}')
             self.prompt_interpreter = 'dumb'
+            changed = True
+        
+        if self.transcription_mode not in ['api', 'local']:
+            logging.warning(f'Invalid transcription mode in config: {self.transcription_mode}')
+            self.transcription_mode = 'api'
             changed = True
 
         return changed

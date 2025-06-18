@@ -5,16 +5,18 @@ import soundfile as sf
 import speech_recognition as sr
 import io
 import time
+import tempfile
 
 SAMPLE_RATE = 16000
 CHANNELS = 1
 BLOCK_SIZE = 1024  # nombre d’échantillons par bloc audio
 
 class AudioRecorder:
-    def __init__(self):
+    def __init__(self, mode):
         self.recording = []
         self._running = False
         self._thread = None
+        self._mode = mode
 
     def _callback(self, indata, frames, time_info, status):
         if self._running:
@@ -50,13 +52,35 @@ class AudioRecorder:
 
     def transcript(self):
         audio_buffer = self.get_audio_bytesio()
-        r = sr.Recognizer()
-        with sr.AudioFile(audio_buffer) as source:
-            audio = r.record(source)
+        if self._mode == "api":
+            r = sr.Recognizer()
+            with sr.AudioFile(audio_buffer) as source:
+                audio = r.record(source)
+                try:
+                    text = r.recognize_google(audio, language="fr-FR")
+                    return text
+                except sr.UnknownValueError:
+                    # On ignore l'exception car celle-ci est levée lorsque l'audio envoyé est vide ce qui esr un comportement normal
+                    return ""
+                except sr.RequestError as e:
+                    raise ConnectionError("API Error")
+        elif self._mode == "local":
             try:
-                text = r.recognize_google(audio, language="fr-FR")
-                return text
-            except sr.UnknownValueError:
-                raise ValueError("Audio Error")
-            except sr.RequestError as e:
-                raise ConnectionError("API Error")
+                import whisper
+                model = whisper.load_model("base", device="cpu") 
+                with tempfile.NamedTemporaryFile(suffix=".wav") as tmpfile:
+                    tmpfile.write(audio_buffer.read())
+                    tmpfile.flush()
+                    result = model.transcribe(tmpfile.name)
+                return result['text']
+            except ImportError:
+                raise ImportError("Whisper library is not installed")
+            except Exception as e:
+                print(e)
+                raise RuntimeError(f"An error occurred during transcription: {e}")
+    
+    def set_mode(self, mode):
+        self._mode = mode
+    
+    def get_mode(self):
+        return self._mode

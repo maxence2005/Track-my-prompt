@@ -28,7 +28,7 @@ class Backend(QObject):
     idChargementSignal = Signal()
     transcriptionReady = Signal(str)
 
-    def __init__(self, media_model: DatabaseManagerMedia, row: int, db_path: str, historique_model: QObject, im_pro: ImageProvider, prompt_ia: str, api_key_mistral: str, encyclopedia_model: QObject):
+    def __init__(self, media_model: DatabaseManagerMedia, row: int, db_path: str, historique_model: QObject, im_pro: ImageProvider, prompt_ia: str, api_key_mistral: str, transcription_mode: str, encyclopedia_model: QObject):
         """
         Initialize the Backend with the given parameters.
 
@@ -51,7 +51,7 @@ class Backend(QObject):
         self.pipeline = PipelinePrompt(self, encyclo_model=self.encyclo_model)
         self.pipelineCamera = CameraPipeline(self)
         self.pipelineCamera.frame_send.connect(self.frame_send)
-        self.audio_recorder = AudioRecorder()
+        self.audio_recorder = AudioRecorder(transcription_mode)
 
         if row == 0:
             self._shared_variable["Start"] = True
@@ -652,6 +652,32 @@ class Backend(QObject):
 
     @Slot()
     def stopRecording(self):
-        self.audio_recorder.stop()
-        res = self.audio_recorder.transcript()
-        self.transcriptionReady.emit(res)
+        try:
+            self.audio_recorder.stop()
+            res = self.audio_recorder.transcript()
+            self.transcriptionReady.emit(res)
+        except ConnectionError as er:
+            self.infoSent.emit("Erreur de connexion à l'API")
+        except ImportError as er:
+            self.infoSent.emit("Erreur lors de l'importation de whisper")
+        except RuntimeError as er:
+            self.infoSent.emit("Erreur lors de la transcription")
+    
+    @Slot(str)
+    def setTranscriptionMode(self, mode: str):
+        """
+        Set the transcription mode for the audio recorder.
+
+        Args:
+            mode (str): The transcription mode ('api' or 'local').
+        """
+        self.audio_recorder.set_mode(mode)
+    
+    def getTranscriptionMode(self) -> str:
+        """
+        Get the current transcription mode.
+
+        Returns:
+            str: The current transcription mode ('api' or 'local').
+        """
+        return self.audio_recorder.get_mode()
