@@ -89,23 +89,21 @@ RowLayout {
             id: promptInputField
             placeholderText: qsTr("Enter your prompt...")
             font.pixelSize: 18
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.right: sendIconImage.left
-            anchors.rightMargin: 10
+            width: parent.width - 50
             height: parent.height
             color: (colorManager ? colorManager.getColorNoNotify("light_gray") : "#000000")
             placeholderTextColor: (colorManager ? colorManager.getColorNoNotify("blue_gray") : "#000000")
-            background: Rectangle { color: "transparent" }
-            onAccepted: sendPrompt()
+            background: Rectangle {
+                color: "transparent"
+            }
+            onAccepted: sendPrompt();
         }
 
         Image {
             id: sendIconImage
             source: "../imgs/send.svg"
-            width: 24
-            height: 24
+            width: 20
+            height: 20
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.rightMargin: 10
@@ -113,7 +111,7 @@ RowLayout {
             MouseArea {
                 id: sendMouseArea
                 anchors.fill: parent
-                onClicked: sendPrompt()
+                onClicked: sendPrompt();
             }
         }
 
