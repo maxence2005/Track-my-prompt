@@ -25,48 +25,6 @@ RowLayout {
     height: 50
 
     Rectangle {
-        id: wizardIconRectangle
-        property bool hovered: false
-        property color backgroundColor: (colorManager ? colorManager.getColorNoNotify("dark_gray") : "#000000")
-        property color backgroundColorHover: (colorManager ? colorManager.getColor["blue_gray"] : "#000000")
-        width: 50
-        height: 50
-        radius: 50
-        Layout.leftMargin: 10
-        color: hovered ? backgroundColorHover : backgroundColor
-
-        Image {
-            id: wizardIconImage
-            source: "../imgs/wizard.png"
-            fillMode: Image.PreserveAspectFit
-            anchors.centerIn: parent
-            width: 30
-            height: 30
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            onEntered: {
-                wizardIconRectangle.hovered = true;
-            }
-            onExited: {
-                wizardIconRectangle.hovered = false;
-            }
-            onClicked: {
-                backend.toggle_menu();
-            }
-        }
-
-        ColorOverlay {
-            id: wizardColorOverlay
-            anchors.fill: wizardIconImage
-            source: wizardIconImage
-            color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
-        }
-    }
-
-    Rectangle {
         id: microphoneIconRectangle
         property bool hovered: false
         property bool isRecording: false
