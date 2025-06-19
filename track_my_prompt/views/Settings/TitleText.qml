@@ -16,6 +16,4 @@ Text {
     font.pixelSize: 40
     color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
     anchors.horizontalCenter: parent.horizontalCenter
-    anchors.top: parent.top
-    anchors.topMargin: 20
 }
