@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track My Prompt - Installation</title>
+    <link rel="stylesheet" href="public/styles.css">
+</head>
+<body>
+    <div class="background">
+        <div class="floating-orb orb1"></div>
+        <div class="floating-orb orb2"></div>
+        <div class="floating-orb orb3"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="logo">Track My Prompt</h1>
+            <p class="subtitle">
+                The Track My Prompts application allows the use of an image recognition AI model. 
+                It can detect everyday objects and interpret prompts for more targeted searches.
+            </p>
+        </div>
+
+        <div class="download-section">
+            <div class="download-card" onclick="downloadWindows()">
+                <div class="os-icon">
+                    <img src="public/windows.png" alt="Windows Icon" style="width: 40px; height: 40px;">
+                </div>
+                <h2 class="os-name">Windows</h2>
+                <p>Compatible with Windows 10 and 11</p>
+                <button class="download-btn">
+                    Download for Windows
+                </button>
+            </div>
+
+            <div class="download-card" onclick="openLinuxModal()">
+                <div class="os-icon">
+                    <img src="public/linux.png" alt="Linux Icon" style="width: 40px; height: 40px;">
+                </div>
+                <h2 class="os-name">Linux</h2>
+                <p>Ubuntu, Debian, Fedora, Arch distributions</p>
+                <button class="download-btn">
+                    Install on Linux
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Linux Modal -->
+    <div id="linuxModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Linux Installation</h2>
+                <button class="close-btn" onclick="closeLinuxModal()">&times;</button>
+            </div>
+
+            <div class="install-section">
+                <h3>⚡ Automatic Installation</h3>
+                <p style="color: #a0a0a0; margin-bottom: 1rem;">
+                    Copy and paste this command into your terminal:
+                </p>
+                <div class="command-box" data-command="getInstallerCommand()">
+                    <button class="copy-btn" onclick="copyCommand(this)">Copy</button>
+                    <span id="dynamicCommand"></span>
+                </div>
+                <p style="margin-top: 1rem; color: #666; font-size: 0.8rem;">
+                    This command automatically downloads and installs TrackMyPrompt on your system.
+                </p>
+            </div>
+
+            <div class="divider">
+                <span>OR</span>
+            </div>
+
+            <div class="install-section">
+                <h3>📦 Manual Download</h3>
+                <button class="download-btn" onclick="downloadLinux()">
+                    Download Flatpak package
+                </button>
+                <p style="margin-top: 1rem; color: #a0a0a0; font-size: 0.9rem;">
+                    Then run the following commands:
+                </p>
+                <div class="command-box">
+                    <button class="copy-btn" onclick="copyCommand(this)">Copy</button>
+                    flatpak remote-info flathub &> /dev/null || flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+                </div>
+                <div class="command-box">
+                    <button class="copy-btn" onclick="copyCommand(this)">Copy</button>
+                    flatpak install -y flathub org.freedesktop.Platform//24.08
+                </div>
+                <div class="command-box">
+                    <button class="copy-btn" onclick="copyCommand(this)">Copy</button>
+                    flatpak install -y ./TrackMyPrompt.flatpak
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Interactive mouse effects
+        document.addEventListener('mousemove', (e) => {
+            const orbs = document.querySelectorAll('.floating-orb');
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+
+            orbs.forEach((orb, index) => {
+                const speed = (index + 1) * 0.02;
+                const x = (mouseX - 0.5) * 50 * speed;
+                const y = (mouseY - 0.5) * 50 * speed;
+                
+                orb.style.transform = `translate(${x}px, ${y}px)`;
+                orb.style.opacity = 0.1 + (mouseX + mouseY) * 0.1;
+            });
+        });
+
+        // Download functions
+        function downloadWindows() {
+            // Trigger Windows download
+            window.location.href = 'public/TrackMyPromptInstaller.exe';
+        }
+
+        function downloadLinux() {
+            // Trigger Linux download
+            window.location.href = 'public/TrackMyPrompt.flatpak';
+        }
+
+        // Linux modal management
+        function openLinuxModal() {
+            document.getElementById('linuxModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLinuxModal() {
+            document.getElementById('linuxModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal by clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('linuxModal');
+            if (event.target === modal) {
+                closeLinuxModal();
+            }
+        }
+
+        // Generate installation command dynamically
+        function getInstallerCommand() {
+            const baseURL = window.location.origin;
+            return `curl -fsSL ${baseURL}/public/installer.sh | bash`;
+        }
+
+        // Copy commands
+        function copyCommand(button) {
+            const commandBox = button.parentElement;
+            const command = commandBox.dataset.command || commandBox.textContent.replace('Copy', '').trim();
+            
+            navigator.clipboard.writeText(command).then(() => {
+                button.textContent = 'Copied!';
+                button.style.background = '#00ff88';
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.style.background = '#333';
+                }, 2000);
+            });
+        }
+
+        // Close with Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeLinuxModal();
+            }
+        });
+
+        // Set the dynamic command text
+        document.getElementById('dynamicCommand').textContent = getInstallerCommand();
+    </script>
+</body>
+</html>
