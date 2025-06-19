@@ -158,6 +158,32 @@ endlocal
 exit /b 0
 EOF
 
+input_folder="../../common/gpu-requirements"
+output_folder="gpu-requirements"
+
+mkdir -p "$output_folder"
+
+for req_file in "$input_folder"/*-requirements.txt; do
+    filename=$(basename "$req_file" | sed 's/-requirements\.txt$//')
+    output_file="$output_folder/$filename.sh"
+
+    pip_args=$(grep -v '^\s*$' "$req_file" | paste -sd' ' -)
+
+    cat > "$output_file" <<EOF
+rem Installing Pytorch (Heavy, can take a while)
+setlocal
+set "apppath=%~1"
+"%apppath%\python.exe" -m pip install $pipArgs
+if %ERRORLEVEL% neq 0 (
+    exit /b %ERRORLEVEL%
+)
+endlocal
+exit /b 0
+EOF
+
+    echo "Create: $output_file"
+done
+
 cd ..
 
 # --- 6. Compilation with Inno Setup ---
