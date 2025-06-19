@@ -7,6 +7,7 @@ Window {
     minimumWidth: 1100
     minimumHeight: 600
 
+    visibility: "Maximized"
     visible: true
     title: "TrackMyPrompts"
 

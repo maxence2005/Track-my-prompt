@@ -48,6 +48,7 @@ Rectangle {
                     HistorySettings { }
                 }
                 Column {
+                    TranscriptionSettings { }
 
                     Rectangle {
                         height: allSettingsColumn.separatorHeight
