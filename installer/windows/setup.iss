@@ -45,9 +45,10 @@ begin
   MyComboBox.Top := WizardForm.DirEdit.Top + WizardForm.DirEdit.Height + 16;
   MyComboBox.Left := WizardForm.DirEdit.Left;
   MyComboBox.Width := WizardForm.DirEdit.Width;
-  MyComboBox.Items.Add('Option A');
-  MyComboBox.Items.Add('Option B');
-  MyComboBox.Items.Add('Option C');
+  MyComboBox.Items.Add('CPU');
+  MyComboBox.Items.Add('CUDA 11.8');
+  MyComboBox.Items.Add('CUDA 12.6');
+  MyComboBox.Items.Add('CUDA 12.8');
   MyComboBox.ItemIndex := 0;
 end;
 
