@@ -1,4 +1,5 @@
 stages:
+    - build-windows
     - build-flatpak
     - release
 
@@ -67,6 +68,7 @@ release:
     stage: release
     needs:
         - job: build-flatpak
+        - job: build-windows
     image: registry.gitlab.com/gitlab-org/release-cli:latest
     before_script:
         - export TAG_NAME="release_$CI_COMMIT_SHORT_SHA"
