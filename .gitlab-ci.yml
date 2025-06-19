@@ -83,6 +83,7 @@ release:
         - git push origin "$TAG_NAME"
     script:
         - CI_JOB_FLATPAK=$(cat CI_JOB_ID_FLATPAK)
-        - release-cli create --name "Release $CI_COMMIT_SHORT_SHA" --tag-name "$TAG_NAME" --ref "$CI_COMMIT_SHA" --assets-link "{\"name\":\"Flatpak Installer\",\"url\":\"https://forgens.univ-ubs.fr/gitlab/e2300056/track-my-prompt/-/jobs/$CI_JOB_FLATPAK/artifacts/raw/$FLATPAK_BUNDLE?inline=false\",\"link_type\":\"other\"}" --assets-link "{\"name\":\"Windows Installer\",\"url\":\"https://forgens.univ-ubs.fr/gitlab/e2300056/track-my-prompt/-/jobs/$CI_JOB_ID_WINDOWS/artifacts/raw/$WINDOWS_BUNDLE?inline=false\",\"link_type\":\"other\"}"
+        - CI_JOB_WINDOWS=$(cat CI_JOB_ID_WINDOWS)
+        - release-cli create --name "Release $CI_COMMIT_SHORT_SHA" --tag-name "$TAG_NAME" --ref "$CI_COMMIT_SHA" --assets-link "{\"name\":\"Flatpak Installer\",\"url\":\"https://forgens.univ-ubs.fr/gitlab/e2300056/track-my-prompt/-/jobs/$CI_JOB_FLATPAK/artifacts/raw/$FLATPAK_BUNDLE?inline=false\",\"link_type\":\"other\"}" --assets-link "{\"name\":\"Windows Installer\",\"url\":\"https://forgens.univ-ubs.fr/gitlab/e2300056/track-my-prompt/-/jobs/$CI_JOB_WINDOWS/artifacts/raw/$WINDOWS_BUNDLE?inline=false\",\"link_type\":\"other\"}"
     rules:
         - if: '$CI_COMMIT_BRANCH == "main"'
