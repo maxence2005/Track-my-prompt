@@ -1,6 +1,6 @@
 #!/bin/bash
 # This script installs or upgrades the Flatpak package of TrackMyPrompt.
-DOWNLOAD_LINK=""
+DOWNLOAD_LINK="https://trackmyprompt.louishamon.fr/public/TrackMyPrompt.flatpak"
 
 set -e
 
