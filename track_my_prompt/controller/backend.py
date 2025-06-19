@@ -32,7 +32,7 @@ class Backend(QObject):
     transcriptionStarted = Signal()
     transcriptionError = Signal(str)
 
-    def __init__(self, media_model: DatabaseManagerMedia, row: int, db_path: str, historique_model: QObject, im_pro: ImageProvider, prompt_ia: str, api_key_mistral: str, frame_color: str, unlock_100: bool, transcription_mode: str encyclopedia_model: QObject):
+    def __init__(self, media_model: DatabaseManagerMedia, row: int, db_path: str, historique_model: QObject, im_pro: ImageProvider, prompt_ia: str, api_key_mistral: str, frame_color: str, unlock_100: bool, transcription_mode: str ,encyclopedia_model: QObject):
         """
         Initialize the Backend with the given parameters.
 
