@@ -197,42 +197,12 @@ class Backend(QObject):
             promptText (str): The prompt text.
         """
         
-        if result is not None:
+        if result:
             self.media_model.updateMediaItem(id=self.fichier["id"], file_path_ia=result, prompt=promptText)
-            
-            # Mise à jour de la table Historique pour le fichier traité
-            connection = None
-            try:
-                connection = sqlite3.connect(self.db_path)
-                cursor = connection.cursor()
-                # Met à jour le champ lienIA avec le résultat retourné
-                cursor.execute("""
-                    UPDATE Historique
-                    SET lien = ?
-                    WHERE id = ?
-                """, (result, idElem))
-                
-                connection.commit()
-                print(f"[DEBUG] Mise à jour de la base de données pour l'ID {self.fichier['id']} avec lienIA : {result}")
-                
-                # Afficher tout l'historique pour débogage
-                cursor.execute("SELECT * FROM Historique")
-                all_rows = cursor.fetchall()
-                print("[DEBUG] Contenu complet de la table Historique :")
-                for row in all_rows:
-                    print(row)
-
-            except sqlite3.Error as e:
-                print(f"[ERROR] Erreur lors de la mise à jour de la base de données : {e}")
-                self.infoSent.emit(f"Erreur de mise à jour dans la base de données : {e}")
-            finally:
-                if connection:
-                    connection.close()
-                    print("Connexion à la base de données fermée après mise à jour.")
-
-        # Mise à jour des variables partagées et émission du signal
+            self.historique_model.update_lienIA(idElem, result)
         self._shared_variable["Chargement"] = False
         self.sharedVariableChanged.emit()
+
 
     def get_file_path(self, fileUrl: str) -> str:
         """
@@ -456,29 +426,14 @@ class Backend(QObject):
     @Slot()
     def increment_pageID(self):
         """Incrémente le pageID pour une nouvelle détection et le met à jour pour les nouveaux éléments."""
-        connection = None
-        try:
-            connection = sqlite3.connect(self.db_path)
-            cursor = connection.cursor()
+        new_page_id = self.historique_model.get_max_pageID() + 1
+        self._internal_pageID = new_page_id
 
-            # Incrémenter le pageID actuel pour la nouvelle détection
-            cursor.execute("SELECT MAX(pageID) FROM Historique")
-            max_page_id = cursor.fetchone()[0]
-            new_page_id = (max_page_id or 0) + 1
-            self._internal_pageID = new_page_id  # Mise à jour de la variable _internal_pageID
 
-            print(f"Nouvelle pageID générée : {self._internal_pageID}")
-
-        except sqlite3.Error as e:
-            print(f"Erreur lors de l'incrémentation du pageID: {e}")
-        finally:
-            if connection:
-                connection.close()
 
     @Slot(int)
     def clearMediaData(self):
         """Efface les données actuelles de MediaData et récupère l'historique pour le pageID spécifié."""
-        # Vider MediaData
         self.media_model.clear_all_media()
 
 
@@ -492,50 +447,39 @@ class Backend(QObject):
     
     @Slot(int)
     def deleteHistorique(self, pageIDToDelete):
-        connection = None
-        try:
-            connection = sqlite3.connect(self.db_path)
-            cursor = connection.cursor()
+        if pageIDToDelete == self._internal_pageID and self._shared_variable["Chargement"]:
+            self.infoSent.emit(f"Ne pas effacer l'historique pendant le chargement d'une image")
+            return
 
-            # Supprimer tous les éléments ayant le même pageID
-            cursor.execute("DELETE FROM Historique WHERE pageID = ?", (pageIDToDelete,))
-            connection.commit()
+        self.historique_model.delete_by_pageID(pageIDToDelete)
+        self.historique_model.remove_items_from_model(pageIDToDelete)
 
-            # Supprimer les éléments dans le modèle correspondant à ce pageID
-            self.historique_model.remove_items_from_model(pageIDToDelete)
+        if pageIDToDelete == self._internal_pageID:
+            self.media_model.clear_all_media()
 
-            if pageIDToDelete == self._internal_pageID:
-                self.media_model.clear_all_media()
+    def stop_detection(self):
+        self._shared_variable["Chargement"] = False
+        self._shared_variable["state"] = ""
+        self.sharedVariableChanged.emit()
+
+        if self.pipeline:
+            self.pipeline.stop_processing()
+
+        if self.pipelineCamera:
+            self.pipelineCamera.stop_processing()
+
+        print("Détection stoppée.")
 
 
-            print(f"Tous les éléments avec pageID {pageIDToDelete} ont été supprimés.")
-        except sqlite3.Error as e:
-            self.infoSent.emit(f"Erreur lors de la suppression de l'élément: {e}")
-        finally:
-            if connection:
-                connection.close()
 
     @Slot(int, str)
     def modifyPromptText(self, pageID, newText):
-        """Modifie le texte du prompt pour tous les éléments ayant la même pageID dans la base de données et met à jour le modèle."""
-        connection = None
-        try:
-            connection = sqlite3.connect(self.db_path)
-            cursor = connection.cursor()
+        """
+        Modifie uniquement le titre de la case (titre_case), sans modifier les prompts des éléments.
+        """
+        self.historique_model.update_case_title(pageID, newText)
+        self.historique_model.update_items_by_pageID(pageID, newText)
 
-            # Mettre à jour tous les éléments avec la pageID donnée
-            cursor.execute("UPDATE Historique SET prompt = ? WHERE pageID = ?", (newText, pageID))
-            connection.commit()
-
-            # Si des lignes ont été mises à jour, mettez à jour le modèle
-            if cursor.rowcount > 0:
-                self.historique_model.update_items_by_pageID(pageID, newText)
-
-        except sqlite3.Error as e:
-            self.infoSent.emit(f"Erreur lors de la modification du texte du prompt: {e}")
-        finally:
-            if connection:
-                connection.close()
 
 
     @Property(str, notify=sharedVariableChanged)
@@ -592,51 +536,36 @@ class Backend(QObject):
         """
         self.image_provider.set_image(frame)
 
-    @Slot(str, str, str, str)  # Ex : prompt, lien, type, lienIA
+    @Slot(str, str, str, str)  
     def add_to_historique(self, prompt, lien, media_type, lienIA):
-        """Ajoute un élément à l'historique pour la page actuelle."""
         if self._internal_pageID is None:
-            print("Erreur : Aucun pageID courant défini. Impossible d'ajouter un élément.")
+            print("Erreur : Aucun pageID courant défini.")
             return
+        
+        page_exists = self.historique_model.page_exists(self._internal_pageID)
+        titre_case = prompt if not page_exists else ""
 
-        connection = None
-        try:
-            connection = sqlite3.connect(self.db_path)
-            cursor = connection.cursor()
+        new_id = self.historique_model.add_entry(
+            pageID=self._internal_pageID,
+            prompt=prompt,
+            lien=lien,
+            media_type=media_type,
+            lienIA=lienIA,
+            titre_case=titre_case            
+        )
 
-            # Insertion dans la base de données avec le _internal_pageID
-            cursor.execute(
-                """
-                INSERT INTO Historique (pageID, prompt, lien, type, lienIA)
-                VALUES (?, ?, ?, ?, ?)
-                """,
-                (self._internal_pageID, prompt, lienIA, media_type, lien),
-            )
-            connection.commit()
+        new_item = {
+            "id": new_id,
+            "pageID": self._internal_pageID,
+            "prompt": prompt,
+            "lien": lienIA,
+            "type": media_type,
+            "lienIA": lien,
+            "titre_case": titre_case
+        }
+        self.historique_model.add_item(new_item, self._internal_pageID)
+        return new_id
 
-            # Récupération de l'ID auto-généré
-            new_id = cursor.lastrowid
-
-            # Mise à jour du modèle uniquement si c'est pour la page actuelle
-            new_item = {
-                "id": new_id,
-                "pageID": self._internal_pageID,
-                "prompt": prompt,
-                "lien": lienIA,
-                "type": media_type,
-                "lienIA": lien,
-            }
-            self.historique_model.add_item(new_item,self._internal_pageID)
-
-            print(f"Nouvel élément ajouté pour pageID {self._internal_pageID}: {new_item}")
-            print(f"voici l'id dans add_to_historique : {new_id}")
-            return new_id
-
-        except sqlite3.Error as e:
-            print(f"Erreur lors de l'insertion dans la base de données: {e}")
-        finally:
-            if connection:
-                connection.close()
 
     @Slot(int)
     def page_exists(self, pageID):
@@ -672,46 +601,24 @@ class Backend(QObject):
     def retrievePage(self, pageID):
         """Méthode appelée pour récupérer les données d'une page et les envoyer dans Media."""
         print(f"Début de récupération pour pageID = {pageID}")
-        self.media_model.clear_all_media()  # Nettoyer les médias actuels
+        self.media_model.clear_all_media()
+        rows = self.historique_model.get_entries_by_pageID(pageID)
 
-        connection = None
-        try:
-            # Connexion à la base de données
-            connection = sqlite3.connect(self.db_path)
-            cursor = connection.cursor()
-            
-            # Requête SQL pour récupérer les données
-            cursor.execute("""
-                SELECT id,prompt, lien, type, lienIA
-                FROM Historique
-                WHERE pageID = ?
-            """, (pageID,))
-            rows = cursor.fetchall()
-            self._internal_pageID = pageID
-            if not rows:
-                self.infoSent.emit(f"Aucune donnée trouvée pour pageID {pageID}.")
-                print(f"Aucune donnée trouvée pour pageID {pageID}")
-                return
+        if not rows:
+            self.infoSent.emit(f"Aucune donnée trouvée pour pageID {pageID}.")
+            return
 
-            for row in rows:
-                id_row, prompt, file_path, media_type, lienIA = row
-                print(f"Ajout d'un élément : {row}")
-                id_row = self.media_model.addMediaItem(file_path, media_type)
-                print(f"voici le id_row apres modifs : {id_row}")
-                self.media_model.updateMediaItem(id=id_row,file_path=lienIA, file_path_ia=file_path, prompt=prompt)
+        self._internal_pageID = pageID
+        for row in rows:
+            id_row, prompt, file_path, media_type, lienIA = row
+            media_id = self.media_model.addMediaItem(file_path, media_type)
+            self.media_model.updateMediaItem(id=media_id, file_path=lienIA, file_path_ia=file_path, prompt=prompt)
 
-            tmp = self.media_model.get_last_media()
-            self.fichier = {"id": tmp["id"], "lien" : tmp["lien"], "type" : tmp["type"]}
-            self._idChargement = tmp["id"]
-            self._shared_variable["Chargement"] = False
-            self.sharedVariableChanged.emit()
-        except sqlite3.Error as e:
-            print(f"Erreur lors de la récupération : {e}")
-            self.infoSent.emit(f"Erreur lors de la récupération : {e}")
-        finally:
-            if connection:
-                connection.close()
-                print("Connexion à la base de données fermée.")
+        tmp = self.media_model.get_last_media()
+        self.fichier = {"id": tmp["id"], "lien": tmp["lien"], "type": tmp["type"]}
+        self._idChargement = tmp["id"]
+        self._shared_variable["Chargement"] = False
+        self.sharedVariableChanged.emit()
 
     @Slot()
     def startRecording(self):

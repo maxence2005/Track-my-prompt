@@ -8,6 +8,8 @@ RowLayout {
         target: colorManager
         function onThemeChanged() {
             colorManager.animateColorChange([
+                [wizardIconRectangle, "backgroundColor", "dark_gray"],
+                [wizardColorOverlay, "color", "default"],
                 [microphoneIconRectangle, "backgroundColor", "dark_gray"],
                 [microphoneColorOverlay, "color", "default"],
                 [promptInputRectangle, "color", "dark_bluish_gray"],
@@ -21,8 +23,48 @@ RowLayout {
     id: promptRowLayout
     width: parent.width
     height: 50
-    spacing: 10
 
+    Rectangle {
+        id: wizardIconRectangle
+        property bool hovered: false
+        property color backgroundColor: (colorManager ? colorManager.getColorNoNotify("dark_gray") : "#000000")
+        property color backgroundColorHover: (colorManager ? colorManager.getColor["blue_gray"] : "#000000")
+        width: 50
+        height: 50
+        radius: 50
+        Layout.leftMargin: 10
+        color: hovered ? backgroundColorHover : backgroundColor
+
+        Image {
+            id: wizardIconImage
+            source: "../imgs/wizard.png"
+            fillMode: Image.PreserveAspectFit
+            anchors.centerIn: parent
+            width: 30
+            height: 30
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            onEntered: {
+                wizardIconRectangle.hovered = true;
+            }
+            onExited: {
+                wizardIconRectangle.hovered = false;
+            }
+            onClicked: {
+                backend.toggle_menu();
+            }
+        }
+
+        ColorOverlay {
+            id: wizardColorOverlay
+            anchors.fill: wizardIconImage
+            source: wizardIconImage
+            color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
+        }
+    }
 
     Rectangle {
         id: microphoneIconRectangle
@@ -80,7 +122,7 @@ RowLayout {
         id: promptInputRectangle
         Layout.fillWidth: true
         Layout.minimumWidth: 60
-        Layout.maximumWidth: parent.width - 80 
+        Layout.maximumWidth: parent.width - 170
         height: 50
         color: (colorManager ? colorManager.getColorNoNotify("dark_bluish_gray") : "#000000")
         radius: 10
@@ -89,7 +131,7 @@ RowLayout {
             id: promptInputField
             placeholderText: qsTr("Enter your prompt...")
             font.pixelSize: 18
-            width: parent.width - 50
+            width: parent.width - 80
             height: parent.height
             color: (colorManager ? colorManager.getColorNoNotify("light_gray") : "#000000")
             placeholderTextColor: (colorManager ? colorManager.getColorNoNotify("blue_gray") : "#000000")

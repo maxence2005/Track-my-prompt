@@ -12,6 +12,7 @@ class HistoriqueModel(QAbstractListModel):
     LienRole = Qt.UserRole + 5
     TypeRole = Qt.UserRole + 6
     LienIARole = Qt.UserRole + 7
+    TitreCaseRole = Qt.UserRole + 8  
 
     def __init__(self, *args, **kwargs):
         """
@@ -47,6 +48,8 @@ class HistoriqueModel(QAbstractListModel):
             return item["type"]
         elif role == self.LienIARole:
             return item["lienIA"]
+        elif role == self.TitreCaseRole:
+            return item["titre_case"]
 
     def rowCount(self, parent: QModelIndex = QModelIndex()) -> int:
         """
@@ -71,6 +74,7 @@ class HistoriqueModel(QAbstractListModel):
             self.LienRole: b"lien",
             self.TypeRole: b"type",
             self.LienIARole: b"lienIA",
+            self.TitreCaseRole: b"titre_case"
         }
 
     def add_item(self, item):
@@ -189,15 +193,13 @@ class DatabaseManagerHistorique(QObject):
         try:
             connection = sqlite3.connect(self.db_path)
             cursor = connection.cursor()
-            cursor.execute("SELECT id, pageID, date_creation, lien, type, prompt, lienIA FROM Historique")
+            cursor.execute("SELECT id, pageID, date_creation, lien, type, prompt, lienIA, titre_case FROM Historique")
             rows = cursor.fetchall()
 
-            # Organiser les données par pageID
             data_by_page = {}
             for row in rows:
-                # Vérification explicite pour éviter les erreurs
                 try:
-                    pageID = row[1]  # Assure que pageID existe
+                    pageID = row[1]  
                     if pageID is None:
                         raise ValueError(f"Entrée avec un pageID invalide détectée : {row}")
 
@@ -211,16 +213,17 @@ class DatabaseManagerHistorique(QObject):
                         "type": row[4],
                         "prompt": row[5],
                         "lienIA": row[6],
+                        "titre_case": row[7],
                     })
                 except Exception as e:
                     print(f"Erreur lors du traitement de la ligne {row}: {e}")
-                    continue  # Ignore la ligne défectueuse
+                    continue  
 
-            # Mettre à jour le modèle pour chaque pageID
-            for pageID, data in data_by_page.items():
+            for pageID in sorted(data_by_page.keys(), reverse=True):
+                data = data_by_page[pageID]
                 self.historique_model.add_data_if_new_pageID(data)
                 print(f"Historique chargé pour pageID {pageID} avec {len(data)} éléments")
-            
+
         except sqlite3.Error as e:
             print(f"Erreur lors de l'accès à la base de données: {e}")
             raise
@@ -238,6 +241,99 @@ class DatabaseManagerHistorique(QObject):
     def add_item(self, item, pageID):
         """Ajoute un élément dans le modèle si le pageID est nouveau."""
         self.historique_model.add_item(item)
+
+    def add_entry(self, pageID, prompt, lien, media_type, lienIA, titre_case) -> int:
+        connection = sqlite3.connect(self.db_path)
+        try:
+            cursor = connection.cursor()
+            cursor.execute(
+                """
+                INSERT INTO Historique (pageID, prompt, lien, type, lienIA,titre_case)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """, (pageID, prompt, lienIA, media_type, lien, titre_case)
+            )
+            connection.commit()
+            return cursor.lastrowid
+        finally:
+            connection.close()
+
+    def update_lienIA(self, id_elem, new_lienIA):
+        connection = sqlite3.connect(self.db_path)
+        try:
+            cursor = connection.cursor()
+            cursor.execute(
+                "UPDATE Historique SET lien = ? WHERE id = ?",
+                (new_lienIA, id_elem)
+            )
+            connection.commit()
+        finally:
+            connection.close()
+
+    def delete_by_pageID(self, pageID):
+        connection = sqlite3.connect(self.db_path)
+        try:
+            cursor = connection.cursor()
+            cursor.execute("DELETE FROM Historique WHERE pageID = ?", (pageID,))
+            connection.commit()
+        finally:
+            connection.close()
+
+    def modify_prompt(self, pageID, new_prompt):
+        connection = sqlite3.connect(self.db_path)
+        try:
+            cursor = connection.cursor()
+            cursor.execute("UPDATE Historique SET prompt = ? WHERE pageID = ?", (new_prompt, pageID))
+            connection.commit()
+        finally:
+            connection.close()
+
+    def get_max_pageID(self) -> int:
+        connection = sqlite3.connect(self.db_path)
+        try:
+            cursor = connection.cursor()
+            cursor.execute("SELECT MAX(pageID) FROM Historique")
+            result = cursor.fetchone()
+            return result[0] if result[0] is not None else 0
+        finally:
+            connection.close()
+
+    def page_exists(self, pageID: int) -> bool:
+        connection = sqlite3.connect(self.db_path)
+        try:
+            cursor = connection.cursor()
+            cursor.execute("SELECT COUNT(*) FROM Historique WHERE pageID = ?", (pageID,))
+            return cursor.fetchone()[0] > 0
+        finally:
+            connection.close()
+
+    def get_entries_by_pageID(self, pageID):
+        connection = sqlite3.connect(self.db_path)
+        try:
+            cursor = connection.cursor()
+            cursor.execute("SELECT id, prompt, lien, type, lienIA FROM Historique WHERE pageID = ?", (pageID,))
+            return cursor.fetchall()
+        finally:
+            connection.close()
+
+    def update_case_title(self, pageID: int, new_title: str):
+        connection = sqlite3.connect(self.db_path)
+        try:
+            cursor = connection.cursor()
+            cursor.execute("UPDATE Historique SET titre_case = ? WHERE pageID = ?", (new_title, pageID))
+            connection.commit()
+        finally:
+            connection.close()
+
+    def get_case_title(self, pageID: int) -> str:
+        connection = sqlite3.connect(self.db_path)
+        try:
+            cursor = connection.cursor()
+            cursor.execute("SELECT titre_case FROM Historique WHERE pageID = ? LIMIT 1", (pageID,))
+            row = cursor.fetchone()
+            return row[0] if row and row[0] else ""
+        finally:
+            connection.close()
+
 
     @Property(QObject, constant=True)
     def historiqueModel(self) -> HistoriqueModel:

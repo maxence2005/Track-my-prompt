@@ -63,7 +63,7 @@ Rectangle {
         PromptInput {
             id: promptInputComponent
             Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter
-            Layout.preferredWidth: parent.width - 150
+            Layout.preferredWidth: parent.width - 170
             Layout.minimumHeight: 80
             Layout.maximumHeight: 100
         }
