@@ -90,12 +90,12 @@ class AudioRecorder:
                     return ""
                 except sr.RequestError as e:
                     if error_callback:
-                        error_callback("API Error")
+                        error_callback("api_error")
                     raise ConnectionError("API Error")
         elif self._mode == "local":
             if not self.recording:
                 if error_callback:
-                    error_callback("Aucun son détecté. Veuillez réessayer.")
+                    error_callback("no_sound_detected")
                 return None
             self.transcription_result = None
             self.transcription_error = None
