@@ -34,7 +34,7 @@ foreach ($line in $lines) {
 rem Installing $packageName
 setlocal
 set "apppath=%~1"
-"%apppath%\python.exe" -m pip install $line
+"%apppath%\python.exe" -m pip install "$line"
 if %ERRORLEVEL% neq 0 (
     exit /b %ERRORLEVEL%
 )
@@ -60,6 +60,37 @@ exit /b 0
 "@
 $batPath = "scripts\install$index.bat"
 Set-Content -Path $batPath -Value $batContent
+
+$inputFolder = "..\..\common\gpu-requirements"
+$outputFolder = "gpu-requirements"
+
+if (-not (Test-Path $outputFolder)) {
+    New-Item -ItemType Directory -Path $outputFolder | Out-Null
+}
+
+Get-ChildItem -Path $inputFolder -Filter "*-requirements.txt" -File | ForEach-Object {
+    $filename = $_.BaseName -replace "-requirements$", ""
+    $outputFile = Join-Path $outputFolder "$filename.bat"
+
+    # Lire les lignes non vides
+    $args = Get-Content $_.FullName | Where-Object { $_.Trim() -ne "" }
+    $pipArgs = $args -join " "
+
+    $batContent = @"
+rem Installing Pytorch (Heavy, can take a while)
+setlocal
+set "apppath=%~1"
+"%apppath%\python.exe" -m pip install $pipArgs
+if %ERRORLEVEL% neq 0 (
+    exit /b %ERRORLEVEL%
+)
+endlocal
+exit /b 0
+"@
+
+    Set-Content -Path $outputFile -Value $batContent
+    Write-Host "Créé: $outputFile"
+}
 
 cd ..
 $localPrograms = Join-Path $env:LOCALAPPDATA "Programs"

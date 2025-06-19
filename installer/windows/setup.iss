@@ -15,6 +15,7 @@ Source: "build/python-3.11.1-embed-amd64\*"; DestDir: "{app}"; Flags: ignorevers
 Source: "build/scripts\install*.bat"; DestDir: "{tmp}"; Flags: deleteafterinstall
 Source: "launch.bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "icon.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "build/gpu-requirements\*"; DestDir: "{tmp}"; Flags: deleteafterinstall
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -28,7 +29,6 @@ Name: "{group}\Uninstall TrackMyPrompt"; Filename: "{uninstallexe}"
 Type: filesandordirs; Name: "{app}\Lib"
 Type: filesandordirs; Name: "{app}\Scripts"
 Type: filesandordirs; Name: "{app}\share"
-
 Type: dirifempty; Name: "{app}"
 
 [Code]
@@ -37,29 +37,70 @@ var
   ResultCode: Integer;
   ScriptCount: Integer;
   ScriptFiles: TStringList;
+  ComboKeys, ComboValues: TStringList;
 
 procedure CreateDropdown;
 begin
+  ComboKeys := TStringList.Create;
+  ComboValues := TStringList.Create;
+
+  // Ajoute des paires clé/valeur
+  ComboKeys.Add('CPU');
+  ComboValues.Add('cpu');
+
+  ComboKeys.Add('CUDA 11.8');
+  ComboValues.Add('cuda118');
+
+  ComboKeys.Add('CUDA 12.6');
+  ComboValues.Add('cuda126');
+
+  ComboKeys.Add('CUDA 12.8');
+  ComboValues.Add('cuda128');
+
+  // Création du ComboBox
   MyComboBox := TNewComboBox.Create(WizardForm);
   MyComboBox.Parent := WizardForm.SelectDirPage;
   MyComboBox.Top := WizardForm.DirEdit.Top + WizardForm.DirEdit.Height + 16;
   MyComboBox.Left := WizardForm.DirEdit.Left;
   MyComboBox.Width := WizardForm.DirEdit.Width;
-  MyComboBox.Items.Add('CPU');
-  MyComboBox.Items.Add('CUDA 11.8');
-  MyComboBox.Items.Add('CUDA 12.6');
-  MyComboBox.Items.Add('CUDA 12.8');
+
+  // Ajoute les clés visuelles
+  MyComboBox.Items.Assign(ComboKeys);
   MyComboBox.ItemIndex := 0;
+end;
+
+function GetSelectedValue(): String;
+var
+  idx: Integer;
+begin
+  idx := MyComboBox.ItemIndex;
+  if (idx >= 0) and (idx < ComboValues.Count) then
+    Result := ComboValues[idx]
+  else
+    Result := '';
 end;
 
 function FindInstallScripts(): Integer;
 var
   I: Integer;
   ScriptPath: string;
+  GPUPath: string;
 begin
   Result := 0;
   ScriptFiles := TStringList.Create;
   
+  GPUPath := ExpandConstant('{tmp}\' + GetSelectedValue() + '.bat');
+  if FileExists(GPUPath) then
+  begin
+    ScriptFiles.Add(GPUPath);
+    Inc(Result);
+    Log('Found GPU script: ' + GPUPath);
+  end
+  else
+  begin
+    Log('No GPU script found for: ' + GetSelectedValue());
+  end;
+
   // Search for install1.bat, install2.bat, etc.
   I := 1;
   while True do
@@ -103,7 +144,7 @@ begin
     try
       FileLines.LoadFromFile(ScriptFile);
       if (FileLines.Count > 0) and (Pos('rem', LowerCase(Trim(FileLines[0]))) = 1) then
-        ScriptMessage := Trim(Copy(FileLines[0], 4, MaxInt)); // Enlève le "rem "
+        ScriptMessage := Trim(Copy(FileLines[0], 4, MaxInt)); // Remove the "rem "
     except
       ScriptMessage := '';
     end;
@@ -168,4 +209,6 @@ procedure DeinitializeSetup();
 begin
   if Assigned(ScriptFiles) then
     ScriptFiles.Free;
+    ComboKeys.Free;
+    ComboValues.Free;
 end;

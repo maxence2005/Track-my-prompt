@@ -15,3 +15,8 @@ ultralytics==8.2.*
 soundfile==0.13.1
 sounddevice==0.5.2
 SpeechRecognition==3.14.3
+
+numba
+more-itertools
+tiktoken
+triton>=2.0.0;platform_machine=='x86_64' and sys_platform=='linux' or sys_platform=='linux2'
