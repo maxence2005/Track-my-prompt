@@ -1,6 +1,5 @@
 stages:
-    - build-windows
-    - build-flatpak
+    - build
     - release
 
 variables:
@@ -13,7 +12,7 @@ variables:
 
 build-windows:
     image: debian:bookworm
-    stage: build-windows
+    stage: build
     tags:
         - windows-builder
     before_script:
@@ -37,7 +36,7 @@ build-windows:
 
 build-flatpak:
     image: debian:bookworm
-    stage: build-flatpak
+    stage: build
     tags:
         - flatpak-builder
     before_script:
