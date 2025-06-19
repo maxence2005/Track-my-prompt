@@ -1,12 +1,39 @@
 stages:
+    - build-windows
     - build-flatpak
     - release
 
 variables:
     FLATPAK_BUNDLE: "TrackMyPrompt.flatpak"
-    FLATPAK_MANIFEST: "flatpak/manifest.json"
+    FLATPAK_MANIFEST: "installer/flatpak/manifest.json"
     BUILD_DIR: "flatpak-build"
     REPO_DIR: "flatpak-repo"
+    WINDOWS_INSTALLER: "installer/windows/compile.sh"
+    WINDOWS_BUNDLE: "TrackMyPromptInstaller.exe"
+
+build-windows:
+    image: debian:bookworm
+    stage: build-windows
+    tags:
+        - windows-builder
+    before_script:
+        - dpkg --add-architecture i386
+        - apt-get update
+        - apt install -y python3 python3-pip curl git wine64 unzip xvfb wine32:i386
+    script:
+        - echo "Build your app"
+        - echo "${CI_JOB_ID}" > CI_JOB_ID_WINDOWS
+        - chmod +x $WINDOWS_INSTALLER
+        - ./$WINDOWS_INSTALLER
+        - mv installer/windows/$WINDOWS_BUNDLE .
+        - echo "Windows build completed"
+    artifacts:
+        paths:
+            - CI_JOB_ID_WINDOWS
+            - $WINDOWS_BUNDLE
+        expire_in: never
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "main"'
 
 build-flatpak:
     image: debian:bookworm
@@ -20,12 +47,12 @@ build-flatpak:
         - flatpak install -y flathub org.freedesktop.Platform//24.08
     script:
         - echo "Build your app"
-        - echo "${CI_JOB_ID}" > CI_JOB_ID.txt
+        - echo "${CI_JOB_ID}" > CI_JOB_ID_FLATPAK
         - flatpak-builder --repo=$REPO_DIR --force-clean $BUILD_DIR $FLATPAK_MANIFEST
         - flatpak build-bundle $REPO_DIR $FLATPAK_BUNDLE iut.sae.TrackMyPrompt
     artifacts:
         paths:
-            - CI_JOB_ID.txt
+            - CI_JOB_ID_FLATPAK
             - $FLATPAK_BUNDLE
         expire_in: never
     cache:
@@ -41,6 +68,7 @@ release:
     stage: release
     needs:
         - job: build-flatpak
+        - job: build-windows
     image: registry.gitlab.com/gitlab-org/release-cli:latest
     before_script:
         - export TAG_NAME="release_$CI_COMMIT_SHORT_SHA"
@@ -54,7 +82,7 @@ release:
         - git tag -a $TAG_NAME -m "$TAG_MSG"
         - git push origin "$TAG_NAME"
     script:
-        - CI_JOB=$(cat CI_JOB_ID.txt)
-        - release-cli create --name "Release $CI_COMMIT_SHORT_SHA" --tag-name "$TAG_NAME" --ref "$CI_COMMIT_SHA" --assets-link "{\"name\":\"Flatpak Installer\",\"url\":\"https://forgens.univ-ubs.fr/gitlab/e2300056/track-my-prompt/-/jobs/$CI_JOB/artifacts/raw/$FLATPAK_BUNDLE?inline=false\",\"link_type\":\"other\"}"
+        - CI_JOB_FLATPAK=$(cat CI_JOB_ID_FLATPAK)
+        - release-cli create --name "Release $CI_COMMIT_SHORT_SHA" --tag-name "$TAG_NAME" --ref "$CI_COMMIT_SHA" --assets-link "{\"name\":\"Flatpak Installer\",\"url\":\"https://forgens.univ-ubs.fr/gitlab/e2300056/track-my-prompt/-/jobs/$CI_JOB_FLATPAK/artifacts/raw/$FLATPAK_BUNDLE?inline=false\",\"link_type\":\"other\"}" --assets-link "{\"name\":\"Windows Installer\",\"url\":\"https://forgens.univ-ubs.fr/gitlab/e2300056/track-my-prompt/-/jobs/$CI_JOB_ID_WINDOWS/artifacts/raw/$WINDOWS_BUNDLE?inline=false\",\"link_type\":\"other\"}"
     rules:
         - if: '$CI_COMMIT_BRANCH == "main"'
