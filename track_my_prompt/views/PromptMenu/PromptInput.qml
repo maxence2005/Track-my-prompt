@@ -8,8 +8,6 @@ RowLayout {
         target: colorManager
         function onThemeChanged() {
             colorManager.animateColorChange([
-                [wizardIconRectangle, "backgroundColor", "dark_gray"],
-                [wizardColorOverlay, "color", "default"],
                 [microphoneIconRectangle, "backgroundColor", "dark_gray"],
                 [microphoneColorOverlay, "color", "default"],
                 [promptInputRectangle, "color", "dark_bluish_gray"],
@@ -91,7 +89,7 @@ RowLayout {
         id: promptInputRectangle
         Layout.fillWidth: true
         Layout.minimumWidth: 60
-        Layout.maximumWidth: parent.width - 170
+        Layout.maximumWidth: parent.width - 70
         height: 50
         color: (colorManager ? colorManager.getColorNoNotify("dark_bluish_gray") : "#000000")
         radius: 10
