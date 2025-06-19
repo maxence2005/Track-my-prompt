@@ -9,6 +9,7 @@ variables:
     REPO_DIR: "flatpak-repo"
     WINDOWS_INSTALLER: "installer/windows/compile.sh"
     WINDOWS_BUNDLE: "TrackMyPromptInstaller.exe"
+    DEPLOY_URL: "https://trackmyprompt.louishamon.fr/update"
 
 build-windows:
     image: debian:bookworm
@@ -63,7 +64,7 @@ build-flatpak:
     rules:
         - if: '$CI_COMMIT_BRANCH == "main"'
 
-release:
+release-gitlab:
     stage: release
     needs:
         - job: build-flatpak
@@ -84,5 +85,21 @@ release:
         - CI_JOB_FLATPAK=$(cat CI_JOB_ID_FLATPAK)
         - CI_JOB_WINDOWS=$(cat CI_JOB_ID_WINDOWS)
         - release-cli create --name "Release $CI_COMMIT_SHORT_SHA" --tag-name "$TAG_NAME" --ref "$CI_COMMIT_SHA" --assets-link "{\"name\":\"Flatpak Installer\",\"url\":\"https://forgens.univ-ubs.fr/gitlab/e2300056/track-my-prompt/-/jobs/$CI_JOB_FLATPAK/artifacts/raw/$FLATPAK_BUNDLE?inline=false\",\"link_type\":\"other\"}" --assets-link "{\"name\":\"Windows Installer\",\"url\":\"https://forgens.univ-ubs.fr/gitlab/e2300056/track-my-prompt/-/jobs/$CI_JOB_WINDOWS/artifacts/raw/$WINDOWS_BUNDLE?inline=false\",\"link_type\":\"other\"}"
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "main"'
+
+release-website:
+    stage: release
+    needs:
+        - job: build-flatpak
+        - job: build-windows
+    image: alpine:latest
+    before_script:
+        - apk add --no-cache curl zip
+    script:
+        - cp "$WINDOWS_BUNDLE" website/www/public/
+        - cp "$FLATPAK_BUNDLE" website/www/public/
+        - cd website/www && zip -r "site.zip" .
+        - curl -X POST "$DEPLOY_URL" -F "token=$DEPLOY_TOKEN" -F "file=@site.zip"
     rules:
         - if: '$CI_COMMIT_BRANCH == "main"'
