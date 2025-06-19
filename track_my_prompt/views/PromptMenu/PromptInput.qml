@@ -23,7 +23,6 @@ RowLayout {
     id: promptRowLayout
     width: parent.width
     height: 50
-    spacing: 10
 
     Rectangle {
         id: wizardIconRectangle
@@ -33,6 +32,7 @@ RowLayout {
         width: 50
         height: 50
         radius: 50
+        Layout.leftMargin: 10
         color: hovered ? backgroundColorHover : backgroundColor
 
         Image {
@@ -123,7 +123,7 @@ RowLayout {
         id: promptInputRectangle
         Layout.fillWidth: true
         Layout.minimumWidth: 60
-        Layout.maximumWidth: parent.width - 80 
+        Layout.maximumWidth: parent.width - 170
         height: 50
         color: (colorManager ? colorManager.getColorNoNotify("dark_bluish_gray") : "#000000")
         radius: 10
@@ -132,7 +132,7 @@ RowLayout {
             id: promptInputField
             placeholderText: qsTr("Enter your prompt...")
             font.pixelSize: 18
-            width: parent.width - 50
+            width: parent.width - 80
             height: parent.height
             color: (colorManager ? colorManager.getColorNoNotify("light_gray") : "#000000")
             placeholderTextColor: (colorManager ? colorManager.getColorNoNotify("blue_gray") : "#000000")

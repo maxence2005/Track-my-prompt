@@ -405,7 +405,6 @@ class Backend(QObject):
     @Slot(int)
     def clearMediaData(self):
         """Efface les données actuelles de MediaData et récupère l'historique pour le pageID spécifié."""
-        # Vider MediaData
         self.media_model.clear_all_media()
 
 
@@ -419,10 +418,28 @@ class Backend(QObject):
     
     @Slot(int)
     def deleteHistorique(self, pageIDToDelete):
+        if pageIDToDelete == self._internal_pageID and self._shared_variable["Chargement"]:
+            self.infoSent.emit(f"Ne pas effacer l'historique pendant le chargement d'une image")
+            return
+
         self.historique_model.delete_by_pageID(pageIDToDelete)
         self.historique_model.remove_items_from_model(pageIDToDelete)
+
         if pageIDToDelete == self._internal_pageID:
             self.media_model.clear_all_media()
+
+    def stop_detection(self):
+        self._shared_variable["Chargement"] = False
+        self._shared_variable["state"] = ""
+        self.sharedVariableChanged.emit()
+
+        if self.pipeline:
+            self.pipeline.stop_processing()
+
+        if self.pipelineCamera:
+            self.pipelineCamera.stop_processing()
+
+        print("Détection stoppée.")
 
 
 
@@ -490,7 +507,7 @@ class Backend(QObject):
         """
         self.image_provider.set_image(frame)
 
-    @Slot(str, str, str, str)  # Ex : prompt, lien, type, lienIA
+    @Slot(str, str, str, str)  
     def add_to_historique(self, prompt, lien, media_type, lienIA):
         if self._internal_pageID is None:
             print("Erreur : Aucun pageID courant défini.")

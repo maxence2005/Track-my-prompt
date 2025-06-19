@@ -196,12 +196,10 @@ class DatabaseManagerHistorique(QObject):
             cursor.execute("SELECT id, pageID, date_creation, lien, type, prompt, lienIA, titre_case FROM Historique")
             rows = cursor.fetchall()
 
-            # Organiser les données par pageID
             data_by_page = {}
             for row in rows:
-                # Vérification explicite pour éviter les erreurs
                 try:
-                    pageID = row[1]  # Assure que pageID existe
+                    pageID = row[1]  
                     if pageID is None:
                         raise ValueError(f"Entrée avec un pageID invalide détectée : {row}")
 
@@ -219,13 +217,13 @@ class DatabaseManagerHistorique(QObject):
                     })
                 except Exception as e:
                     print(f"Erreur lors du traitement de la ligne {row}: {e}")
-                    continue  # Ignore la ligne défectueuse
+                    continue  
 
-            # Mettre à jour le modèle pour chaque pageID
-            for pageID, data in data_by_page.items():
+            for pageID in sorted(data_by_page.keys(), reverse=True):
+                data = data_by_page[pageID]
                 self.historique_model.add_data_if_new_pageID(data)
                 print(f"Historique chargé pour pageID {pageID} avec {len(data)} éléments")
-            
+
         except sqlite3.Error as e:
             print(f"Erreur lors de l'accès à la base de données: {e}")
             raise
