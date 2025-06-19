@@ -22,11 +22,12 @@ class AppConfig:
         """
         self.language: str = 'English'
         self.style: str = 'dark'
-        self.expertMode: bool = False
+        self.frameManager: str = '#787878'
         self.languages: dict = languages
         self.prompt_interpreter: str = 'dumb'
         self.api_key: str = ''
         self.transcription_mode: str = 'api'
+        self.unlock_100: bool = False
 
         filepaths.create_config_dir()
         self.path: Path = filepaths.get_base_config_dir() / 'app_config.json'

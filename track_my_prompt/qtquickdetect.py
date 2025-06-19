@@ -66,6 +66,8 @@ def main():
     appContext.appConfig.languages = appContext.languageManager.languages
     appContext.appConfig.prompt_interpreter = appContext.backend.shared_variable["prompt_ia"]
     appContext.appConfig.api_key = appContext.backend.shared_variable["api_key_mistral"]
+    appContext.appConfig.frameManager = appContext.backend.shared_variable["frame_color"]
+    appContext.appConfig.unlock_100 = appContext.backend.hasUnlocked100()
     appContext.appConfig.transcription_mode = appContext.backend.getTranscriptionMode()
     appContext.appConfig.save()
     sys.exit(statut)

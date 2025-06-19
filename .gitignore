@@ -11,3 +11,7 @@ qtquickdetect.spec
 build/
 site/
 .vscode
+*flatpak-*
+*.exe
+*.dll
+*.so

@@ -100,18 +100,22 @@ Rectangle {
                 visible: !isEditing
                 elide: Text.ElideRight
                 wrapMode: Text.NoWrap
+                
             }
 
-            // Champ de saisie pour la modification
             TextInput {
                 id: promptInput
                 text: promptText
                 font.pixelSize: 18
                 color: (colorManager?.getColorNoNotify("silver_gray") ?? "#000000")
                 anchors.fill: parent
+                anchors.verticalCenterOffset: -10
                 visible: isEditing
                 focus: isEditing
                 maximumLength: 100
+                wrapMode: TextInput.NoWrap
+                horizontalAlignment: Text.AlignLeft
+                clip: true  
                 onAccepted: {
                     backend.modifyPromptText(caseID, text);
                     promptText = text;
