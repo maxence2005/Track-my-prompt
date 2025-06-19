@@ -27,6 +27,8 @@ class Backend(QObject):
     sharedVariableChanged = Signal()
     idChargementSignal = Signal()
     transcriptionReady = Signal(str)
+    transcriptionStarted = Signal()
+    transcriptionError = Signal(str)
 
     def __init__(self, media_model: DatabaseManagerMedia, row: int, db_path: str, historique_model: QObject, im_pro: ImageProvider, prompt_ia: str, api_key_mistral: str, transcription_mode: str, encyclopedia_model: QObject):
         """
@@ -654,14 +656,23 @@ class Backend(QObject):
     def stopRecording(self):
         try:
             self.audio_recorder.stop()
-            res = self.audio_recorder.transcript()
-            self.transcriptionReady.emit(res)
-        except ConnectionError as er:
-            self.infoSent.emit("Erreur de connexion à l'API")
-        except ImportError as er:
-            self.infoSent.emit("Erreur lors de l'importation de whisper")
-        except RuntimeError as er:
-            self.infoSent.emit("Erreur lors de la transcription")
+            self.transcriptionStarted.emit()
+            def on_transcription_ready(res):
+                self.transcriptionReady.emit(res)
+            def on_transcription_error(err):
+                if isinstance(err, ConnectionError):
+                    self.infoSent.emit("Erreur de connexion à l'API")
+                elif isinstance(err, ImportError):
+                    self.infoSent.emit("Erreur lors de l'importation de whisper")
+                else:
+                    self.infoSent.emit("Erreur lors de la transcription")
+                self.transcriptionError.emit(str(err))
+            self.audio_recorder.transcript(
+                callback=on_transcription_ready,
+                error_callback=on_transcription_error
+            )
+        except Exception as er:
+            self.infoSent.emit(f"Erreur lors de l'arrêt de l'enregistrement : {er}")
     
     @Slot(str)
     def setTranscriptionMode(self, mode: str):

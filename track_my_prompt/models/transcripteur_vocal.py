@@ -6,6 +6,8 @@ import speech_recognition as sr
 import io
 import time
 import tempfile
+from pipeline.pipelineTranscription import PipelineTranscription
+from PySide6.QtCore import Qt
 
 SAMPLE_RATE = 16000
 CHANNELS = 1
@@ -17,8 +19,15 @@ class AudioRecorder:
         self._running = False
         self._thread = None
         self._mode = mode
+        self.transcription_pipeline = PipelineTranscription()
+        self.transcription_result = None
+        self.transcription_error = None
+        self._transcription_callback = None
+        self._transcription_error_callback = None
+        self.transcription_pipeline.transcriptionComplete.connect(self._on_transcription_complete)
+        self.transcription_pipeline.transcriptionError.connect(self._on_transcription_error)
 
-    def _callback(self, indata, frames, time_info, status):
+    def _audio_stream_callback(self, indata, frames, time_info, status):
         if self._running:
             self.recording.append(indata.copy())
 
@@ -28,7 +37,7 @@ class AudioRecorder:
         self._stream = sd.InputStream(samplerate=SAMPLE_RATE,
                                       channels=CHANNELS,
                                       blocksize=BLOCK_SIZE,
-                                      callback=self._callback)
+                                      callback=self._audio_stream_callback)
         self._stream.start()
         self._thread = threading.Thread(target=self._monitor)
         self._thread.start()
@@ -42,42 +51,74 @@ class AudioRecorder:
         self._stream.stop()
         self._stream.close()
         self._thread.join()
+        if not self.recording:
+            if self._transcription_error_callback:
+                self._transcription_error_callback("Aucun son détecté. Veuillez réessayer.")
+            return False
+        return True
 
     def get_audio_bytesio(self):
+        if not self.recording:
+            raise ValueError("Aucun bloc audio enregistré")
         audio_np = np.concatenate(self.recording, axis=0)
         buffer = io.BytesIO()
         sf.write(buffer, audio_np, SAMPLE_RATE, format='WAV')
         buffer.seek(0)
         return buffer
 
-    def transcript(self):
-        audio_buffer = self.get_audio_bytesio()
+    def transcript(self, callback=None, error_callback=None):
+        self._transcription_callback = callback
+        self._transcription_error_callback = error_callback
         if self._mode == "api":
+            try:
+                audio_buffer = self.get_audio_bytesio()
+            except Exception as e:
+                if error_callback:
+                    error_callback(str(e))
+                return None
             r = sr.Recognizer()
             with sr.AudioFile(audio_buffer) as source:
                 audio = r.record(source)
                 try:
                     text = r.recognize_google(audio, language="fr-FR")
+                    if callback:
+                        callback(text)
                     return text
                 except sr.UnknownValueError:
-                    # On ignore l'exception car celle-ci est levée lorsque l'audio envoyé est vide ce qui esr un comportement normal
+                    if callback:
+                        callback("")
                     return ""
                 except sr.RequestError as e:
+                    if error_callback:
+                        error_callback("API Error")
                     raise ConnectionError("API Error")
         elif self._mode == "local":
-            try:
-                import whisper
-                model = whisper.load_model("base", device="cpu") 
-                with tempfile.NamedTemporaryFile(suffix=".wav") as tmpfile:
-                    tmpfile.write(audio_buffer.read())
-                    tmpfile.flush()
-                    result = model.transcribe(tmpfile.name)
-                return result['text']
-            except ImportError:
-                raise ImportError("Whisper library is not installed")
-            except Exception as e:
-                print(e)
-                raise RuntimeError(f"An error occurred during transcription: {e}")
+            if not self.recording:
+                if error_callback:
+                    error_callback("Aucun son détecté. Veuillez réessayer.")
+                return None
+            self.transcription_result = None
+            self.transcription_error = None
+            audio_buffer = self.get_audio_bytesio()
+            self.transcription_pipeline = PipelineTranscription()
+            self.transcription_pipeline.transcriptionComplete.connect(self._on_transcription_complete)
+            self.transcription_pipeline.transcriptionError.connect(self._on_transcription_error)
+            self.transcription_pipeline.start_transcription(audio_buffer.read())
+            return None
+
+    def _on_transcription_complete(self, text):
+        self.transcription_result = text
+        if self._transcription_callback:
+            self._transcription_callback(text)
+            self._transcription_callback = None
+        self._transcription_error_callback = None
+
+    def _on_transcription_error(self, error):
+        self.transcription_error = error
+        if self._transcription_error_callback:
+            self._transcription_error_callback(error)
+            self._transcription_error_callback = None
+        self._transcription_callback = None
     
     def set_mode(self, mode):
         self._mode = mode
