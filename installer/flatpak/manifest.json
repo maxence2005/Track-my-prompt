@@ -76,9 +76,9 @@
                 "install -Dm644 icon.png /app/share/icons/hicolor/256x256/apps/iut.sae.TrackMyPrompt.png",
                 "install -Dm755 entrypoint.sh /app/bin/TrackMyPrompt",
                 "install -Dm644 requirements.txt /app/bin/TrackMyPrompt-requirements.txt",
-                "install -Dm644 cpu-requirements.txt /app/bin/TrackMyPrompt-cpu-requirements.txt",
                 "install -Dm644 LICENSE /app/bin/TrackMyPrompt-LICENSE",
                 "cp -r track_my_prompt/ /app/track_my_prompt",
+                "cp -r gpu-requirements/ /app/bin/gpu-requirements",
                 "install -Dm755 installer.py /app/bin/TrackMyPrompt-installer.py",
                 "install -Dm755 installer_translate.py /app/bin/installer_translate.py",
                 "/app/bin/pip3 install --no-deps --prefix=/app -r no-deps.txt"
@@ -86,18 +86,22 @@
             "sources": [
                 {
                     "type": "dir",
-                    "path": "../track_my_prompt",
+                    "path": "../../track_my_prompt",
                     "dest": "track_my_prompt"
                 },
-                { "type": "file", "path": "files/requirements.txt" },
-                { "type": "file", "path": "files/cpu-requirements.txt" },
-                { "type": "file", "path": "files/no-deps.txt" },
+                {
+                    "type": "dir",
+                    "path": "../common/gpu-requirements",
+                    "dest": "gpu-requirements"
+                },
+                { "type": "file", "path": "../common/requirements.txt" },
+                { "type": "file", "path": "../common/no-deps.txt" },
                 { "type": "file", "path": "files/entrypoint.sh" },
                 { "type": "file", "path": "files/installer.py" },
                 { "type": "file", "path": "files/installer_translate.py" },
                 { "type": "file", "path": "files/icon.png" },
                 { "type": "file", "path": "files/TrackMyPrompt.desktop" },
-                { "type": "file", "path": "../LICENSE" }
+                { "type": "file", "path": "../../LICENSE" }
             ]
         }
     ]

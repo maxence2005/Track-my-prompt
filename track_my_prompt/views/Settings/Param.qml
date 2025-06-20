@@ -23,13 +23,14 @@ Rectangle {
         color: (colorManager ? colorManager.getColorNoNotify("very_dark_gray") : "#000000")
 
         CloseButton { }
-        TitleText { }
         Column {
             property int separatorHeight: 20
 
             id: allSettingsColumn
             anchors.centerIn: parent
             spacing: 20
+
+            TitleText {}
 
             Row {
                 id: settingsRow
@@ -48,6 +49,7 @@ Rectangle {
                     HistorySettings { }
                 }
                 Column {
+                    TranscriptionSettings { }
 
                     Rectangle {
                         height: allSettingsColumn.separatorHeight

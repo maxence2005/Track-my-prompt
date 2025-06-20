@@ -68,21 +68,12 @@ Rectangle {
         z: -1 
     }
 
-    Row {
+    RowLayout {
         id: headerRow
         anchors.top: headerRectangle.top
         anchors.topMargin: 10
-        anchors.horizontalCenter: parent.horizontalCenter
         width: parent.width * 0.8
-        spacing: 10
-
-        Label {
-            id: headerLabel
-            text: qsTr("Encyclopedia")
-            font.pixelSize: parent.width/15
-            color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
+        spacing: 0
 
         Button {
             id: giftButton
@@ -92,10 +83,20 @@ Rectangle {
                 backend.checkAndUnlock100(Math.round(progressBar.value * 100))
             }
             font.pixelSize: parent.width/15
+            
             background: Rectangle {
                 radius: 10
                 color: "transparent"
             }
+        }
+
+        Label {
+            id: headerLabel
+            text: qsTr("Encyclopedia")
+            font.pixelSize: parent.width/15
+            horizontalAlignment: Text.AlignHCenter
+            Layout.alignment: Qt.AlignHCenter
+            color: (colorManager ? colorManager.getColorNoNotify("default") : "#000000")
         }
     }
 

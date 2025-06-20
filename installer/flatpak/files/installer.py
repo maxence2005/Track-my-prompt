@@ -11,6 +11,14 @@ font_family = "courier"
 cache_dir = "/tmp/TrackMyPrompt-pip-cache"
 os.makedirs(cache_dir, exist_ok=True)
 
+version_available = {
+    "CUDA 11.8": "gpu-requirements/cuda118-requirements.txt",
+    "CUDA 12.6": "gpu-requirements/cuda126-requirements.txt",
+    "CUDA 12.8": "gpu-requirements/cuda128-requirements.txt",
+    "ROCm": "gpu-requirements/rocm-requirements.txt",
+    "CPU": "gpu-requirements/cpu-requirements.txt"
+}
+
 class InstallerApp:
     def __init__(self, root, license_text=""):
         self.root = root
@@ -81,11 +89,27 @@ class InstallerApp:
             self.label = tk.Label(self.frame, text=self.get_text("installation"), font=(font_family, 14))
             self.label.pack(pady=10)
 
-            tk.Label(self.frame, text=self.get_text("wait_message"), font=(font_family, 10)).pack()
+            # Version selection section
+            self.version_frame = tk.Frame(self.frame)
+            self.version_frame.pack(pady=20)
 
-            self.output_box = scrolledtext.ScrolledText(self.frame, height=15)
-            self.output_box.pack(fill="both", expand=True, padx=10, pady=10)
-            self.output_box.config(state=tk.DISABLED)
+            tk.Label(self.version_frame, text=self.get_text("choose_version"), font=(font_family, 12)).pack(pady=10)
+
+            self.version_var = tk.StringVar()
+            self.version_var.set("CPU")  # Default selection
+
+            version_options = list(version_available.keys())
+            self.version_dropdown = ttk.Combobox(
+                self.version_frame,
+                textvariable=self.version_var,
+                values=version_options,
+                state="readonly",
+                width=15,
+                font=(font_family, 11)
+            )
+            self.version_dropdown.pack(pady=10)
+            
+            
 
             self.install_button = tk.Button(self.frame, text=self.get_text("install"), command=self.start_installation)
             self.install_button.pack(pady=10)
@@ -106,7 +130,18 @@ class InstallerApp:
 
     def start_installation(self):
         self.install_button.config(state=tk.DISABLED)
+        self.version_frame.destroy()  # Remove version selection UI
+        self.show_output_box()  # Show output box
         threading.Thread(target=self.run_installation, daemon=True).start()
+
+    def show_output_box(self):
+        tk.Label(self.frame, text=self.get_text("wait_message"), font=(font_family, 10)).pack()
+
+        self.output_box = scrolledtext.ScrolledText(self.frame, height=12)
+        self.output_box.pack(fill="both", expand=True, padx=10, pady=10)
+        self.output_box.config(state=tk.DISABLED)
+        self.install_button.pack_forget()
+        self.install_button.pack(pady=10)
 
     def append_output(self, text):
         self.output_box.config(state=tk.NORMAL)
@@ -135,7 +170,7 @@ class InstallerApp:
 
     def run_installation(self):
         commands = [
-            ["/app/bin/pip3", "install", "--no-warn-script-location", "--cache-dir", "/tmp/pip_cache", "-r", "/app/bin/TrackMyPrompt-cpu-requirements.txt"],
+            ["/app/bin/pip3", "install", "--no-warn-script-location", "--cache-dir", "/tmp/pip_cache", "-r", "/app/bin/" + version_available[self.version_var.get()]],
             ["/app/bin/pip3", "install", "--no-warn-script-location", "--cache-dir", "/tmp/pip_cache", "-r", "/app/bin/TrackMyPrompt-requirements.txt"],
         ]
 

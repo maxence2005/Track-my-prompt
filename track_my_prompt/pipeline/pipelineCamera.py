@@ -15,7 +15,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 class CameraWorker(QObject):
     frameCaptured = Signal(QImage)
 
-    def __init__(self, pipeline: 'CameraPipeline', parent: QObject = None):
+    def __init__(self, pipeline: 'CameraPipeline', classes: list = None, prompt: str = "", parent: QObject = None):
         """
         Initialize the CameraWorker with the given parameters.
 
@@ -27,38 +27,53 @@ class CameraWorker(QObject):
         self._is_running = True
         self.file_path = None
         self.pipeline = pipeline
+        self.prompt = prompt
         models_path = filepaths.get_base_data_dir() / 'models'
         self.model = YOLOWorld(os.path.join(models_path, 'yolov8s-world.pt')).to(device)
+        if classes:
+            self.model.set_classes(classes)
 
         
     def run_task(self):
         """
         Runs the video recording task.
         """
-        capture = cv2.VideoCapture(0)
-        if not capture.isOpened():
-            capture =cv2.VideoCapture(1)
+        try:
+            capture = cv2.VideoCapture(0)
             if not capture.isOpened():
-                self.pipeline.on_error_occurred("Erreur : Impossible d'ouvrir la caméra.")
-                return
+                capture =cv2.VideoCapture(1)
+                if not capture.isOpened():
+                    self.pipeline.on_error_occurred("Erreur : Impossible d'ouvrir la caméra.")
+                    return
+        except Exception as e:
+            self.pipeline.on_error_occurred(f"Erreur lors de l'ouverture de la caméra ")
+            return
 
         destination_directory = get_base_data_dir() / "collections" / "video"
         os.makedirs(destination_directory, exist_ok=True)
-        self.file_path = destination_directory / f"webcam_capture_{str(uuid.uuid4())}.avi"
+
+        video_id = str(uuid.uuid4())
+        self.annotated_path = destination_directory / f"webcam_annotated_{video_id}.avi"
+        self.raw_path = destination_directory / f"webcam_raw_{video_id}.avi"
 
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
         fps = 20.0
         frame_width = int(capture.get(cv2.CAP_PROP_FRAME_WIDTH))
         frame_height = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        out = cv2.VideoWriter(str(self.file_path), fourcc, fps, (frame_width, frame_height))
+
+        out_annotated = cv2.VideoWriter(str(self.annotated_path), fourcc, fps, (frame_width, frame_height))
+        out_raw = cv2.VideoWriter(str(self.raw_path), fourcc, fps, (frame_width, frame_height))
 
         frame_color_hex = self.pipeline.backend.shared_variable.get("frame_color", "#FF0000")
         color = hex_to_bgr(frame_color_hex)
+
         while self._is_running:
             ret, frame = capture.read()
             if not ret:
                 break
-            
+
+            raw_frame = frame.copy()  # Save unmodified frame
+
             with torch.no_grad():
                 results = self.model.predict(frame, stream=True)
 
@@ -76,24 +91,28 @@ class CameraWorker(QObject):
                         if r.boxes.conf is not None and i < len(r.boxes.conf):
                             confidence = r.boxes.conf[i].item() * 100
                             class_index = int(r.boxes.cls[i].item())
-                            class_name = self.model.names[class_index] if class_index in self.model.names else "Unknown"
+                            class_name = self.model.names.get(class_index, "Unknown")
                             label = f"{class_name} {confidence:.1f}%"
                             cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, color_to_use, 2)
 
                     if r.masks is not None:
                         r.masks.draw(frame)
+
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             h, w, ch = rgb_frame.shape
             bytes_per_line = ch * w
             q_image = QImage(rgb_frame.data, w, h, bytes_per_line, QImage.Format_RGB888)
 
             self.pipeline.captured_image(q_image)
-            out.write(frame)
+
+            out_annotated.write(frame)
+            out_raw.write(raw_frame)
 
         capture.release()
-        out.release()
+        out_annotated.release()
+        out_raw.release()
 
-        self.pipeline.on_processing_complete(str(self.file_path))
+        self.pipeline.on_processing_complete(str(self.annotated_path), str(self.raw_path), self.prompt)
 
     def stop(self):
         """
@@ -120,12 +139,12 @@ class CameraPipeline(QObject):
         self.backend = backend
 
     @Slot()
-    def start_camera_recording(self):
+    def start_camera_recording(self, classes, prompt):
         """
         Start the camera recording in a separate thread.
         """
         self.thread = QThread()
-        self.worker = CameraWorker(self)
+        self.worker = CameraWorker(self, classes, prompt)
         
         self.worker.moveToThread(self.thread)
         self.thread.started.connect(self.worker.run_task)
@@ -143,14 +162,14 @@ class CameraPipeline(QObject):
         self.stop_processing()
 
     @Slot(str)
-    def on_processing_complete(self, file_path: str):
+    def on_processing_complete(self, file_path: str, file_path_2: str, prompt: str):
         """
         Handle the completion of the recording.
 
         Args:
             file_path (str): The path to the recorded file.
         """
-        self.backend.on_recording_complete(file_path)
+        self.backend.on_recording_complete(file_path, file_path_2, prompt)
         self.stop_processing()
     
     @Slot(QImage)

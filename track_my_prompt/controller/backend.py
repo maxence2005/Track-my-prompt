@@ -19,6 +19,7 @@ from pipeline.pipelinePrompt import PipelinePrompt
 from pipeline.pipelineCamera import CameraPipeline
 from models.mediaModel import DatabaseManagerMedia
 from models.transcripteur_vocal import AudioRecorder
+from models.filtre import promptFiltre
 
 class Backend(QObject):
 
@@ -27,8 +28,11 @@ class Backend(QObject):
     sharedVariableChanged = Signal()
     idChargementSignal = Signal()
     celebrationUnlocked = Signal()
+    transcriptionReady = Signal(str)
+    transcriptionStarted = Signal()
+    transcriptionError = Signal(str)
 
-    def __init__(self, media_model: DatabaseManagerMedia, row: int, db_path: str, historique_model: QObject, im_pro: ImageProvider, prompt_ia: str, api_key_mistral: str, frame_color: str, unlock_100: bool, encyclopedia_model: QObject):
+    def __init__(self, media_model: DatabaseManagerMedia, row: int, db_path: str, historique_model: QObject, im_pro: ImageProvider, prompt_ia: str, api_key_mistral: str, frame_color: str, unlock_100: bool, transcription_mode: str ,encyclopedia_model: QObject):
         """
         Initialize the Backend with the given parameters.
 
@@ -52,7 +56,7 @@ class Backend(QObject):
         self.pipeline = PipelinePrompt(self, encyclo_model=self.encyclo_model)
         self.pipelineCamera = CameraPipeline(self)
         self.pipelineCamera.frame_send.connect(self.frame_send)
-        self.audio_recorder = AudioRecorder()
+        self.audio_recorder = AudioRecorder(transcription_mode)
 
         if row == 0:
             self._shared_variable["Start"] = True
@@ -124,7 +128,6 @@ class Backend(QObject):
                 self.sharedVariableChanged.emit()
                 self.idChargementSignal.emit()
                 id = self.add_to_historique(promptText, self.fichier["lien"], self.fichier["type"], "")
-                print(f"voici l'id dans receivePrompt : {id}")
                 self.pipeline.start_processing(self.fichier["lien"], self.fichier["type"], promptText, self._shared_variable["prompt_ia"], self._shared_variable["api_key_mistral"],id)
 
     @Slot(str, str)
@@ -287,12 +290,19 @@ class Backend(QObject):
         """
         self.handle_media(file_path, is_url=False)
 
-    @Slot()
-    def start_Camera(self):
+    @Slot(str)
+    def start_Camera(self, prompt):
         """
         Start the camera recording.
         """
-        self.pipelineCamera.start_camera_recording()
+        if self._shared_variable["prompt_ia"] == "mistral" and self._shared_variable["api_key_mistral"] == "":
+            self.infoSent.emit("missing_mistral_api_key")
+        else :
+            if prompt != "":
+                classes = promptFiltre(prompt, self._shared_variable["prompt_ia"], self._shared_variable["api_key_mistral"])
+                self.pipelineCamera.start_camera_recording(classes, prompt)
+            else :
+                self.pipelineCamera.start_camera_recording(None, "")
 
     @Slot()
     def stop_Camera(self):
@@ -301,21 +311,42 @@ class Backend(QObject):
         """
         self.pipelineCamera.stop_camera_recording()
     
-    def on_recording_complete(self, lien: str):
+    def on_recording_complete(self, video_ia: str, video_simple: str, prompt: str):
         """
         Handle the completion of the recording.
 
         Args:
             lien (str): The file path of the recorded video.
         """
-        self.fichier["lien"] = str(lien)
+        self.fichier["lien"] = str(video_simple)
         self.fichier["type"] = 'video'
         if self.start == True :
             self.start = False
             self._shared_variable["Start"] = False
             self.sharedVariableChanged.emit()
-        id_row = self.media_model.addMediaItem(str(lien), 'video')
+        id_row = self.media_model.addMediaItem(str(video_simple), 'video')
+
         self.fichier["id"] = id_row
+        self._idChargement = self.fichier["id"]
+        self.idChargementSignal.emit()
+        id = self.add_to_historique(prompt, self.fichier["lien"], self.fichier["type"], "")
+        self.media_model.updateMediaItem(id_row, video_simple, video_ia, 'video', prompt)
+
+        connection = None
+        try:
+            connection = sqlite3.connect(self.db_path)
+            cursor = connection.cursor()
+            cursor.execute("""
+                UPDATE Historique
+                SET lien = ?
+                WHERE id = ?
+            """, (video_ia, id))
+            connection.commit()
+        except sqlite3.Error as e:
+            self.infoSent.emit(f"Erreur de mise à jour dans la base de données : {e}")
+        finally:
+            if connection:
+                connection.close()
 
 
     @Slot()
@@ -601,6 +632,41 @@ class Backend(QObject):
 
     @Slot()
     def stopRecording(self):
-        self.audio_recorder.stop()
-        res = self.audio_recorder.transcript()
-        self.transcriptionReady.emit(res)
+        try:
+            self.audio_recorder.stop()
+            self.transcriptionStarted.emit()
+            def on_transcription_ready(res):
+                self.transcriptionReady.emit(res)
+            def on_transcription_error(err):
+                if isinstance(err, ConnectionError):
+                    self.infoSent.emit("Erreur de connexion à l'API")
+                elif isinstance(err, ImportError):
+                    self.infoSent.emit("Erreur lors de l'importation de whisper")
+                else:
+                    self.infoSent.emit("Erreur lors de la transcription")
+                self.transcriptionError.emit(str(err))
+            self.audio_recorder.transcript(
+                callback=on_transcription_ready,
+                error_callback=on_transcription_error
+            )
+        except Exception as er:
+            self.infoSent.emit(f"Erreur lors de l'arrêt de l'enregistrement : {er}")
+    
+    @Slot(str)
+    def setTranscriptionMode(self, mode: str):
+        """
+        Set the transcription mode for the audio recorder.
+
+        Args:
+            mode (str): The transcription mode ('api' or 'local').
+        """
+        self.audio_recorder.set_mode(mode)
+    
+    def getTranscriptionMode(self) -> str:
+        """
+        Get the current transcription mode.
+
+        Returns:
+            str: The current transcription mode ('api' or 'local').
+        """
+        return self.audio_recorder.get_mode()
