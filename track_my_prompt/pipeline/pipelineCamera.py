@@ -57,7 +57,7 @@ class CameraWorker(QObject):
         self.raw_path = destination_directory / f"webcam_raw_{video_id}.avi"
 
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        fps = 20.0
+        fps = 10.0
         frame_width = int(capture.get(cv2.CAP_PROP_FRAME_WIDTH))
         frame_height = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
 

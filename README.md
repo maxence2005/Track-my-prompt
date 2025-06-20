@@ -10,6 +10,7 @@ The Track My Prompts application allows the use of an image recognition AI model
 - Object detection in images and videos
 - Live detection through the webcam
 - Prompt interpretation for more targeted detection
+- Voice prompt with different AI models
 
 ## Available Formats
 YoloWorld AI model is used for object detection. The model is trained on the COCO dataset and can detect 80 different objects. The model is available in the following formats:
@@ -25,6 +26,15 @@ The application can interpret prompts to provide more targeted detection. The fo
 | Dumb | Search for a specific object by keyword in english |
 | Dumb With Translation | Search for a specific object by keyword in any language |
 | Mistral | Use the Mistral API to interpret the prompt |
+
+## Voice Prompt
+
+The application supports voice input with two modes of speech-to-text transcription, allowing users to issue commands or prompts by speaking.
+
+| Mode | Description |
+|---|---|
+| Online (Google API) | Uses the Google Speech-to-Text API via the internet for accurate, real-time transcription. Requires internet access. |
+| Offline (Whisper) | Uses OpenAI's Whisper model locally for private, offline transcription. No internet connection is needed. |
 
 ## Translations
 The application is available in the following languages:
@@ -77,6 +87,27 @@ After installation, to launch the application, use the command
 ```
 venv/bin/python -m qtquickdetect
 ```
+
+## Easy Installation (Graphical)
+
+If you prefer a simple installation method without using the terminal:
+
+### Option 1: Website
+
+You can download the pre-built graphical application from our website:
+
+🔗 [Download from Website](https://trackmyprompt.louishamon.fr/)
+
+*Just download and run the application. No Python or terminal needed.*
+
+### Option 2: GitLab Releases
+
+Go to the **Releases** section of the GitLab repository to download the latest executable version:
+
+🔗 [Download from GitLab Releases](https://forgens.univ-ubs.fr/gitlab/e2300056/track-my-prompt/-/releases)
+
+*Choose the version that matches your operating system: Windows or Linux.*
+
 
 ## Use Mistral API (FREE)
 To understand prompts, you can use the Mistral API. To do this, you need to create an account on the [Mistral](https://www.mistral.ai/) website. Once the account is created, you can obtain an API key to use the text recognition service.\
