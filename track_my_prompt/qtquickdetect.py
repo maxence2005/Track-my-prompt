@@ -4,6 +4,7 @@ import pathlib
 import sys
 
 from PySide6.QtCore import QObject, Signal, QUrl
+from PySide6.QtGui import QIcon
 from PySide6.QtGui import QFontDatabase
 from PySide6.QtWidgets import QApplication
 from PySide6.QtQml import QQmlApplicationEngine
@@ -59,6 +60,13 @@ def main():
     if not engine.rootObjects():
         sys.exit(-1)
 
+    icon_path = base + "/views/imgs/icon.png"
+    icon = QIcon(icon_path)
+
+    if icon.isNull():
+        raise ValueError(f"Erreur : Impossible de charger l'icône depuis le chemin '{icon_path}'")
+    else:
+        app.setWindowIcon(icon)
     statut = app.exec()
 
     appContext.appConfig.style = appContext.colorManager.current_theme
