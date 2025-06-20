@@ -623,19 +623,14 @@ class Backend(QObject):
             def on_transcription_ready(res):
                 self.transcriptionReady.emit(res)
             def on_transcription_error(err):
-                if isinstance(err, ConnectionError):
-                    self.infoSent.emit("Erreur de connexion à l'API")
-                elif isinstance(err, ImportError):
-                    self.infoSent.emit("Erreur lors de l'importation de whisper")
-                else:
-                    self.infoSent.emit("Erreur lors de la transcription")
+                self.infoSent.emit(err)
                 self.transcriptionError.emit(str(err))
             self.audio_recorder.transcript(
                 callback=on_transcription_ready,
                 error_callback=on_transcription_error
             )
         except Exception as er:
-            self.infoSent.emit(f"Erreur lors de l'arrêt de l'enregistrement : {er}")
+            self.infoSent.emit("error_recording")
     
     @Slot(str)
     def setTranscriptionMode(self, mode: str):

@@ -24,8 +24,11 @@ class WorkerTranscription(QObject):
                 tmpfile.flush()
                 result = model.transcribe(tmpfile.name)
             self.finished.emit(result['text'])
+        except ImportError as e:
+            self.error.emit("whisper_error")
         except Exception as e:
-            self.error.emit(str(e))
+            print(e)
+            self.error.emit("transcription_error")
 
     def stop(self):
         self._is_running = False

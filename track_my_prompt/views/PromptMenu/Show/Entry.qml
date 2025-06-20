@@ -121,7 +121,7 @@ ColumnLayout {
         horizontalAlignment: Text.AlignHCenter
         text: backend ? (
             backend.shared_variable["state"] === "prompt" ? qsTr("Prompt processing") :
-            backend.shared_variable["state"] === "ia" ? qsTr("IA processing") :
+            backend.shared_variable["state"] === "ia" ? qsTr("AI processing") :
             qsTr("Loading...")
         ) : qsTr("Loading...")
         font.pixelSize: imageContainer.width / 50
