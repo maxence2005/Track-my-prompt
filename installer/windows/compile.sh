@@ -132,7 +132,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 rem Installing $packageName
 setlocal
 set "apppath=%~1"
-"%apppath%\python.exe" -m pip install $line
+"%apppath%\python.exe" -m pip install "$line"
 if %ERRORLEVEL% neq 0 (
     exit /b %ERRORLEVEL%
 )
