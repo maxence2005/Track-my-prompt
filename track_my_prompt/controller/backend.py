@@ -451,6 +451,7 @@ class Backend(QObject):
     def deleteHistorique(self, pageIDToDelete):
         if pageIDToDelete == self._internal_pageID and self._shared_variable["Chargement"]:
             self.infoSent.emit(f"Ne pas effacer l'historique pendant le chargement d'une image")
+            raise Exception("Ne pas effacer l'historique pendant le chargement d'une image")
             return
 
         self.historique_model.delete_by_pageID(pageIDToDelete)
@@ -476,12 +477,15 @@ class Backend(QObject):
 
     @Slot(int, str)
     def modifyPromptText(self, pageID, newText):
-        """
-        Modifie uniquement le titre de la case (titre_case), sans modifier les prompts des éléments.
-        """
-        self.historique_model.update_case_title(pageID, newText)
-        self.historique_model.update_items_by_pageID(pageID, newText)
+        old_title = self.historique_model.get_case_title(pageID)
+        try:
+            print("b")
+            self.historique_model.update_case_title(pageID, newText)
+            print("a")
+            self.historique_model.update_items_by_pageID(pageID, newText)
 
+        except (ValueError, LookupError) as e:
+            self.infoSent.emit(str(e))
 
 
     @Property(str, notify=sharedVariableChanged)
@@ -567,26 +571,6 @@ class Backend(QObject):
         }
         self.historique_model.add_item(new_item, self._internal_pageID)
         return new_id
-
-
-    @Slot(int)
-    def page_exists(self, pageID):
-        """Vérifie si une case (Historique) existe pour un pageID donné."""
-        connection = None
-        try:
-            connection = sqlite3.connect(self.db_path)
-            cursor = connection.cursor()
-
-            cursor.execute("SELECT COUNT(*) FROM Historique WHERE pageID = ?", (pageID,))
-            count = cursor.fetchone()[0]
-            return count > 0
-
-        except sqlite3.Error as e:
-            print(f"Erreur lors de la vérification de l'existence de la page: {e}")
-            return False
-        finally:
-            if connection:
-                connection.close()
 
     
     @Slot(result=bool)

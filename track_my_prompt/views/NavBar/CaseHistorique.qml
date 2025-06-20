@@ -50,7 +50,7 @@ Rectangle {
             if (backend.shared_variable["Chargement"] == false) {
                 backend.startOnFalse()
                 
-                backend.retrievePage(container.caseID); // Appelle la méthode du backend
+                backend.retrievePage(container.caseID); 
             }
             else {
                 backend.infoSent("history_cannot_change_on_loading");
@@ -117,9 +117,15 @@ Rectangle {
                 horizontalAlignment: Text.AlignLeft
                 clip: true  
                 onAccepted: {
-                    backend.modifyPromptText(caseID, text);
-                    promptText = text;
-                    isEditing = false;
+                    if (text.trim().length > 0) {
+                        backend.modifyPromptText(caseID, text);
+                        promptText = text;
+                        isEditing = false;
+                    } 
+                    else {
+                        backend.modifyPromptText(caseID, text);
+                        isEditing = false;
+                    }
                 }
             }
 

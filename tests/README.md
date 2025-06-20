@@ -79,3 +79,68 @@
 
 ### `test_handle_media_image`
 - Verifies the processing of an image.
+
+## Tests for Historique (History)
+
+### `test_EX1_T1_affichage_historique_nominal_1`
+- Adds a history entry and checks its presence.
+
+### `test_EX1_T2_ajout_multiples`
+- Adds multiple entries and checks their order.
+
+### `test_EX1_T3_modif_pendant_traitement`
+- Simulates blocking modification during processing.
+
+### `test_EX1_T4_click_rapide`
+- Ensures no duplication on rapid clicks.
+
+### `test_EX1_T5_affichage_limite`
+- Adds more than 50 entries and checks the limit.
+
+### `test_EX2_T1_modif_prompt`
+- Modifies an existing prompt and checks the update.
+
+### `test_EX2_T3_prompt_vide`
+- Ensures empty prompts are rejected.
+
+### `test_EX2_T5_prompt_100_caracteres`
+- Checks handling of a 100-character prompt.
+
+### `test_EX3_T1_suppression_nominale`
+- Tests simple deletion of an entry.
+
+### `test_EX3_T2_suppression_second_element`
+- Tests deletion of a second entry.
+
+### `test_EX3_T3_suppression_en_detection`
+- Ensures deletion is blocked during detection.
+
+### `test_EX3_T4_suppression_rapide`
+- Ensures no error on rapid double deletion.
+
+### `test_EX3_T5_suppression_massive`
+- Tests mass deletion of entries.
+
+---
+
+## Tests for AudioRecorder (Transcription)
+
+### `test_EX5_T1_transcription_nominale`
+- Checks correct transcription of a clear message.
+
+### `test_EX5_T2_bruit_uniquement`
+- Ensures transcription fails on noise-only input.
+
+### `test_EX5_T3_transcription_mot_complexe`
+- Checks transcription of a complex/rare word.
+
+### `test_EX5_T4_aucun_son`
+- Ensures error is raised if no sound is recorded.
+
+### `test_EX5_T5_duree_maximale`
+- Tests handling of a very long recording.
+
+### `test_EX5_T6_callback_transcription`
+- Checks that the callback is called during transcription.
+
+---
