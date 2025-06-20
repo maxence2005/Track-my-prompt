@@ -572,26 +572,6 @@ class Backend(QObject):
         self.historique_model.add_item(new_item, self._internal_pageID)
         return new_id
 
-
-    @Slot(int)
-    def page_exists(self, pageID):
-        """Vérifie si une case (Historique) existe pour un pageID donné."""
-        connection = None
-        try:
-            connection = sqlite3.connect(self.db_path)
-            cursor = connection.cursor()
-
-            cursor.execute("SELECT COUNT(*) FROM Historique WHERE pageID = ?", (pageID,))
-            count = cursor.fetchone()[0]
-            return count > 0
-
-        except sqlite3.Error as e:
-            print(f"Erreur lors de la vérification de l'existence de la page: {e}")
-            return False
-        finally:
-            if connection:
-                connection.close()
-
     
     @Slot(result=bool)
     def hasUnlocked100(self):
