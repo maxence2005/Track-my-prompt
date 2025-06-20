@@ -30,6 +30,15 @@ Column {
         ]
         textRole: "text"
         valueRole: "value"
+        Component.onCompleted: {
+            var currentMode = backend.transcriptionMode;
+            for (var i = 0; i < modeSelector.model.length; i++) {
+                if (modeSelector.model[i].value === currentMode) {
+                    modeSelector.currentIndex = i;
+                    break;
+                }
+            }
+        }
         onActivated: {
             var selected = modeSelector.model[modeSelector.currentIndex];
             if (backend && selected) {

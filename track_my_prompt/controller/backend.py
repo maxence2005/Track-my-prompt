@@ -637,3 +637,13 @@ class Backend(QObject):
             str: The current transcription mode ('api' or 'local').
         """
         return self.audio_recorder.get_mode()
+    
+    @Property(str, notify=sharedVariableChanged)
+    def transcriptionMode(self) -> str:
+        """
+        Get the current transcription mode.
+
+        Returns:
+            str: The current transcription mode ('api' or 'local').
+        """
+        return self.audio_recorder.get_mode()
