@@ -460,6 +460,11 @@ class Backend(QObject):
         if pageIDToDelete == self._internal_pageID:
             self.media_model.clear_all_media()
 
+        if self.start == False :
+                self.start = True
+                self._shared_variable["Start"] = True
+                self.sharedVariableChanged.emit()
+
     def stop_detection(self):
         self._shared_variable["Chargement"] = False
         self._shared_variable["state"] = ""
