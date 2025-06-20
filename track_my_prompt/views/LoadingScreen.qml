@@ -2,7 +2,7 @@ import QtQuick 2.0
 import QtQuick.Controls 2.0
 
 Rectangle {
-	id: root
+    id: root
     width: 300
     height: 300
     color: "#33343B"
@@ -18,21 +18,37 @@ Rectangle {
 
     property var textAnim: "Track My Prompts"
     property int index: 0
+    property var dots: ["", ".", "..", "..."]
+    property int dotIndex: 0
+    property bool textFinished: false
 
     Timer {
+        id: textTimer
         interval: 1000 / textAnim.length
         repeat: true
         running: true
         onTriggered: {
-			let textAnimArray = textAnim.split("")
-
             if (index <= textAnim.length) {
-				let point = (index == textAnim.length ? "" : ".")
-                animatedText.text = textAnimArray.slice(0, index).join("") + point ;
+                animatedText.text = textAnim.slice(0, index)
+                index += 1
             } else {
-                stop()
+                textFinished = true
+                textTimer.stop()
+                dotsTimer.start()
             }
-			root.index += 1
+        }
+    }
+
+    Timer {
+        id: dotsTimer
+        interval: 500
+        repeat: true
+        running: false
+        onTriggered: {
+            if (textFinished) {
+                animatedText.text = textAnim + dots[dotIndex]
+                dotIndex = (dotIndex + 1) % dots.length
+            }
         }
     }
 }
