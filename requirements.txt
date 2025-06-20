@@ -12,3 +12,4 @@ soundfile==0.13.1
 sounddevice==0.5.2
 SpeechRecognition==3.14.3
 git+https://github.com/openai/whisper.git
+imageio-ffmpeg;sys_platform == "win32"

@@ -1,6 +1,6 @@
 from PySide6.QtCore import QObject, Signal, Slot, QThread
 import tempfile
-
+import os
 class WorkerTranscription(QObject):
     """
     Worker class to handle audio transcription in a separate thread.
@@ -19,13 +19,17 @@ class WorkerTranscription(QObject):
         try:
             import whisper
             model = whisper.load_model("base", device="cpu")
-            with tempfile.NamedTemporaryFile(suffix=".wav") as tmpfile:
+            with tempfile.NamedTemporaryFile(suffix=".wav", mode='wb', delete=False) as tmpfile:
                 tmpfile.write(self.audio_bytes)
                 tmpfile.flush()
-                result = model.transcribe(tmpfile.name)
+                path_file = tmpfile.name
+            result = model.transcribe(path_file)
+            os.remove(path_file)
             self.finished.emit(result['text'])
         except Exception as e:
+            print(e)
             self.error.emit(str(e))
+
 
     def stop(self):
         self._is_running = False

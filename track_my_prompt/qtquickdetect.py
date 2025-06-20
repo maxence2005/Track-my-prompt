@@ -2,6 +2,7 @@ import logging
 import os
 import pathlib
 import sys
+import shutil
 
 from PySide6.QtCore import QObject, Signal, QUrl
 from PySide6.QtGui import QIcon
@@ -22,6 +23,22 @@ def main():
     """
     base = "track_my_prompt"
     
+
+    if sys.platform == 'win32':
+        config_dir = filepaths.get_base_config_dir()
+        os.makedirs(config_dir, exist_ok=True)
+
+        target_ffmpeg = os.path.join(config_dir, "ffmpeg.exe")
+
+        if not os.path.exists(target_ffmpeg):
+            import imageio_ffmpeg
+            ffmpeg_path = imageio_ffmpeg.get_ffmpeg_exe()
+            shutil.copy(ffmpeg_path, target_ffmpeg)
+            print(f"ffmpeg copié vers : {target_ffmpeg}")
+
+        os.environ["PATH"] = str(config_dir) + os.pathsep + os.environ.get("PATH", "")
+        
+        
     # Get path to the python package
     package_path = pathlib.Path(__file__).absolute().parent.parent
     os.chdir(package_path)
