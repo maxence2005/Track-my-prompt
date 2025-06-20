@@ -420,6 +420,7 @@ class Backend(QObject):
     def deleteHistorique(self, pageIDToDelete):
         if pageIDToDelete == self._internal_pageID and self._shared_variable["Chargement"]:
             self.infoSent.emit(f"Ne pas effacer l'historique pendant le chargement d'une image")
+            raise Exception("Ne pas effacer l'historique pendant le chargement d'une image")
             return
 
         self.historique_model.delete_by_pageID(pageIDToDelete)
@@ -445,12 +446,15 @@ class Backend(QObject):
 
     @Slot(int, str)
     def modifyPromptText(self, pageID, newText):
-        """
-        Modifie uniquement le titre de la case (titre_case), sans modifier les prompts des éléments.
-        """
-        self.historique_model.update_case_title(pageID, newText)
-        self.historique_model.update_items_by_pageID(pageID, newText)
+        old_title = self.historique_model.get_case_title(pageID)
+        try:
+            print("b")
+            self.historique_model.update_case_title(pageID, newText)
+            print("a")
+            self.historique_model.update_items_by_pageID(pageID, newText)
 
+        except (ValueError, LookupError) as e:
+            self.infoSent.emit(str(e))
 
 
     @Property(str, notify=sharedVariableChanged)

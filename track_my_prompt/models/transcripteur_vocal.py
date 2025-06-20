@@ -60,3 +60,4 @@ class AudioRecorder:
                 raise ValueError("Audio Error")
             except sr.RequestError as e:
                 raise ConnectionError("API Error")
+            

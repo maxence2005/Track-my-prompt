@@ -19,8 +19,8 @@ class HistoriqueModel(QAbstractListModel):
         Initialize the model.
         """
         super(HistoriqueModel, self).__init__(*args, **kwargs)
-        self._items = []  # Liste pour stocker les éléments du modèle
-        self.current_pageID = None  # Variable pour stocker le pageID actuel
+        self._items = []  
+        self.current_pageID = None  
 
     def data(self, index: QModelIndex, role: int) -> str:
         """
@@ -81,26 +81,22 @@ class HistoriqueModel(QAbstractListModel):
         """Ajoute un élément au modèle uniquement si le pageID est unique."""
         pageID = item["pageID"]
 
-        # Vérifier si un élément avec ce pageID existe déjà
         if self.has_pageID(pageID):
             print(f"Le pageID {pageID} existe déjà, l'élément est ignoré.")
-            return  # Ne pas ajouter l'élément si le pageID existe déjà
+            return  
 
-        # Ajouter l'élément à la liste si le pageID est unique
         self.beginInsertRows(QModelIndex(), 0, 0)
         self._items.insert(0, item)
         self.endInsertRows()
         self.dataChanged.emit(self.index(len(self._items) - 1), self.index(len(self._items) - 1), [self.PromptRole])
-        print(f"Élément avec pageID {pageID} ajouté au modèle.")
 
 
     def update_items_by_pageID(self, pageID, newText):
         """Met à jour le texte des éléments ayant le même `pageID`."""
         for index, item in enumerate(self._items):
             if item["pageID"] == pageID:
-                self._items[index]["prompt"] = newText
+                self._items[index]["titre_case"] = newText
 
-        # On émet un signal pour informer que les données ont changé
         self.dataChanged.emit(self.index(0), self.index(len(self._items) - 1), [self.PromptRole])
 
     def remove_items_by_pageID(self, pageID):
@@ -114,7 +110,7 @@ class HistoriqueModel(QAbstractListModel):
     def add_data_if_new_pageID(self, data):
         """Ajoute des éléments si le `pageID` est nouveau, mais seulement le premier élément rencontré."""
         if not data or not isinstance(data, list):
-            return  # Aucune donnée ou mauvais format
+            return  
 
         try:
             new_pageID = data[0]["pageID"]
@@ -316,10 +312,21 @@ class DatabaseManagerHistorique(QObject):
             connection.close()
 
     def update_case_title(self, pageID: int, new_title: str):
+        print("1")
+        if not new_title:
+            print("2")
+            raise ValueError("Le titre ne peut pas être vide")
+            print("3")
+
         connection = sqlite3.connect(self.db_path)
+        print("3")
+
         try:
+            print("4")
             cursor = connection.cursor()
             cursor.execute("UPDATE Historique SET titre_case = ? WHERE pageID = ?", (new_title, pageID))
+            if cursor.rowcount == 0:
+                raise LookupError(f"Aucune donnée trouvée pour pageID {pageID}.")
             connection.commit()
         finally:
             connection.close()

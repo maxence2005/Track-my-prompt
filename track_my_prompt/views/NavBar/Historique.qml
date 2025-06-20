@@ -32,7 +32,7 @@ Rectangle {
 
             // Delegate avec CaseHistorique
             delegate: CaseHistorique {
-                promptText: model.prompt
+                promptText: model.titre_case
                 caseID: model.pageID
             }
 
