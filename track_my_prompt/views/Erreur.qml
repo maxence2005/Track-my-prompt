@@ -115,7 +115,10 @@ Rectangle {
                 "prompt_err" : qsTr("Error processing the prompt, try again, check your internet connection, rewrite the prompt, check your API key, or change the method."),
                 "history_cannot_change_on_loading": qsTr("Error: You cannot perform a new detection or load a history item during image or video processing"),
                 "api_error": qsTr("Error: An error occurred with the API, please try again later and check your internet connection."),
-                "no_sound_detected" : qsTr("No sound detected. Please try again.")
+                "no_sound_detected" : qsTr("No sound detected. Please try again."),
+                "transcription_error" : qsTr("Error: Unable to transcribe the audio, please try again."),
+                "whisper_error" : qsTr("Error: Unable to use the Whisper."),
+                "error_recording" : qsTr("Error: Unable to record audio, please check your microphone and permissions."),
             }
             erreurRectangle.errorMessage = msg[message] !== undefined ? msg[message] : message;
             backend.toggle_erreur();

@@ -26,9 +26,11 @@ class WorkerTranscription(QObject):
             result = model.transcribe(path_file)
             os.remove(path_file)
             self.finished.emit(result['text'])
+        except ImportError as e:
+            self.error.emit("whisper_error")
         except Exception as e:
             print(e)
-            self.error.emit(str(e))
+            self.error.emit("transcription_error")
 
 
     def stop(self):
