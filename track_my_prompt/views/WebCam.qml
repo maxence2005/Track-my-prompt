@@ -118,7 +118,6 @@ Rectangle {
                 }
                 height: parent.height
                 width: parent.width - 190
-                onAccepted: sendPrompt()
             }
 
             Rectangle {
