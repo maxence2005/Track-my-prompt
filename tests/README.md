@@ -79,3 +79,14 @@
 
 ### `test_handle_media_image`
 - Verifies the processing of an image.
+
+## Tests for AudioRecorder
+
+### `test_EX5_T4_aucun_son`
+- Verifies that an error is raised if no audio is recorded.
+
+### `test_EX5_T5_duree_maximale`
+- Verifies the behavior when recording for an extended period (several minutes).
+
+### `test_EX5_T6_callback_transcription`
+- Verifies that the callback is called during transcription.
