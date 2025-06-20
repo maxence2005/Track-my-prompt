@@ -332,21 +332,8 @@ class Backend(QObject):
         id = self.add_to_historique(prompt, self.fichier["lien"], self.fichier["type"], "")
         self.media_model.updateMediaItem(id_row, video_simple, video_ia, 'video', prompt)
 
-        connection = None
-        try:
-            connection = sqlite3.connect(self.db_path)
-            cursor = connection.cursor()
-            cursor.execute("""
-                UPDATE Historique
-                SET lien = ?
-                WHERE id = ?
-            """, (video_ia, id))
-            connection.commit()
-        except sqlite3.Error as e:
-            self.infoSent.emit(f"Erreur de mise à jour dans la base de données : {e}")
-        finally:
-            if connection:
-                connection.close()
+
+        self.historique_model.update_lienIA(id, video_ia)
 
 
     @Slot()
