@@ -165,7 +165,7 @@ mkdir -p "$output_folder"
 
 for req_file in "$input_folder"/*-requirements.txt; do
     filename=$(basename "$req_file" | sed 's/-requirements\.txt$//')
-    output_file="$output_folder/$filename.sh"
+    output_file="$output_folder/$filename.bat"
 
     pip_args=$(grep -v '^\s*$' "$req_file" | paste -sd' ' -)
 
@@ -173,7 +173,7 @@ for req_file in "$input_folder"/*-requirements.txt; do
 rem Installing Pytorch (Heavy, can take a while)
 setlocal
 set "apppath=%~1"
-"%apppath%\python.exe" -m pip install $pipArgs
+"%apppath%\python.exe" -m pip install $pip_args
 if %ERRORLEVEL% neq 0 (
     exit /b %ERRORLEVEL%
 )
