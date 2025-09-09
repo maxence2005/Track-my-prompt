@@ -1,7 +1,7 @@
 # Track My Prompts
-<div>
+
 ![app_screenshot](media/app_screenshot.png)
-</div>
+
 
 The Track My Prompts application allows the use of an image recognition AI model. It can detect everyday objects and interpret prompts for more targeted searches.
 
